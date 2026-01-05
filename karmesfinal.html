@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Kermés - Control Total</title>
+<style>
+body{font-family:Arial;background:#f2f2f2;padding:20px}
+h1,h2{text-align:center}
+.game{background:white;padding:15px;margin:10px 0;border-radius:8px}
+button{padding:6px 10px;margin:3px;font-size:14px}
+.rojo{color:red;font-weight:bold}
+.azul{color:blue;font-weight:bold}
+.timer{font-size:28px;font-weight:bold;text-align:center;margin:15px}
+.bloqueado{opacity:0.5}
+.tv button{display:none}
+</style>
+</head>
+<body>
+
+<h1>🎪 Kermés</h1>
+
+<h2>
+<span class="rojo">🔴 <span id="totalRojo">0</span></span> |
+<span class="azul">🔵 <span id="totalAzul">0</span></span>
+</h2>
+
+<div class="timer" id="timer">05:00</div>
+
+<div style="text-align:center">
+<input id="minutos" type="number" value="5" style="width:60px"> min<br><br>
+<button onclick="iniciar()">▶</button>
+<button onclick="pausar()">⏸</button>
+<button onclick="resetear()">⏹</button>
+</div>
+
+<hr>
+
+<button onclick="agregarJuego()">➕ Juego</button>
+<button onclick="resetGeneral()">🔄 Reset General</button>
+
+<div id="lista"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig={
+ apiKey:"AIzaSyAMmhnl_yunLCC0k1t-dDRZLnbni7tKaP8",
+ authDomain:"kermes-90bb2.firebaseapp.com",
+ projectId:"kermes-90bb2"
+};
+
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+const juegos=collection(db,"juegos");
+
+const modoTV=location.search.includes("tv");
+
+if(modoTV)document.body.classList.add("tv");
+
+window.agregarJuego=async()=>{
+ const n=prompt("Nombre del juego:");
+ if(n)await addDoc(juegos,{nombre:n,rojo:0,azul:0,bloqueado:false});
+};
+
+onSnapshot(juegos,s=>{
+ lista.innerHTML="";
+ let r=0,a=0;
+ s.forEach(d=>{
+  const j=d.data();
+  r+=j.rojo;a+=j.azul;
+  lista.innerHTML+=`
+  <div class="game ${j.bloqueado?'bloqueado':''}">
+  <h3>${j.nombre}</h3>
+  <button onclick="editar('${d.id}','${j.nombre}')">✏️</button>
+  <button onclick="borrar('${d.id}')">🗑️</button>
+  <button onclick="bloquear('${d.id}',${!j.bloqueado})">${j.bloqueado?'🔓':'🔒'}</button>
+  <br><br>
+  🔴 ${j.rojo}
+  <button onclick="sumar('${d.id}','rojo',${j.rojo+1})">+1</button>
+  <button onclick="sumar('${d.id}','rojo',${j.rojo-1})">-1</button>
+  <br><br>
+  🔵 ${j.azul}
+  <button onclick="sumar('${d.id}','azul',${j.azul+1})">+1</button>
+  <button onclick="sumar('${d.id}','azul',${j.azul-1})">-1</button>
+  </div>`;
+ });
+ totalRojo.innerText=r;
+ totalAzul.innerText=a;
+});
+
+window.sumar=async(id,e,v)=>{if(v<0)v=0;await updateDoc(doc(db,"juegos",id),{[e]:v});}
+window.editar=async(id,n)=>{const x=prompt("Nuevo nombre",n);if(x)await updateDoc(doc(db,"juegos",id),{nombre:x});}
+window.borrar=async(id)=>{if(confirm("Eliminar?"))await deleteDoc(doc(db,"juegos",id));}
+window.bloquear=async(id,v)=>{await updateDoc(doc(db,"juegos",id),{bloqueado:v});}
+
+window.resetGeneral=async()=>{
+ if(!confirm("Resetear TODO?"))return;
+ const docs=await getDocs(juegos);
+ docs.forEach(d=>updateDoc(d.ref,{rojo:0,azul:0}));
+}
+
+/* TEMPORIZADOR */
+let t=300,i=null;
+function mostrar(){timer.innerText=`${String(Math.floor(t/60)).padStart(2,"0")}:${String(t%60).padStart(2,"0")}`;}
+window.iniciar=()=>{if(i)return;t=minutos.value*60;mostrar();i=setInterval(()=>{if(t>0){t--;mostrar();}},1000);}
+window.pausar=()=>{clearInterval(i);i=null;}
+window.resetear=()=>{pausar();t=minutos.value*60;mostrar();}
+</script>
+</body>
+</html>
