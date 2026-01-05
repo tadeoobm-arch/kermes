@@ -1,111 +1,233 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Kermés - Control Total</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Kermés - Control</title>
 <style>
-body{font-family:Arial;background:#f2f2f2;padding:20px}
-h1,h2{text-align:center}
-.game{background:white;padding:15px;margin:10px 0;border-radius:8px}
-button{padding:6px 10px;margin:3px;font-size:14px}
-.rojo{color:red;font-weight:bold}
-.azul{color:blue;font-weight:bold}
-.timer{font-size:28px;font-weight:bold;text-align:center;margin:15px}
-.bloqueado{opacity:0.5}
-.tv button{display:none}
+  body{font-family:Arial;background:#f2f2f2;padding:16px;margin:0}
+  h1,h2{text-align:center;margin:10px 0}
+  .top{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:10px 0}
+  .rojo{color:#d40000;font-weight:700}
+  .azul{color:#0047ff;font-weight:700}
+  .timer{font-size:28px;font-weight:800;text-align:center;margin:10px 0}
+  .card{background:#fff;border-radius:10px;padding:12px;margin:10px auto;max-width:900px}
+  .game{background:#fff;border-radius:10px;padding:12px;margin:10px 0}
+  .muted{opacity:.55}
+  button{padding:8px 10px;margin:3px;font-size:14px;cursor:pointer}
+  input[type="number"]{padding:8px;width:70px}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .grow{flex:1}
+  .tv body{}
+  /* Modo TV: oculta controles */
+  .tv .controls, .tv .admin, .tv button { display:none !important; }
+  .tv .game { font-size:22px; }
+  .tv .timer { font-size:44px; }
+  .tv h1 { font-size:42px; }
+  .tv h2 { font-size:30px; }
 </style>
 </head>
-<body>
 
+<body>
 <h1>🎪 Kermés</h1>
 
 <h2>
-<span class="rojo">🔴 <span id="totalRojo">0</span></span> |
-<span class="azul">🔵 <span id="totalAzul">0</span></span>
+  <span class="rojo">🔴 <span id="totalRojo">0</span></span>
+  &nbsp;|&nbsp;
+  <span class="azul">🔵 <span id="totalAzul">0</span></span>
 </h2>
 
-<div class="timer" id="timer">05:00</div>
+<div class="card">
+  <div class="timer" id="timer">05:00</div>
 
-<div style="text-align:center">
-<input id="minutos" type="number" value="5" style="width:60px"> min<br><br>
-<button onclick="iniciar()">▶</button>
-<button onclick="pausar()">⏸</button>
-<button onclick="resetear()">⏹</button>
+  <div class="top controls">
+    <div class="row">
+      <label>Min:</label>
+      <input id="minutos" type="number" value="5" min="1" />
+      <button onclick="iniciar()">▶ Iniciar</button>
+      <button onclick="pausar()">⏸ Pausa</button>
+      <button onclick="resetear()">⏹ Reset</button>
+    </div>
+  </div>
+
+  <div class="top admin">
+    <button onclick="agregarJuego()">➕ Agregar juego</button>
+    <button onclick="resetGeneral()">🔄 Reset general</button>
+  </div>
 </div>
 
-<hr>
-
-<button onclick="agregarJuego()">➕ Juego</button>
-<button onclick="resetGeneral()">🔄 Reset General</button>
-
-<div id="lista"></div>
+<div class="card">
+  <div id="lista"></div>
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {
+  getFirestore, collection, addDoc, doc, updateDoc, deleteDoc,
+  onSnapshot, getDocs, setDoc, getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const firebaseConfig={
- apiKey:"AIzaSyAMmhnl_yunLCC0k1t-dDRZLnbni7tKaP8",
- authDomain:"kermes-90bb2.firebaseapp.com",
- projectId:"kermes-90bb2"
+const firebaseConfig = {
+  apiKey: "AIzaSyAMmhnl_yunLCC0k1t-dDRZLnbni7tKaP8",
+  authDomain: "kermes-90bb2.firebaseapp.com",
+  projectId: "kermes-90bb2"
 };
 
-const app=initializeApp(firebaseConfig);
-const db=getFirestore(app);
-const juegos=collection(db,"juegos");
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-const modoTV=location.search.includes("tv");
+const juegosCol = collection(db, "juegos");
+const timerDoc = doc(db, "config", "timer"); // guarda el temporizador para que TV y celulares vean lo mismo
 
-if(modoTV)document.body.classList.add("tv");
+// ✅ Modo TV por URL
+const modoTV = new URLSearchParams(location.search).has("tv");
+if (modoTV) document.documentElement.classList.add("tv");
 
-window.agregarJuego=async()=>{
- const n=prompt("Nombre del juego:");
- if(n)await addDoc(juegos,{nombre:n,rojo:0,azul:0,bloqueado:false});
+// ---------- Juegos ----------
+window.agregarJuego = async () => {
+  const nombre = prompt("Nombre del juego:");
+  if (!nombre) return;
+  await addDoc(juegosCol, { nombre, rojo: 0, azul: 0, bloqueado: false });
 };
 
-onSnapshot(juegos,s=>{
- lista.innerHTML="";
- let r=0,a=0;
- s.forEach(d=>{
-  const j=d.data();
-  r+=j.rojo;a+=j.azul;
-  lista.innerHTML+=`
-  <div class="game ${j.bloqueado?'bloqueado':''}">
-  <h3>${j.nombre}</h3>
-  <button onclick="editar('${d.id}','${j.nombre}')">✏️</button>
-  <button onclick="borrar('${d.id}')">🗑️</button>
-  <button onclick="bloquear('${d.id}',${!j.bloqueado})">${j.bloqueado?'🔓':'🔒'}</button>
-  <br><br>
-  🔴 ${j.rojo}
-  <button onclick="sumar('${d.id}','rojo',${j.rojo+1})">+1</button>
-  <button onclick="sumar('${d.id}','rojo',${j.rojo-1})">-1</button>
-  <br><br>
-  🔵 ${j.azul}
-  <button onclick="sumar('${d.id}','azul',${j.azul+1})">+1</button>
-  <button onclick="sumar('${d.id}','azul',${j.azul-1})">-1</button>
-  </div>`;
- });
- totalRojo.innerText=r;
- totalAzul.innerText=a;
+window.editar = async (id, actual) => {
+  const nuevo = prompt("Nuevo nombre:", actual);
+  if (!nuevo) return;
+  await updateDoc(doc(db, "juegos", id), { nombre: nuevo });
+};
+
+window.borrar = async (id) => {
+  if (!confirm("¿Eliminar este juego?")) return;
+  await deleteDoc(doc(db, "juegos", id));
+};
+
+window.bloquear = async (id, v) => {
+  await updateDoc(doc(db, "juegos", id), { bloqueado: v });
+};
+
+window.sumar = async (id, eq, val) => {
+  if (val < 0) val = 0;
+  await updateDoc(doc(db, "juegos", id), { [eq]: val });
+};
+
+window.resetGeneral = async () => {
+  if (!confirm("¿Resetear TODOS los puntos?")) return;
+  const docs = await getDocs(juegosCol);
+  docs.forEach(d => updateDoc(d.ref, { rojo: 0, azul: 0 }));
+};
+
+// Render realtime
+const lista = document.getElementById("lista");
+onSnapshot(juegosCol, (snap) => {
+  lista.innerHTML = "";
+  let tr = 0, ta = 0;
+
+  snap.forEach((d) => {
+    const j = d.data();
+    tr += j.rojo;
+    ta += j.azul;
+
+    lista.innerHTML += `
+      <div class="game ${j.bloqueado ? "muted" : ""}">
+        <div class="row">
+          <div class="grow"><b>${j.nombre}</b></div>
+
+          <div class="admin">
+            <button onclick="editar('${d.id}','${escapeHtml(j.nombre)}')">✏️</button>
+            <button onclick="borrar('${d.id}')">🗑️</button>
+            <button onclick="bloquear('${d.id}', ${!j.bloqueado})">${j.bloqueado ? "🔓" : "🔒"}</button>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="rojo">🔴 Rojo: ${j.rojo}</div>
+          <div class="controls">
+            <button ${j.bloqueado ? "disabled" : ""} onclick="sumar('${d.id}','rojo',${j.rojo+1})">+1</button>
+            <button ${j.bloqueado ? "disabled" : ""} onclick="sumar('${d.id}','rojo',${j.rojo+5})">+5</button>
+            <button ${j.bloqueado ? "disabled" : ""} onclick="sumar('${d.id}','rojo',${j.rojo-1})">-1</button>
+            <button ${j.bloqueado ? "disabled" : ""} onclick="sumar('${d.id}','rojo',${j.rojo-5})">-5</button>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="azul">🔵 Azul: ${j.azul}</div>
+          <div class="controls">
+            <button ${j.bloqueado ? "disabled" : ""} onclick="sumar('${d.id}','azul',${j.azul+1})">+1</button>
+            <button ${j.bloqueado ? "disabled" : ""} onclick="sumar('${d.id}','azul',${j.azul+5})">+5</button>
+            <button ${j.bloqueado ? "disabled" : ""} onclick="sumar('${d.id}','azul',${j.azul-1})">-1</button>
+            <button ${j.bloqueado ? "disabled" : ""} onclick="sumar('${d.id}','azul',${j.azul-5})">-5</button>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+
+  document.getElementById("totalRojo").innerText = tr;
+  document.getElementById("totalAzul").innerText = ta;
 });
 
-window.sumar=async(id,e,v)=>{if(v<0)v=0;await updateDoc(doc(db,"juegos",id),{[e]:v});}
-window.editar=async(id,n)=>{const x=prompt("Nuevo nombre",n);if(x)await updateDoc(doc(db,"juegos",id),{nombre:x});}
-window.borrar=async(id)=>{if(confirm("Eliminar?"))await deleteDoc(doc(db,"juegos",id));}
-window.bloquear=async(id,v)=>{await updateDoc(doc(db,"juegos",id),{bloqueado:v});}
+// ---------- Temporizador sincronizado ----------
+let interval = null;
+let running = false;
+let remaining = 300; // seg
 
-window.resetGeneral=async()=>{
- if(!confirm("Resetear TODO?"))return;
- const docs=await getDocs(juegos);
- docs.forEach(d=>updateDoc(d.ref,{rojo:0,azul:0}));
+function formatTime(sec){
+  const m = String(Math.floor(sec/60)).padStart(2,"0");
+  const s = String(sec%60).padStart(2,"0");
+  return `${m}:${s}`;
 }
 
-/* TEMPORIZADOR */
-let t=300,i=null;
-function mostrar(){timer.innerText=`${String(Math.floor(t/60)).padStart(2,"0")}:${String(t%60).padStart(2,"0")}`;}
-window.iniciar=()=>{if(i)return;t=minutos.value*60;mostrar();i=setInterval(()=>{if(t>0){t--;mostrar();}},1000);}
-window.pausar=()=>{clearInterval(i);i=null;}
-window.resetear=()=>{pausar();t=minutos.value*60;mostrar();}
+async function ensureTimerDoc(){
+  const snap = await getDoc(timerDoc);
+  if(!snap.exists()){
+    await setDoc(timerDoc, { remaining: remaining, running: false, updatedAt: Date.now() });
+  }
+}
+await ensureTimerDoc();
+
+onSnapshot(timerDoc, (snap)=>{
+  if(!snap.exists()) return;
+  const d = snap.data();
+  remaining = d.remaining ?? 300;
+  running = !!d.running;
+  document.getElementById("timer").innerText = formatTime(remaining);
+});
+
+async function tick(){
+  // lee local remaining y lo baja 1s, pero guarda en Firestore para que todos lo vean
+  if(!running) return;
+  if(remaining <= 0) {
+    await updateDoc(timerDoc, { remaining: 0, running: false, updatedAt: Date.now() });
+    return;
+  }
+  await updateDoc(timerDoc, { remaining: remaining - 1, updatedAt: Date.now() });
+}
+
+window.iniciar = async () => {
+  const min = parseInt(document.getElementById("minutos").value || "5", 10);
+  const start = min * 60;
+  await updateDoc(timerDoc, { remaining: start, running: true, updatedAt: Date.now() });
+  // el tick lo hace el navegador que lo inicia (con esto alcanza)
+  if(!interval) interval = setInterval(tick, 1000);
+};
+
+window.pausar = async () => {
+  await updateDoc(timerDoc, { running: false, updatedAt: Date.now() });
+};
+
+window.resetear = async () => {
+  const min = parseInt(document.getElementById("minutos").value || "5", 10);
+  await updateDoc(timerDoc, { remaining: min*60, running: false, updatedAt: Date.now() });
+};
+
+// si alguien dejó abierto el control, que mantenga el tick activo
+if(!modoTV){
+  if(!interval) interval = setInterval(tick, 1000);
+}
+
+function escapeHtml(str){
+  return (str||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+}
 </script>
 </body>
 </html>
