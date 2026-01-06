@@ -4,27 +4,96 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Kermés - Control</title>
+
 <style>
   body{font-family:Arial;background:#f2f2f2;padding:16px;margin:0}
   h1,h2{text-align:center;margin:10px 0}
   .top{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:10px 0}
-  .rojo{color:#d40000;font-weight:700}
-  .azul{color:#0047ff;font-weight:700}
-  .timer{font-size:28px;font-weight:800;text-align:center;margin:10px 0}
-  .card{background:#fff;border-radius:10px;padding:12px;margin:10px auto;max-width:900px}
-  .game{background:#fff;border-radius:10px;padding:12px;margin:10px 0}
+  .rojo{color:#d40000;font-weight:800}
+  .azul{color:#0047ff;font-weight:800}
+  .timer{font-size:30px;font-weight:900;text-align:center;margin:10px 0}
+  .card{background:#fff;border-radius:12px;padding:12px;margin:10px auto;max-width:1100px}
+  #lista{max-width:1100px;margin:0 auto}
+  .game{background:#fff;border-radius:12px;padding:12px;margin:10px 0;border:1px solid #e8e8e8}
   .muted{opacity:.55}
-  button{padding:8px 10px;margin:3px;font-size:14px;cursor:pointer}
-  input[type="number"]{padding:8px;width:70px}
+  button{padding:9px 12px;margin:3px;font-size:14px;cursor:pointer;border-radius:10px;border:1px solid #ddd;background:#fafafa}
+  button:disabled{opacity:.4;cursor:not-allowed}
+  input[type="number"]{padding:9px;width:80px;border-radius:10px;border:1px solid #ddd}
   .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
   .grow{flex:1}
+  .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#f4f4f4;border:1px solid #e5e5e5}
+  .mini{font-size:12px;opacity:.7}
+  .sep{height:1px;background:#eee;margin:10px 0}
+
+  /* ===== MODO TV ===== */
   .tv body{}
-  /* Modo TV: oculta controles */
-  .tv .controls, .tv .admin, .tv button { display:none !important; }
-  .tv .game { font-size:22px; }
-  .tv .timer { font-size:44px; }
-  .tv h1 { font-size:42px; }
-  .tv h2 { font-size:30px; }
+  .tv .controls, .tv .admin, .tv button, .tv input { display:none !important; }
+  .tv h1{font-size:46px}
+  .tv h2{font-size:32px}
+  .tv .timer{font-size:64px;margin:18px 0}
+  .tv #lista{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap:12px;
+    max-width:1400px;
+  }
+  .tv .game{
+    margin:0;
+    font-size:22px;
+    border:0;
+    background:#ffffff;
+  }
+  .tv .pill{font-size:16px}
+  .tv .mini{display:none}
+
+  /* ===== MODAL TECLADO ===== */
+  .modal{
+    position:fixed; inset:0;
+    background:rgba(0,0,0,.55);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:9999;
+    padding:14px;
+  }
+  .modal.open{ display:flex; }
+  .modal-box{
+    background:#fff;
+    border-radius:16px;
+    padding:14px;
+    width:min(420px, 96vw);
+  }
+  .modal-title{ font-weight:900; margin:6px 0 10px; text-align:center; }
+  .display{
+    background:#f3f3f3;
+    padding:12px;
+    border-radius:12px;
+    font-size:30px;
+    text-align:center;
+    letter-spacing:2px;
+    margin-bottom:10px;
+  }
+  .keypad{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:8px;
+  }
+  .keypad button{
+    font-size:20px;
+    padding:14px 0;
+    border-radius:14px;
+  }
+  .actions{
+    display:flex;
+    gap:8px;
+    margin-top:10px;
+  }
+  .actions button{
+    flex:1;
+    padding:12px 0;
+    font-size:16px;
+    border-radius:14px;
+  }
 </style>
 </head>
 
@@ -41,18 +110,16 @@
   <div class="timer" id="timer">05:00</div>
 
   <div class="top controls">
-    <div class="row">
-      <label>Min:</label>
-      <input id="minutos" type="number" value="5" min="1" />
-      <button onclick="iniciar()">▶ Iniciar</button>
-      <button onclick="pausar()">⏸ Pausa</button>
-      <button onclick="resetear()">⏹ Reset</button>
-    </div>
+    <span class="pill">Min: <input id="minutos" type="number" value="5" min="1" /></span>
+    <button onclick="iniciarTimer()">▶ Iniciar</button>
+    <button onclick="pausarTimer()">⏸ Pausa</button>
+    <button onclick="resetearTimer()">⏹ Reset</button>
   </div>
 
   <div class="top admin">
     <button onclick="agregarJuego()">➕ Agregar juego</button>
     <button onclick="resetGeneral()">🔄 Reset general</button>
+    <span class="mini">TV: abrí el mismo link con <b>?tv</b></span>
   </div>
 </div>
 
@@ -60,13 +127,43 @@
   <div id="lista"></div>
 </div>
 
+<!-- MODAL TECLADO -->
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <div class="modal-title" id="modalTitle">Puntos</div>
+    <div class="display" id="display">0</div>
+
+    <div class="keypad">
+      <button onclick="press(1)">1</button>
+      <button onclick="press(2)">2</button>
+      <button onclick="press(3)">3</button>
+      <button onclick="press(4)">4</button>
+      <button onclick="press(5)">5</button>
+      <button onclick="press(6)">6</button>
+      <button onclick="press(7)">7</button>
+      <button onclick="press(8)">8</button>
+      <button onclick="press(9)">9</button>
+      <button onclick="back()">⌫</button>
+      <button onclick="press(0)">0</button>
+      <button onclick="clearNum()">C</button>
+    </div>
+
+    <div class="actions">
+      <button onclick="closePad()">Cancelar</button>
+      <button onclick="applyPad()">OK</button>
+    </div>
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getFirestore, collection, addDoc, doc, updateDoc, deleteDoc,
-  onSnapshot, getDocs, setDoc, getDoc
+  onSnapshot, getDocs, getDoc, setDoc, query, orderBy,
+  serverTimestamp, runTransaction
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+/* ====== TU FIREBASE ====== */
 const firebaseConfig = {
   apiKey: "AIzaSyAMmhnl_yunLCC0k1t-dDRZLnbni7tKaP8",
   authDomain: "kermes-90bb2.firebaseapp.com",
@@ -76,28 +173,51 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const juegosCol = collection(db, "juegos");
-const timerDoc = doc(db, "config", "timer"); // guarda el temporizador para que TV y celulares vean lo mismo
-
-// ✅ Modo TV por URL
+/* ====== MODO TV ====== */
 const modoTV = new URLSearchParams(location.search).has("tv");
 if (modoTV) document.documentElement.classList.add("tv");
 
-// ---------- Juegos ----------
+/* ====== COLECCIONES ====== */
+const juegosCol = collection(db, "juegos");
+const juegosQ = query(juegosCol, orderBy("createdAt", "asc"));
+const timerDoc = doc(db, "config", "timer");
+
+/* ====== HELPERS ====== */
+const lista = document.getElementById("lista");
+const totalRojoEl = document.getElementById("totalRojo");
+const totalAzulEl = document.getElementById("totalAzul");
+const timerEl = document.getElementById("timer");
+const minutosEl = document.getElementById("minutos");
+
+function escapeHtml(str){
+  return (str||"")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+function fmt(sec){
+  const m = String(Math.floor(sec/60)).padStart(2,"0");
+  const s = String(sec%60).padStart(2,"0");
+  return `${m}:${s}`;
+}
+
+/* ====== JUEGOS (CRUD) ====== */
 window.agregarJuego = async () => {
   const nombre = prompt("Nombre del juego:");
-  if (!nombre) return;
-  await addDoc(juegosCol, { nombre, rojo: 0, azul: 0, bloqueado: false });
+  if(!nombre) return;
+  await addDoc(juegosCol, { nombre, rojo:0, azul:0, bloqueado:false, createdAt: serverTimestamp() });
 };
 
 window.editar = async (id, actual) => {
   const nuevo = prompt("Nuevo nombre:", actual);
-  if (!nuevo) return;
+  if(!nuevo) return;
   await updateDoc(doc(db, "juegos", id), { nombre: nuevo });
 };
 
 window.borrar = async (id) => {
-  if (!confirm("¿Eliminar este juego?")) return;
+  if(!confirm("¿Eliminar este juego?")) return;
   await deleteDoc(doc(db, "juegos", id));
 };
 
@@ -105,128 +225,198 @@ window.bloquear = async (id, v) => {
   await updateDoc(doc(db, "juegos", id), { bloqueado: v });
 };
 
-window.sumar = async (id, eq, val) => {
-  if (val < 0) val = 0;
+window.setPuntos = async (id, eq, val) => {
+  if(val < 0) val = 0;
   await updateDoc(doc(db, "juegos", id), { [eq]: val });
 };
 
 window.resetGeneral = async () => {
-  if (!confirm("¿Resetear TODOS los puntos?")) return;
+  if(!confirm("¿Resetear TODOS los puntos?")) return;
   const docs = await getDocs(juegosCol);
-  docs.forEach(d => updateDoc(d.ref, { rojo: 0, azul: 0 }));
+  docs.forEach(d => updateDoc(d.ref, { rojo:0, azul:0 }));
 };
 
-// Render realtime
-const lista = document.getElementById("lista");
-onSnapshot(juegosCol, (snap) => {
+/* ====== RENDER REALTIME ====== */
+onSnapshot(juegosQ, (snap) => {
   lista.innerHTML = "";
   let tr = 0, ta = 0;
 
-  snap.forEach((d) => {
+  snap.forEach(d => {
     const j = d.data();
-    tr += j.rojo;
-    ta += j.azul;
+    tr += (j.rojo||0);
+    ta += (j.azul||0);
 
     lista.innerHTML += `
       <div class="game ${j.bloqueado ? "muted" : ""}">
         <div class="row">
-          <div class="grow"><b>${j.nombre}</b></div>
+          <div class="grow"><b>${escapeHtml(j.nombre || "Juego")}</b></div>
 
           <div class="admin">
-            <button onclick="editar('${d.id}','${escapeHtml(j.nombre)}')">✏️</button>
+            <button onclick="editar('${d.id}','${escapeHtml(j.nombre||"")}')">✏️</button>
             <button onclick="borrar('${d.id}')">🗑️</button>
             <button onclick="bloquear('${d.id}', ${!j.bloqueado})">${j.bloqueado ? "🔓" : "🔒"}</button>
           </div>
         </div>
 
+        <div class="sep"></div>
+
         <div class="row">
-          <div class="rojo">🔴 Rojo: ${j.rojo}</div>
+          <div class="grow rojo">🔴 Rojo: ${j.rojo||0}</div>
           <div class="controls">
-            <button ${j.bloqueado ? "disabled" : ""} onclick="sumar('${d.id}','rojo',${j.rojo+1})">+1</button>
-            <button ${j.bloqueado ? "disabled" : ""} onclick="sumar('${d.id}','rojo',${j.rojo+5})">+5</button>
-            <button ${j.bloqueado ? "disabled" : ""} onclick="sumar('${d.id}','rojo',${j.rojo-1})">-1</button>
-            <button ${j.bloqueado ? "disabled" : ""} onclick="sumar('${d.id}','rojo',${j.rojo-5})">-5</button>
+            <button ${j.bloqueado ? "disabled" : ""} onclick="openPad('${d.id}','rojo',${j.rojo||0},1,'${escapeHtml(j.nombre||"")}')">➕</button>
+            <button ${j.bloqueado ? "disabled" : ""} onclick="openPad('${d.id}','rojo',${j.rojo||0},-1,'${escapeHtml(j.nombre||"")}')">➖</button>
           </div>
         </div>
 
         <div class="row">
-          <div class="azul">🔵 Azul: ${j.azul}</div>
+          <div class="grow azul">🔵 Azul: ${j.azul||0}</div>
           <div class="controls">
-            <button ${j.bloqueado ? "disabled" : ""} onclick="sumar('${d.id}','azul',${j.azul+1})">+1</button>
-            <button ${j.bloqueado ? "disabled" : ""} onclick="sumar('${d.id}','azul',${j.azul+5})">+5</button>
-            <button ${j.bloqueado ? "disabled" : ""} onclick="sumar('${d.id}','azul',${j.azul-1})">-1</button>
-            <button ${j.bloqueado ? "disabled" : ""} onclick="sumar('${d.id}','azul',${j.azul-5})">-5</button>
+            <button ${j.bloqueado ? "disabled" : ""} onclick="openPad('${d.id}','azul',${j.azul||0},1,'${escapeHtml(j.nombre||"")}')">➕</button>
+            <button ${j.bloqueado ? "disabled" : ""} onclick="openPad('${d.id}','azul',${j.azul||0},-1,'${escapeHtml(j.nombre||"")}')">➖</button>
           </div>
         </div>
       </div>
     `;
   });
 
-  document.getElementById("totalRojo").innerText = tr;
-  document.getElementById("totalAzul").innerText = ta;
+  totalRojoEl.innerText = tr;
+  totalAzulEl.innerText = ta;
 });
 
-// ---------- Temporizador sincronizado ----------
-let interval = null;
-let running = false;
-let remaining = 300; // seg
+/* ====== TECLADO NUMÉRICO ====== */
+let pad = { open:false, id:null, team:null, current:0, sign:1, name:"", value:"0" };
+const modalEl = document.getElementById("modal");
+const displayEl = document.getElementById("display");
+const modalTitleEl = document.getElementById("modalTitle");
 
-function formatTime(sec){
-  const m = String(Math.floor(sec/60)).padStart(2,"0");
-  const s = String(sec%60).padStart(2,"0");
-  return `${m}:${s}`;
-}
+window.openPad = (id, team, current, sign, name) => {
+  pad = { open:true, id, team, current, sign, name, value:"0" };
+  const eq = team === "rojo" ? "🔴 Rojo" : "🔵 Azul";
+  const op = sign === 1 ? "SUMAR" : "RESTAR";
+  modalTitleEl.textContent = `${op} puntos — ${eq} — ${name}`;
+  displayEl.textContent = "0";
+  modalEl.classList.add("open");
+};
 
-async function ensureTimerDoc(){
-  const snap = await getDoc(timerDoc);
-  if(!snap.exists()){
-    await setDoc(timerDoc, { remaining: remaining, running: false, updatedAt: Date.now() });
+window.closePad = () => {
+  modalEl.classList.remove("open");
+  pad.open = false;
+};
+
+window.press = (n) => {
+  if(!pad.open) return;
+  if(pad.value === "0") pad.value = String(n);
+  else pad.value += String(n);
+  if(pad.value.length > 6) pad.value = pad.value.slice(0,6);
+  displayEl.textContent = pad.value;
+};
+
+window.back = () => {
+  if(!pad.open) return;
+  pad.value = pad.value.slice(0,-1) || "0";
+  displayEl.textContent = pad.value;
+};
+
+window.clearNum = () => {
+  if(!pad.open) return;
+  pad.value = "0";
+  displayEl.textContent = "0";
+};
+
+window.applyPad = async () => {
+  if(!pad.open) return;
+  const amount = parseInt(pad.value || "0", 10) || 0;
+  let next = pad.current + (pad.sign * amount);
+  if(next < 0) next = 0;
+  await updateDoc(doc(db, "juegos", pad.id), { [pad.team]: next });
+  closePad();
+};
+
+// cerrar modal tocando fuera
+modalEl.addEventListener("click", (e)=>{
+  if(e.target === modalEl) closePad();
+});
+
+/* ====== TEMPORIZADOR SINCRONIZADO (anti doble-tick) ====== */
+async function ensureTimer(){
+  const s = await getDoc(timerDoc);
+  if(!s.exists()){
+    await setDoc(timerDoc, {
+      remaining: 300,
+      running: false,
+      lastTick: 0,
+      updatedAt: serverTimestamp()
+    });
   }
 }
-await ensureTimerDoc();
+await ensureTimer();
+
+let timerState = { remaining:300, running:false, lastTick:0 };
 
 onSnapshot(timerDoc, (snap)=>{
   if(!snap.exists()) return;
   const d = snap.data();
-  remaining = d.remaining ?? 300;
-  running = !!d.running;
-  document.getElementById("timer").innerText = formatTime(remaining);
+  timerState.remaining = d.remaining ?? 300;
+  timerState.running = !!d.running;
+  timerState.lastTick = d.lastTick ?? 0;
+  timerEl.textContent = fmt(timerState.remaining);
 });
 
-async function tick(){
-  // lee local remaining y lo baja 1s, pero guarda en Firestore para que todos lo vean
-  if(!running) return;
-  if(remaining <= 0) {
-    await updateDoc(timerDoc, { remaining: 0, running: false, updatedAt: Date.now() });
-    return;
+window.iniciarTimer = async () => {
+  const min = Math.max(1, parseInt(minutosEl.value || "5", 10));
+  await updateDoc(timerDoc, {
+    remaining: min*60,
+    running: true,
+    lastTick: 0,
+    updatedAt: serverTimestamp()
+  });
+};
+
+window.pausarTimer = async () => {
+  await updateDoc(timerDoc, { running:false, updatedAt: serverTimestamp() });
+};
+
+window.resetearTimer = async () => {
+  const min = Math.max(1, parseInt(minutosEl.value || "5", 10));
+  await updateDoc(timerDoc, {
+    remaining: min*60,
+    running: false,
+    lastTick: 0,
+    updatedAt: serverTimestamp()
+  });
+};
+
+// Tick seguro: si hay varios celulares abiertos, el transaction evita descontar doble
+async function safeTick(){
+  try{
+    await runTransaction(db, async (tx)=>{
+      const snap = await tx.get(timerDoc);
+      if(!snap.exists()) return;
+      const d = snap.data();
+      if(!d.running) return;
+      const remaining = d.remaining ?? 0;
+      if(remaining <= 0){
+        tx.update(timerDoc, { remaining:0, running:false, updatedAt: serverTimestamp() });
+        return;
+      }
+      const lastTick = d.lastTick ?? 0;
+      const now = Date.now();
+      // solo 1 decrement por segundo aprox
+      if(now - lastTick < 900) return;
+      tx.update(timerDoc, {
+        remaining: remaining - 1,
+        lastTick: now,
+        updatedAt: serverTimestamp()
+      });
+    });
+  } catch(e){
+    // silencio
   }
-  await updateDoc(timerDoc, { remaining: remaining - 1, updatedAt: Date.now() });
 }
 
-window.iniciar = async () => {
-  const min = parseInt(document.getElementById("minutos").value || "5", 10);
-  const start = min * 60;
-  await updateDoc(timerDoc, { remaining: start, running: true, updatedAt: Date.now() });
-  // el tick lo hace el navegador que lo inicia (con esto alcanza)
-  if(!interval) interval = setInterval(tick, 1000);
-};
-
-window.pausar = async () => {
-  await updateDoc(timerDoc, { running: false, updatedAt: Date.now() });
-};
-
-window.resetear = async () => {
-  const min = parseInt(document.getElementById("minutos").value || "5", 10);
-  await updateDoc(timerDoc, { remaining: min*60, running: false, updatedAt: Date.now() });
-};
-
-// si alguien dejó abierto el control, que mantenga el tick activo
+// Solo los que NO son TV hacen tick (la TV solo muestra)
 if(!modoTV){
-  if(!interval) interval = setInterval(tick, 1000);
-}
-
-function escapeHtml(str){
-  return (str||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+  setInterval(safeTick, 1000);
 }
 </script>
 </body>
