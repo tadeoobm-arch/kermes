@@ -249,3 +249,12 @@ test('stock: no se puede comprar más de lo disponible en la variante', async ()
   await seedCatalog(ctx, shopify);
   assert.throws(() => shopify.checkout({ items: [{ sku: 'NP-CED-100', quantity: 3 }], customer: CUSTOMER, address: ADDRESS }), /Sin stock/);
 });
+
+test('orders/create y orders/paid simultáneos: el estado nunca retrocede', async () => {
+  const { ctx, shopify, rec } = createTestContext();
+  await seedCatalog(ctx, shopify);
+  const order = shopify.checkout({ items: [{ sku: 'NP-AUR-30', quantity: 1 }], customer: CUSTOMER, address: ADDRESS, financialStatus: 'PAID' });
+  await Promise.all([handleOrderPaid(ctx, order.id), handleOrderCreated(ctx, order.id)]);
+  assert.equal(shopify.state.orders.get(order.id).estado.value, STATUS.PREPARANDO);
+  assert.equal(rec.emails.filter((e) => e.to === 'pedidos@proveedor-a.test').length, 1);
+});

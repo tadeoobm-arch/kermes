@@ -68,8 +68,9 @@ export async function syncSheet(ctx, order, extra = {}) {
 
 // orders/create — el pedido existe pero NO es una venta confirmada todavía.
 export async function handleOrderCreated(ctx, orderId) {
-  const order = await fetchOrder(ctx, orderId);
-  return withOrderLock(order.gid, async () => {
+  return withOrderLock(toGid('Order', orderId), async () => {
+    // Se lee dentro del candado: si orders/paid llegó antes, no se retrocede el estado.
+    const order = await fetchOrder(ctx, orderId);
     if (!order.estado) await setOrderState(ctx, order, { status: isPaid(order) ? STATUS.PAGO_CONFIRMADO : STATUS.PEDIDO_RECIBIDO });
     await syncSheet(ctx, order);
     return { order: order.name, status: order.estado, paid: isPaid(order) };

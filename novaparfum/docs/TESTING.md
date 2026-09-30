@@ -4,7 +4,7 @@
 ```bash
 cd novaparfum/app
 npm install
-npm test               # 34 pruebas: flujo completo con Shopify simulado en memoria
+npm test               # 35 pruebas: flujo completo con Shopify simulado en memoria
 npm run simulate       # imprime la compra completa: emails a proveedores, planilla, tracking
 npm run check:theme    # Theme Check oficial de Shopify (0 errores, 0 advertencias)
 npm run check:secrets  # sin credenciales en el repo

@@ -31,7 +31,7 @@ novaparfum/
 ├── app/                    ← NovaParfum Ops: webhooks, proveedores, planilla, tracking, App Proxy
 │   ├── shopify.app.toml    ← permisos, webhooks y App Proxy (Shopify CLI)
 │   ├── src/                ← código (sin framework, 1 dependencia: nodemailer)
-│   └── test/               ← 34 pruebas + Shopify simulado
+│   └── test/               ← 35 pruebas + Shopify simulado
 ├── automations/
 │   ├── notifications/      ← plantillas de email de Shopify con la marca
 │   └── pixels/             ← píxel personalizado GA4 / Meta / TikTok
@@ -51,7 +51,7 @@ novaparfum/
 ```bash
 cd novaparfum/app
 npm install
-npm test            # 34 pruebas del flujo completo
+npm test            # 35 pruebas del flujo completo
 npm run simulate    # simula una compra de punta a punta y muestra los emails a proveedores
 ```
 
