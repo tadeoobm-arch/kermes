@@ -14,7 +14,7 @@ embedded = false
 automatically_update_urls_on_dev = false
 
 [access_scopes]
-scopes = "read_orders,write_orders,read_products,write_products,read_customers,read_inventory,write_inventory,read_locations,read_fulfillments,write_fulfillments,read_merchant_managed_fulfillment_orders,write_merchant_managed_fulfillment_orders,read_metaobjects,write_metaobjects,read_metaobject_definitions,write_metaobject_definitions,read_discounts,write_discounts"
+scopes = "read_orders,write_orders,read_products,write_products,read_customers,read_inventory,write_inventory,read_locations,read_fulfillments,write_fulfillments,read_merchant_managed_fulfillment_orders,write_merchant_managed_fulfillment_orders,read_metaobjects,write_metaobjects,read_metaobject_definitions,write_metaobject_definitions,read_discounts,write_discounts,read_online_store_navigation,write_online_store_navigation,read_online_store_pages,write_online_store_pages,read_content,write_content,read_publications,write_publications"
 
 [auth]
 redirect_urls = [ "https://ops.TU-DOMINIO/auth/callback" ]
@@ -46,5 +46,3 @@ url = "https://ops.TU-DOMINIO/proxy"
 subpath = "novaparfum"
 prefix = "apps"
 
-[pos]
-embedded = false
