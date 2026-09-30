@@ -107,6 +107,9 @@ export function createSheetsClient(sheetsConfig, { fetchImpl = fetch, logger } =
     async setValues(range, values, inputOption = 'USER_ENTERED') {
       return call(`/values/${q(range)}?valueInputOption=${inputOption}`, { method: 'PUT', body: { values } });
     },
+    async clear(range) {
+      return call(`/values/${q(range)}:clear`, { method: 'POST', body: {} });
+    },
     async batchUpdate(requests) {
       return call(':batchUpdate', { method: 'POST', body: { requests } });
     },

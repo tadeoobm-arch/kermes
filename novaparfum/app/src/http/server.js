@@ -6,6 +6,7 @@ import { handleOrderCreated, handleOrderPaid, handleOrderCancelled } from '../se
 import { handleFulfillmentWebhook } from '../services/fulfillment.js';
 import { lookupOrder } from '../services/tracking.js';
 import { reconcilePaidOrders } from '../services/reconcile.js';
+import { refreshReports } from '../services/reports.js';
 import { supplierPortal } from './supplierPortal.js';
 import { missingIntegrations } from '../config.js';
 
@@ -115,12 +116,13 @@ export function createHandler(ctx, { processInline = false } = {}) {
         return send(res, r.status, r.html, 'text/html; charset=utf-8', { 'Cache-Control': 'no-store', 'X-Frame-Options': 'DENY' });
       }
 
-      if (req.method === 'POST' && url.pathname === '/tasks/reconcile') {
+      // Tareas programadas (cron externo): conciliación de pagos y reportes de ganancia.
+      if (req.method === 'POST' && (url.pathname === '/tasks/reconcile' || url.pathname === '/tasks/reports')) {
         const auth = String(req.headers.authorization || '');
         const expected = `Bearer ${ctx.config.cronSecret}`;
         const ok = ctx.config.cronSecret && auth.length === expected.length && timingSafeEqual(Buffer.from(auth), Buffer.from(expected));
         if (!ok) return send(res, 401, { error: 'unauthorized' });
-        return send(res, 200, await reconcilePaidOrders(ctx));
+        return send(res, 200, url.pathname === '/tasks/reports' ? await refreshReports(ctx) : await reconcilePaidOrders(ctx));
       }
 
       return send(res, 404, { error: 'not found' });

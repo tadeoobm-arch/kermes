@@ -1,0 +1,50 @@
+# Configuración de la app privada "NovaParfum Ops" (Shopify CLI / Dev Dashboard).
+# ESTO REQUIERE QUE EL USUARIO CONECTE SU CUENTA:
+#   1. `npx @shopify/cli@latest app config link` completa client_id automáticamente.
+#   2. Reemplazá https://ops.TU-DOMINIO por la URL pública donde despliegues esta app.
+#   3. `npx @shopify/cli@latest app deploy` publica scopes, webhooks y App Proxy.
+# El client_id NO es secreto; el client secret va SOLO en variables de entorno (SHOPIFY_CLIENT_SECRET).
+
+client_id = ""
+name = "NovaParfum Ops"
+application_url = "https://ops.TU-DOMINIO"
+embedded = false
+
+[build]
+automatically_update_urls_on_dev = false
+
+[access_scopes]
+scopes = "read_orders,write_orders,read_products,write_products,read_customers,read_inventory,write_inventory,read_locations,read_fulfillments,write_fulfillments,read_merchant_managed_fulfillment_orders,write_merchant_managed_fulfillment_orders,read_metaobjects,write_metaobjects,read_metaobject_definitions,write_metaobject_definitions,read_discounts,write_discounts"
+
+[auth]
+redirect_urls = [ "https://ops.TU-DOMINIO/auth/callback" ]
+
+[webhooks]
+api_version = "2026-07"
+
+  # PEDIDO CREADO: solo registra (NO es venta confirmada)
+  [[webhooks.subscriptions]]
+  topics = [ "orders/create" ]
+  uri = "/webhooks"
+
+  # PEDIDO PAGADO: único disparador de órdenes a proveedores
+  [[webhooks.subscriptions]]
+  topics = [ "orders/paid" ]
+  uri = "/webhooks"
+
+  [[webhooks.subscriptions]]
+  topics = [ "orders/cancelled" ]
+  uri = "/webhooks"
+
+  [[webhooks.subscriptions]]
+  topics = [ "fulfillments/create", "fulfillments/update" ]
+  uri = "/webhooks"
+
+# Página "Seguí tu pedido": https://TU-TIENDA/apps/novaparfum/track -> APP/proxy/track
+[app_proxy]
+url = "https://ops.TU-DOMINIO/proxy"
+subpath = "novaparfum"
+prefix = "apps"
+
+[pos]
+embedded = false

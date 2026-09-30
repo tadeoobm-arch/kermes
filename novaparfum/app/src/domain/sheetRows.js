@@ -7,7 +7,7 @@ export const SHEET_COLUMNS = [
   'Apartamento', 'Código postal', 'Producto', 'Marca', 'Tamaño', 'Cantidad', 'SKU', 'Precio',
   'Costo proveedor', 'Margen', 'Total', 'Método de pago', 'Estado del pago', 'Estado del pedido',
   'Estado del envío', 'Empresa de envío', 'Número de seguimiento', 'Fecha de envío', 'Fecha de entrega',
-  'Observaciones', 'Proveedor', 'SKU proveedor', 'Comisión MP', 'Clave',
+  'Observaciones', 'Proveedor', 'SKU proveedor', 'Comisión MP', 'Venta línea', 'Clave',
 ];
 
 export const KEY_COLUMN = 'Clave';
@@ -87,6 +87,7 @@ export function orderToRows(order, { margins, suppliersConfig, timezone = 'Ameri
       Proveedor: supplier.nombre,
       'SKU proveedor': line.supplierSku,
       'Comisión MP': m?.mpFee ?? '',
+      'Venta línea': m?.revenue ?? line.unitPrice * qty,
       Clave: `${order.name}|${line.id.split('/').pop()}`,
     };
     return SHEET_COLUMNS.map((c) => row[c] ?? '');

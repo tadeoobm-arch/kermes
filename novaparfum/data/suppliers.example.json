@@ -1,0 +1,26 @@
+{
+  "default": "proveedor-principal",
+  "suppliers": [
+    {
+      "handle": "proveedor-principal",
+      "nombre": "Proveedor Principal",
+      "email": "pedidos@proveedor-principal.example",
+      "whatsapp": "",
+      "metodo_envio": "DAC",
+      "tiempo_preparacion_dias": 1,
+      "costo_envio": 0,
+      "vendors": ["Marca Ejemplo"],
+      "sku_prefixes": ["NP-"]
+    },
+    {
+      "handle": "proveedor-b",
+      "nombre": "Proveedor B",
+      "email": "ventas@proveedor-b.example",
+      "whatsapp": "",
+      "metodo_envio": "UES",
+      "tiempo_preparacion_dias": 2,
+      "vendors": ["Otra Marca"],
+      "sku_prefixes": ["PB-"]
+    }
+  ]
+}

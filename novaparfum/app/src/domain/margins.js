@@ -46,8 +46,9 @@ export function computeMargins(order, groups, costs) {
     const cost = l.unitCost === null || l.unitCost === undefined ? null : l.unitCost * qty;
     if (cost === null) missingCost = true;
     const feeShare = mpFee * share;
-    const net = netOfSalesVat(revenue, costs);
-    const margin = cost === null ? null : round(net - cost - feeShare);
+    // El envío (cobrado y pagado) se prorratea para que la suma de márgenes por línea = margen del pedido.
+    const net = netOfSalesVat(revenue + shippingCharged * share, costs);
+    const margin = cost === null ? null : round(net - cost - feeShare - shippingCost * share);
     return {
       lineItemId: l.id,
       revenue: round(revenue),
@@ -83,7 +84,7 @@ export function aggregateProfit(rows, { timezone = 'America/Montevideo' } = {}) 
   const monthly = {};
   for (const r of rows) {
     if (r.cancelled) continue;
-    const day = fmtDay.format(new Date(r.date));
+    const day = r.localDate || fmtDay.format(new Date(r.date));
     const month = day.slice(0, 7);
     for (const [bucket, key] of [[daily, day], [monthly, month]]) {
       bucket[key] ||= { ventas: 0, ganancia: 0, pedidos: new Set() };

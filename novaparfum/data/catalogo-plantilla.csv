@@ -1,0 +1,4 @@
+handle,nombre,marca,genero,familias,notas_salida,notas_corazon,notas_fondo,concentracion,codigo_interno,proveedor,tamano,precio,precio_anterior,sku,sku_proveedor,costo,stock,descripcion,imagenes,estado
+,Aurora Nocturna (EJEMPLO),Marca Ejemplo,Unisex,Oriental|Ambarada,Bergamota|Azafrán,Rosa|Jazmín,Ámbar|Vainilla|Almizcle,Eau de Parfum,NP-0001,proveedor-principal,30 ml,1990,,NP-AUR-30,,900,5,"Fragancia de ejemplo: reemplazá esta fila por tus productos reales.",,DRAFT
+,Aurora Nocturna (EJEMPLO),Marca Ejemplo,Unisex,Oriental|Ambarada,Bergamota|Azafrán,Rosa|Jazmín,Ámbar|Vainilla|Almizcle,Eau de Parfum,NP-0001,proveedor-principal,50 ml,2890,,NP-AUR-50,,1400,4,,,DRAFT
+,Aurora Nocturna (EJEMPLO),Marca Ejemplo,Unisex,Oriental|Ambarada,Bergamota|Azafrán,Rosa|Jazmín,Ámbar|Vainilla|Almizcle,Eau de Parfum,NP-0001,proveedor-principal,100 ml,3990,4590,NP-AUR-100,,2000,3,,,DRAFT

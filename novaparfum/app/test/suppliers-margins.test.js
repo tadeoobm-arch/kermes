@@ -67,7 +67,8 @@ test('margen por producto y por pedido', () => {
   // comisión total = 5000*5% = 250 + 22% IVA = 305; prorrateo 60% / 40%
   assert.equal(m.order.mpFee, 305);
   assert.equal(m.lines[0].mpFee, 183);
-  assert.equal(m.lines[0].margin, 3000 - 1500 - 183);
+  assert.equal(m.lines[0].margin, 3000 - 1500 - 183 - 180, 'incluye su parte del costo de envío (60%)');
+  assert.equal(m.lines[0].margin + m.lines[1].margin, m.order.margin, 'suma de líneas = margen del pedido');
   assert.equal(m.order.shippingCost, 300, '2 proveedores = 2 envíos');
   assert.equal(m.order.margin, 5000 - 2300 - 305 - 300);
   assert.equal(m.order.missingCost, false);
@@ -92,4 +93,22 @@ test('ganancia diaria y mensual (zona horaria Montevideo, excluye cancelados)', 
   assert.deepEqual(daily['2026-10-01'], { ventas: 2500, ganancia: 600, pedidos: 1 });
   assert.equal(daily['2026-10-02'], undefined);
   assert.deepEqual(monthly['2026-10'], { ventas: 2500, ganancia: 600, pedidos: 1 });
+});
+
+test('reportes desde la planilla: diario, mensual, por proveedor y producto (solo pagados, sin cancelados)', async () => {
+  const { buildReports } = await import('../src/services/reports.js');
+  const { SHEET_COLUMNS } = await import('../src/domain/sheetRows.js');
+  const mk = (o) => SHEET_COLUMNS.map((c) => o[c] ?? '');
+  const values = [
+    SHEET_COLUMNS,
+    mk({ 'ID pedido': '#1', Fecha: '2026-10-01', Marca: 'M', Producto: 'A', 'Tamaño': '100 ml', Proveedor: 'P1', 'Venta línea': 3000, Margen: 1000, Cantidad: 1, 'Estado del pago': 'Pagado', 'Estado del pedido': 'Enviado' }),
+    mk({ 'ID pedido': '#1', Fecha: '2026-10-01', Marca: 'M', Producto: 'B', 'Tamaño': '50 ml', Proveedor: 'P2', 'Venta línea': 2000, Margen: 500, Cantidad: 2, 'Estado del pago': 'Pagado', 'Estado del pedido': 'Enviado' }),
+    mk({ 'ID pedido': '#2', Fecha: '2026-10-02', Marca: 'M', Producto: 'A', 'Tamaño': '100 ml', Proveedor: 'P1', 'Venta línea': 3000, Margen: 900, Cantidad: 1, 'Estado del pago': 'Pendiente', 'Estado del pedido': 'Pedido recibido' }),
+    mk({ 'ID pedido': '#3', Fecha: '2026-11-05', Marca: 'M', Producto: 'A', 'Tamaño': '100 ml', Proveedor: 'P1', 'Venta línea': 3000, Margen: 1000, Cantidad: 1, 'Estado del pago': 'Pagado', 'Estado del pedido': 'Cancelado' }),
+  ];
+  const r = buildReports(values);
+  assert.deepEqual(r['Resumen diario'].slice(1), [['2026-10-01', 1, 5000, 1500]]);
+  assert.deepEqual(r['Resumen mensual'].slice(1), [['2026-10', 1, 5000, 1500]]);
+  assert.deepEqual(r['Por proveedor'][1], ['P1', 1, 3000, 1000, 33.33]);
+  assert.deepEqual(r['Por producto'].find((x) => x[0] === 'M B 50 ml'), ['M B 50 ml', 2, 2000, 500, 25]);
 });
