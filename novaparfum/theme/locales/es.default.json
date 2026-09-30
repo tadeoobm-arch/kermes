@@ -1,0 +1,11 @@
+{
+  "products": {
+    "add_to_cart": "Agregar al carrito",
+    "sold_out": "Agotado",
+    "buy_now": "Comprar ahora"
+  },
+  "cart": {
+    "added": "Agregado al carrito",
+    "view": "Ver carrito"
+  }
+}

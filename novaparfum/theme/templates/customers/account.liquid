@@ -1,0 +1,14 @@
+<div class="container section">
+  <h1>Hola, {{ customer.first_name }}</h1>
+  <p><a href="{{ routes.account_addresses_url }}">Mis direcciones</a> · <a href="{{ routes.account_logout_url }}">Salir</a></p>
+  <h2 class="h3">Mis pedidos</h2>
+  {%- paginate customer.orders by 20 -%}
+    {%- if customer.orders.size > 0 -%}
+      <ul class="cart-items">
+        {%- for order in customer.orders -%}
+          <li class="cart-summary"><a href="{{ order.customer_url }}"><strong>{{ order.name }}</strong></a> · {{ order.created_at | date: '%d/%m/%Y' }} · {{ order.financial_status_label }} · {{ order.fulfillment_status_label }} · {{ order.total_price | money }}</li>
+        {%- endfor -%}
+      </ul>
+    {%- else -%}<p class="muted">Todavía no hiciste pedidos.</p>{%- endif -%}
+  {%- endpaginate -%}
+</div>

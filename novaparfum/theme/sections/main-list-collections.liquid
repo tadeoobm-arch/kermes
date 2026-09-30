@@ -1,0 +1,16 @@
+<div class="container section">
+  <h1>Colecciones</h1>
+  <div class="cat-grid">
+    {%- for c in collections -%}
+      {%- unless c.handle == 'frontpage' -%}
+        <a class="cat-card" href="{{ c.url }}">
+          {%- if c.featured_image -%}{{ c.featured_image | image_url: width: 600 | image_tag: alt: '', loading: 'lazy', widths: '300, 450, 600', sizes: '(min-width: 750px) 25vw, 50vw' }}{%- endif -%}
+          <span class="cat-card__label">{{ c.title }}</span>
+        </a>
+      {%- endunless -%}
+    {%- endfor -%}
+  </div>
+</div>
+{% schema %}
+{ "name": "Lista de colecciones", "settings": [] }
+{% endschema %}

@@ -1,0 +1,187 @@
+{%- liquid
+  assign current = product.selected_or_first_available_variant
+  assign pf = product.metafields.perfume
+  assign form_id = 'product-form-' | append: section.id
+  assign threshold = settings.low_stock_threshold | default: 3
+-%}
+<div class="container">
+  <nav aria-label="Migas de pan" class="muted" style="font-size:13px;padding-top:14px">
+    <a href="{{ routes.root_url }}">Inicio</a> ›
+    {%- if collection %} <a href="{{ collection.url }}">{{ collection.title }}</a> ›{% else %} <a href="{{ routes.collections_url }}/perfumes">Perfumes</a> ›{% endif %}
+    <span aria-current="page">{{ product.title }}</span>
+  </nav>
+
+  <div class="product" data-product data-section="{{ section.id }}">
+    <div class="gallery" aria-label="Imágenes de {{ product.title | escape }}">
+      {%- for media in product.media -%}
+        {%- liquid
+          assign img_loading = 'lazy'
+          assign img_priority = 'auto'
+          if forloop.first
+            assign img_loading = 'eager'
+            assign img_priority = 'high'
+          endif
+          assign default_alt = product.title | append: ' — perfume ' | append: product.vendor
+        -%}
+        <div class="gallery__item">
+          {{ media | image_url: width: 1400 | image_tag:
+            alt: media.alt | default: default_alt,
+            loading: img_loading,
+            fetchpriority: img_priority,
+            widths: '400, 600, 800, 1000, 1400',
+            sizes: '(min-width: 990px) 55vw, 88vw' }}
+        </div>
+      {%- else -%}
+        <div class="gallery__item">{{ 'product-1' | placeholder_svg_tag: 'placeholder' }}</div>
+      {%- endfor -%}
+    </div>
+
+    <div class="product__info">
+      <a class="product__brand" href="{{ product.vendor | url_for_vendor }}">{{ product.vendor }}</a>
+      <h1 class="product__title h2">{{ product.title }}</h1>
+
+      <div class="price price--large" data-price>
+        <span class="{% if current.compare_at_price > current.price %}price__sale{% endif %}" data-price-current>{{ current.price | money }}</span>
+        <s class="price__compare" data-price-compare {% unless current.compare_at_price > current.price %}hidden{% endunless %}>{{ current.compare_at_price | money }}</s>
+        {%- assign pct = 0 -%}
+        {%- if current.compare_at_price > current.price -%}
+          {%- assign pct = current.compare_at_price | minus: current.price | times: 100 | divided_by: current.compare_at_price -%}
+        {%- endif -%}
+        <span class="badge badge--sale" data-price-badge {% if pct == 0 %}hidden{% endif %}>-<span data-price-pct>{{ pct }}</span>%</span>
+      </div>
+
+      <div class="product__meta">
+        {%- if pf.genero != blank -%}<span class="chip">{{ pf.genero.value }}</span>{%- endif -%}
+        {%- if pf.concentracion != blank -%}<span class="chip">{{ pf.concentracion.value }}</span>{%- endif -%}
+        {%- for fam in pf.familia_olfativa.value -%}<span class="chip">{% render 'icon', icon: 'drop' %}{{ fam }}</span>{%- endfor -%}
+      </div>
+
+      {%- form 'product', product, id: form_id, class: 'product-form', novalidate: 'novalidate', data-product-form: '' -%}
+        <input type="hidden" name="id" value="{{ current.id }}" data-variant-id>
+
+        {%- unless product.has_only_default_variant -%}
+          {%- for option in product.options_with_values -%}
+            <fieldset class="option-group">
+              <legend>{{ option.name }}: <span data-option-label="{{ forloop.index0 }}">{{ option.selected_value }}</span></legend>
+              <div class="pills">
+                {%- for value in option.values -%}
+                  <label class="pill">
+                    <input type="radio" name="option{{ forloop.parentloop.index }}" value="{{ value | escape }}" data-option-index="{{ forloop.parentloop.index0 }}" {% if option.selected_value == value %}checked{% endif %}>
+                    <span>{{ value }}</span>
+                  </label>
+                {%- endfor -%}
+              </div>
+            </fieldset>
+          {%- endfor -%}
+          <noscript>
+            <label for="variant-noscript">Tamaño</label>
+            <select id="variant-noscript" name="id">
+              {%- for v in product.variants -%}<option value="{{ v.id }}" {% if v == current %}selected{% endif %} {% unless v.available %}disabled{% endunless %}>{{ v.title }} — {{ v.price | money }}</option>{%- endfor -%}
+            </select>
+          </noscript>
+        {%- endunless -%}
+
+        <p class="stock {% if current.available == false %}stock--out{% elsif current.inventory_management and current.inventory_quantity <= threshold %}stock--low{% endif %}" data-stock>
+          {%- if current.available == false -%}Agotado
+          {%- elsif current.inventory_management and current.inventory_quantity <= threshold -%}¡Últimas {{ current.inventory_quantity }} unidades!
+          {%- else -%}En stock · listo para enviar{%- endif -%}
+        </p>
+
+        <div style="display:flex;gap:12px;align-items:center">
+          <div class="qty">
+            <button type="button" data-qty="-1" aria-label="Restar uno">−</button>
+            <input type="number" name="quantity" value="1" min="1" inputmode="numeric" aria-label="Cantidad" data-qty-input>
+            <button type="button" data-qty="1" aria-label="Sumar uno">+</button>
+          </div>
+          <small class="muted">SKU: <span data-sku>{{ current.sku }}</span></small>
+        </div>
+
+        <div class="buy-buttons" data-buy-buttons>
+          {%- comment -%}
+            "Comprar ahora": sin JS envía el formulario con return_to=/checkout (agrega y va al checkout).
+            Con JS usa el enlace permanente de carrito /cart/<variante>:<cantidad>, que abre el checkout
+            solo con este producto. En ambos casos el pago se hace en el checkout seguro de Shopify.
+          {%- endcomment -%}
+          <button type="submit" name="return_to" value="/checkout" class="btn btn--primary btn--block" data-buy-now {% unless current.available %}disabled{% endunless %}>
+            Comprar ahora
+          </button>
+          <button type="submit" class="btn btn--secondary btn--block" data-add-to-cart {% unless current.available %}disabled{% endunless %}>
+            {% if current.available %}{{ 'products.add_to_cart' | t }}{% else %}{{ 'products.sold_out' | t }}{% endif %}
+          </button>
+          {%- if section.settings.show_dynamic_checkout -%}{{ form | payment_button }}{%- endif -%}
+        </div>
+      {%- endform -%}
+
+      {% render 'payment-box' %}
+
+      {%- if section.settings.show_tiers -%}
+        <p class="notice" style="font-size:14px">{% render 'icon', icon: 'gift' %} <strong>Llevá 2 y ahorrá {{ section.settings.tier2 }}% · 3 o más, {{ section.settings.tier3 }}%.</strong> Se aplica solo en el carrito.</p>
+      {%- endif -%}
+
+      {%- if pf.notas_salida != blank or pf.notas_corazon != blank or pf.notas_fondo != blank -%}
+        <h2 class="h3" style="margin-top:24px">Pirámide olfativa</h2>
+        <div class="notes">
+          {%- if pf.notas_salida != blank -%}<div class="note-row"><strong>Salida</strong><span>{{ pf.notas_salida.value | join: ', ' }}</span></div>{%- endif -%}
+          {%- if pf.notas_corazon != blank -%}<div class="note-row"><strong>Corazón</strong><span>{{ pf.notas_corazon.value | join: ', ' }}</span></div>{%- endif -%}
+          {%- if pf.notas_fondo != blank -%}<div class="note-row"><strong>Fondo</strong><span>{{ pf.notas_fondo.value | join: ', ' }}</span></div>{%- endif -%}
+        </div>
+      {%- endif -%}
+
+      <div class="accordion" style="margin-top:20px">
+        {%- if product.description != blank -%}
+          <details open><summary>Descripción</summary><div class="rte">{{ product.description }}</div></details>
+        {%- endif -%}
+        <details>
+          <summary>Envío</summary>
+          <div class="rte">{{ pf.info_envio.value | default: settings.shipping_text | newline_to_br }}</div>
+        </details>
+        <details>
+          <summary>Pago seguro</summary>
+          <div class="rte">{{ settings.payment_text | newline_to_br }}</div>
+        </details>
+        <details>
+          <summary>Cambios y devoluciones</summary>
+          <div class="rte">{{ settings.returns_text | newline_to_br }}</div>
+        </details>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sticky-buy" data-sticky-buy aria-hidden="true">
+  <div><strong data-sticky-price>{{ current.price | money }}</strong><br><small class="muted" data-sticky-variant>{{ current.title }}</small></div>
+  <button type="button" class="btn btn--primary" data-sticky-buy-now {% unless current.available %}disabled{% endunless %}>Comprar ahora</button>
+</div>
+
+<script type="application/json" data-variants-json>
+  [
+    {%- for v in product.variants -%}
+      {
+        "id": {{ v.id }},
+        "title": {{ v.title | json }},
+        "options": {{ v.options | json }},
+        "available": {{ v.available | json }},
+        "sku": {{ v.sku | json }},
+        "price": {{ v.price | money | json }},
+        "compare": {% if v.compare_at_price > v.price %}{{ v.compare_at_price | money | json }}{% else %}null{% endif %},
+        "pct": {% if v.compare_at_price > v.price %}{{ v.compare_at_price | minus: v.price | times: 100 | divided_by: v.compare_at_price }}{% else %}0{% endif %},
+        "lowStock": {% if v.inventory_management and v.inventory_quantity <= threshold and v.available %}{{ v.inventory_quantity }}{% else %}null{% endif %},
+        "url": {{ v.url | json }}
+      }{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  ]
+</script>
+
+{% render 'structured-data-product', product: product, collection: collection %}
+
+{% schema %}
+{
+  "name": "Producto",
+  "settings": [
+    { "type": "checkbox", "id": "show_tiers", "label": "Mostrar promo por cantidad", "default": true },
+    { "type": "number", "id": "tier2", "label": "% con 2 perfumes", "default": 10 },
+    { "type": "number", "id": "tier3", "label": "% con 3 o más", "default": 15 },
+    { "type": "checkbox", "id": "show_dynamic_checkout", "label": "Mostrar botones de pago acelerado de Shopify", "info": "Muestran billeteras compatibles con Shopify (no incluyen Mercado Pago). Desactivado por defecto.", "default": false }
+  ]
+}
+{% endschema %}

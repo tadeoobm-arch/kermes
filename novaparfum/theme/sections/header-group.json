@@ -1,0 +1,15 @@
+{
+  "type": "header",
+  "name": "Grupo encabezado",
+  "sections": {
+    "announcement": {
+      "type": "announcement-bar",
+      "settings": { "text": "Envíos a todo Uruguay · Pagá con Mercado Pago", "link": "" }
+    },
+    "header": {
+      "type": "header",
+      "settings": { "menu": "main-menu" }
+    }
+  },
+  "order": ["announcement", "header"]
+}

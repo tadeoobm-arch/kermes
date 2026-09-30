@@ -1,0 +1,15 @@
+{
+  "current": {
+    "brand_tagline": "Tu esencia, en nueva luz.",
+    "mp_message": "Pagá seguro con Mercado Pago",
+    "low_stock_threshold": 3,
+    "tracking_proxy_path": "/apps/novaparfum/track",
+    "social_instagram": "https://www.instagram.com/novaparfum.uy",
+    "whatsapp_message": "¡Hola NovaParfum! Quiero hacer una consulta."
+  },
+  "presets": {
+    "NovaParfum": {
+      "brand_tagline": "Tu esencia, en nueva luz."
+    }
+  }
+}

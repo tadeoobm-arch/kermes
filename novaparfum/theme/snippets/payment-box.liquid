@@ -1,0 +1,18 @@
+{%- comment -%}
+  Bloque de pago: Mercado Pago destacado + íconos oficiales de los medios habilitados en la tienda.
+  Los íconos salen de shop.enabled_payment_types (solo muestra lo que realmente está activo).
+{%- endcomment -%}
+<div class="pay-box">
+  <div class="pay-box__mp">
+    <span class="mp-badge">{% render 'icon', icon: 'card' %} Mercado Pago</span>
+    <span>{{ settings.mp_message | default: 'Pagá seguro con Mercado Pago' }}</span>
+  </div>
+  {%- if settings.mp_installments_text != blank -%}
+    <small class="muted">{{ settings.mp_installments_text }}</small>
+  {%- endif -%}
+  <ul class="pay-icons" aria-label="Medios de pago">
+    {%- for type in shop.enabled_payment_types -%}
+      <li>{{ type | payment_type_svg_tag }}</li>
+    {%- endfor -%}
+  </ul>
+</div>

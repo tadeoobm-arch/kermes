@@ -1,0 +1,12 @@
+<div class="container section" style="max-width:460px">
+  <h1>Crear cuenta</h1>
+  {%- form 'create_customer' -%}
+    {{ form.errors | default_errors }}
+    <div class="field"><label for="RegFirst">Nombre</label><input id="RegFirst" name="customer[first_name]" autocomplete="given-name"></div>
+    <div class="field" style="margin-top:12px"><label for="RegLast">Apellido</label><input id="RegLast" name="customer[last_name]" autocomplete="family-name"></div>
+    <div class="field" style="margin-top:12px"><label for="RegEmail">Email</label><input id="RegEmail" type="email" name="customer[email]" autocomplete="email" required></div>
+    <div class="field" style="margin-top:12px"><label for="RegPass">Contraseña</label><input id="RegPass" type="password" name="customer[password]" autocomplete="new-password" required></div>
+    <label style="display:flex;gap:10px;margin-top:12px"><input type="checkbox" name="customer[accepts_marketing]"> Quiero recibir novedades y ofertas</label>
+    <button class="btn btn--primary btn--block" style="margin-top:16px">Crear cuenta</button>
+  {%- endform -%}
+</div>

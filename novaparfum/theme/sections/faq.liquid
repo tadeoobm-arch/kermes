@@ -1,0 +1,49 @@
+<section class="section" id="preguntas-frecuentes">
+  <div class="container" style="max-width:820px">
+    <div class="section__head"><h2>{{ section.settings.heading }}</h2></div>
+    <div class="accordion">
+      {%- for block in section.blocks -%}
+        <details {{ block.shopify_attributes }}>
+          <summary>{{ block.settings.question }}</summary>
+          <div class="rte">{{ block.settings.answer }}</div>
+        </details>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{%- if section.blocks.size > 0 -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {%- for block in section.blocks -%}
+        {
+          "@type": "Question",
+          "name": {{ block.settings.question | json }},
+          "acceptedAnswer": { "@type": "Answer", "text": {{ block.settings.answer | strip_html | json }} }
+        }{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    ]
+  }
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Preguntas frecuentes",
+  "settings": [{ "type": "text", "id": "heading", "label": "Título", "default": "Preguntas frecuentes" }],
+  "blocks": [
+    {
+      "type": "question",
+      "name": "Pregunta",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Pregunta", "default": "¿Los perfumes son originales?" },
+        { "type": "richtext", "id": "answer", "label": "Respuesta", "default": "<p>Sí. Trabajamos solo con proveedores confiables.</p>" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Preguntas frecuentes", "blocks": [{ "type": "question" }] }]
+}
+{% endschema %}
