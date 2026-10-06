@@ -8,7 +8,11 @@
   - Portada animada: entrada en secuencia (letras, círculo de luz, perfume que se enfoca, textos en cascada),
     bruma que flota detrás del frasco, "rocío" de partículas al cambiar de perfume, brillo que cruza el círculo
     y estrellitas de la marca que flotan (y siguen levemente al mouse en computadora).
-  - Con "reducir movimiento": sin rotación automática, sin bruma ni partículas; la entrada es solo un fundido.
+  - Siempre en movimiento: el frasco flota (sube, baja y se balancea) con su sombra en el piso, se inclina en 3D
+    siguiendo al mouse, y una órbita de perfumes de la tienda gira alrededor pasando por delante y por detrás.
+    La órbita se calcula con JS (cada perfume se mueve solo, para que el "multiply" siga funcionando) y se
+    detiene cuando la portada no está en pantalla.
+  - Con "reducir movimiento": sin rotación automática, sin bruma, partículas ni órbita; la entrada es solo un fundido.
 {%- endcomment -%}
 {%- liquid
   assign count = 0
@@ -140,6 +144,29 @@
   }
   @media (max-width: 989px) { .hs__spark:nth-child(n+5) { display: none; } }
 
+  /* ---------- Siempre en movimiento ---------- */
+  .hs__slide a { perspective: 900px; }
+  .hs__tilt { display: grid; place-items: center; width: 100%; height: 100%; transform-style: preserve-3d;
+    transition: transform .6s var(--hs-out); }
+  .hs__float { display: grid; place-items: center; width: 100%; height: 100%; }
+  .hs__floor { position: absolute; left: 50%; bottom: 9%; width: 46%; height: 7%; margin-left: -23%; border-radius: 50%;
+    background: radial-gradient(closest-side, var(--hs-shadow, rgba(74,56,140,.45)), rgba(0,0,0,0)); opacity: .55; pointer-events: none; }
+  .hs__orbit { position: absolute; inset: -6% -14%; pointer-events: none; }
+  .hs__o { position: absolute; left: 50%; top: 50%; width: 92px; height: 92px; margin: -46px 0 0 -46px; border-radius: 22px;
+    background: #fff; mix-blend-mode: multiply; pointer-events: auto; will-change: transform; opacity: 0;
+    transition: opacity .8s ease; }
+  .hs__o.is-on { opacity: 1; }
+  .hs__o--front { z-index: 1; }
+  .hs__o img { width: 100%; height: 100%; object-fit: contain; padding: 10%; }
+  @media (max-width: 989px) { .hs__o { width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 16px; } .hs__orbit { inset: -4% -12%; } }
+  @media (prefers-reduced-motion: no-preference) {
+    .hs__slide.is-active .hs__float { animation: hsBob 6s ease-in-out infinite; }
+    .hs__slide.is-active ~ .hs__floor, .hs__floor { animation: hsFloor 6s ease-in-out infinite; }
+    @keyframes hsBob { 0%, 100% { transform: translateY(0) rotate(-1.2deg); } 50% { transform: translateY(-16px) rotate(1.2deg); } }
+    @keyframes hsFloor { 0%, 100% { transform: scaleX(1); opacity: .55; } 50% { transform: scaleX(.78); opacity: .32; } }
+  }
+  @media (prefers-reduced-motion: reduce) { .hs__orbit { display: none; } }
+
   @media (prefers-reduced-motion: reduce) {
     .hs__mist, .hs__puff { display: none; }
     .hs, .hs__slide, .hs__halo, .hs__text-swap { transition: none; }
@@ -185,7 +212,20 @@
       <div class="hs__mistwrap" aria-hidden="true" data-hs-depth="8">
         <span class="hs__mist hs__mist--1"></span><span class="hs__mist hs__mist--2"></span><span class="hs__mist hs__mist--3"></span>
       </div>
+      <span class="hs__floor" aria-hidden="true"></span>
       <span class="hs__puff" aria-hidden="true" data-hs-puff></span>
+      {%- assign orbit_col = collections[section.settings.orbit_handle] -%}
+      {%- if section.settings.orbit_count > 0 and orbit_col != blank -%}
+        <div class="hs__orbit" data-hs-orbit>
+          {%- for op in orbit_col.products limit: section.settings.orbit_count -%}
+            {%- if op.featured_image -%}
+              <a class="hs__o" href="{{ op.url }}" data-hs-o tabindex="-1" aria-label="{{ op.title | escape }}">
+                {{ op.featured_image | image_url: width: 220 | image_tag: loading: 'lazy', widths: '140, 220', sizes: '92px', alt: '' }}
+              </a>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
       {%- assign n = 0 -%}
       {%- for i in (1..3) -%}
         {%- assign key = 'product_' | append: i -%}
@@ -198,8 +238,10 @@
             data-brand="{{ p.vendor | escape }}" data-title="{{ p.title | escape }}" data-url="{{ p.url }}"
             data-price="{{ p.price | money }}" role="group" aria-roledescription="diapositiva" aria-label="{{ n | plus: 1 }} de {{ count }}">
             <a href="{{ p.url }}" tabindex="{% if n == 0 %}0{% else %}-1{% endif %}" aria-label="{{ p.title | escape }}">
-              {{ p.featured_image | image_url: width: 1000 | image_tag: widths: '400, 600, 800, 1000', sizes: '(min-width: 990px) 40vw, 78vw',
-                 loading: 'eager', fetchpriority: 'high', alt: p.title }}
+              <span class="hs__tilt" data-hs-tilt><span class="hs__float">
+                {{ p.featured_image | image_url: width: 1000 | image_tag: widths: '400, 600, 800, 1000', sizes: '(min-width: 990px) 40vw, 78vw',
+                   loading: 'eager', fetchpriority: 'high', alt: p.title }}
+              </span></span>
             </a>
           </figure>
           {%- assign n = n | plus: 1 -%}
@@ -326,6 +368,46 @@
       });
       root.addEventListener('pointerleave', () => { tx = 0; ty = 0; if (!raf) raf = requestAnimationFrame(loop); });
     }
+    // Órbita: los perfumes giran en una elipse; los de adelante pasan sobre el frasco y los de atrás por detrás
+    const orbit = root.querySelector('[data-hs-orbit]');
+    const items = orbit ? [...orbit.querySelectorAll('[data-hs-o]')] : [];
+    if (orbit && items.length && !reduce) {
+      let visible = true, last = performance.now(), ang = 0, rafO = 0;
+      const speed = (Math.PI * 2) / {{ section.settings.orbit_seconds | default: 28 }} / 1000;
+      const step = (t) => {
+        const dt = Math.min(64, t - last); last = t;
+        ang += dt * speed;
+        const rx = orbit.offsetWidth / 2 - 40, ry = orbit.offsetHeight * .16;
+        items.forEach((el, k) => {
+          const a = ang + (k / items.length) * Math.PI * 2;
+          const x = Math.cos(a) * rx, y = Math.sin(a) * ry + orbit.offsetHeight * .1;
+          const depth = (Math.sin(a) + 1) / 2;               // 0 = atrás, 1 = adelante
+          const sc = .55 + depth * .55;
+          el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) scale(${sc.toFixed(3)}) rotate(${(Math.cos(a) * -8).toFixed(1)}deg)`;
+          el.classList.toggle('hs__o--front', depth > .55);
+        });
+        rafO = visible && !document.hidden ? requestAnimationFrame(step) : 0;
+      };
+      new IntersectionObserver(([en]) => {
+        visible = en.isIntersecting;
+        if (visible && !rafO) { last = performance.now(); rafO = requestAnimationFrame(step); }
+      }).observe(root);
+      document.addEventListener('visibilitychange', () => { if (!document.hidden && visible && !rafO) { last = performance.now(); rafO = requestAnimationFrame(step); } });
+      step(performance.now());
+      setTimeout(() => items.forEach((el, k) => setTimeout(() => el.classList.add('is-on'), k * 70)), 900);
+    }
+
+    // Inclinación 3D del frasco siguiendo al mouse (solo computadora)
+    if (!reduce && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      const stage = root.querySelector('.hs__stage');
+      stage.addEventListener('pointermove', (e) => {
+        const r = stage.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - .5, py = (e.clientY - r.top) / r.height - .5;
+        const t = root.querySelector('.hs__slide.is-active [data-hs-tilt]');
+        if (t) t.style.transform = `rotateY(${(px * 22).toFixed(2)}deg) rotateX(${(-py * 16).toFixed(2)}deg) scale(1.03)`;
+      });
+      stage.addEventListener('pointerleave', () => root.querySelectorAll('[data-hs-tilt]').forEach((t) => (t.style.transform = '')));
+    }
     schedule();
   })();
 </script>
@@ -345,6 +427,10 @@
     { "type": "text", "id": "button2_label", "label": "Botón secundario" },
     { "type": "url", "id": "button2_link", "label": "Enlace del botón secundario" },
     { "type": "range", "id": "delay", "label": "Segundos por perfume", "min": 3, "max": 10, "step": 0.5, "default": 5.5 },
+    { "type": "header", "content": "Órbita de perfumes" },
+    { "type": "text", "id": "orbit_handle", "label": "Colección (identificador)", "default": "destacados" },
+    { "type": "range", "id": "orbit_count", "label": "Cantidad de perfumes en la órbita (0 = sin órbita)", "min": 0, "max": 10, "step": 1, "default": 8 },
+    { "type": "range", "id": "orbit_seconds", "label": "Segundos por vuelta", "min": 12, "max": 60, "step": 2, "default": 28 },
     { "type": "header", "content": "Perfume 1" },
     { "type": "product", "id": "product_1", "label": "Perfume" },
     { "type": "color", "id": "tint_1", "label": "Color de fondo", "default": "#DDE3F1" },

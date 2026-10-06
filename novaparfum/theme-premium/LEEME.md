@@ -29,3 +29,6 @@ Se publica desde Tienda online → Temas → Publicar. Nada se borró: las secci
 - Brillo de luz que cruza el círculo.
 - Estrellitas de la marca que flotan; en computadora siguen levemente al mouse (paralaje).
 - Con "reducir movimiento" no hay bruma, partículas ni rotación; la entrada es solo un fundido.
+- Siempre en movimiento: el frasco flota (sube, baja y se balancea) con sombra en el piso, se inclina en 3D con el mouse,
+  y una órbita de 8 perfumes de la colección "destacados" gira alrededor (por delante y por detrás). Se configura en
+  Personalizar → Banner con perfumes → Órbita de perfumes (colección, cantidad, segundos por vuelta). Se detiene fuera de pantalla.
