@@ -23,3 +23,8 @@ El resto de la tienda (tarjetas, fichas de producto) sigue usando la foto oficia
 ## Tarjetas sin segunda foto
 `snippets/product-card.liquid` (mismo tema 188901327102): las tarjetas muestran solo la foto principal. Antes, al pasar el
 mouse o tocar un perfume aparecía encima la foto anterior.
+
+## Galería de la página de producto
+`sections/main-product.liquid` (tema 188901327102): si la foto principal es la oficial, la página del perfume muestra solo esa.
+Además se borraron de Shopify las 76 ilustraciones genéricas "frasco NovaParfum" de los perfumes que ya tienen foto real
+(los 14 pendientes la conservan).
