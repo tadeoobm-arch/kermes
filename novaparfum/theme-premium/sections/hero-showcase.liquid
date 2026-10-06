@@ -5,7 +5,10 @@
     (z-index, transform, filter, animación), o el fondo blanco de la foto vuelve a verse.
   - Cambio automático cada pocos segundos (se pausa al pasar el mouse, al tocar un punto o si la pestaña no está visible).
   - El título grande se desplaza suave con el scroll (solo en navegadores con animaciones por scroll).
-  - Con "reducir movimiento": sin rotación automática ni desplazamientos.
+  - Portada animada: entrada en secuencia (letras, círculo de luz, perfume que se enfoca, textos en cascada),
+    bruma que flota detrás del frasco, "rocío" de partículas al cambiar de perfume, brillo que cruza el círculo
+    y estrellitas de la marca que flotan (y siguen levemente al mouse en computadora).
+  - Con "reducir movimiento": sin rotación automática, sin bruma ni partículas; la entrada es solo un fundido.
 {%- endcomment -%}
 {%- liquid
   assign count = 0
@@ -90,16 +93,76 @@
       @keyframes hsDrift { to { transform: translateY(-18%); opacity: .3; } }
     }
   }
+  /* ---------- Portada animada ---------- */
+  .hs { --hs-out: cubic-bezier(.23, 1, .32, 1); }
+  .hs__ch { display: inline-block; }
+  .hs__halo { overflow: hidden; }
+  .hs__halo::after { content: ''; position: absolute; inset: -10%; pointer-events: none;
+    background: linear-gradient(115deg, rgba(255,255,255,0) 38%, rgba(255,255,255,.75) 50%, rgba(255,255,255,0) 62%);
+    transform: translateX(-120%); }
+  .hs__halo.is-shine::after { animation: hsShine 1.6s var(--hs-out) both; }
+  .hs__mistwrap, .hs__ambient { position: absolute; inset: 0; pointer-events: none; }
+  .hs__ambient { z-index: 0; }
+  .hs__mist { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(255,255,255,.85), rgba(255,255,255,0));
+    opacity: .55; }
+  .hs__mist--1 { width: 46%; height: 46%; left: 6%; top: 18%; }
+  .hs__mist--2 { width: 38%; height: 38%; right: 4%; top: 8%; }
+  .hs__mist--3 { width: 52%; height: 40%; left: 24%; bottom: 2%; }
+  .hs__puff { position: absolute; left: 50%; top: 22%; width: 0; height: 0; pointer-events: none; }
+  .hs__p { position: absolute; left: -12px; top: -12px; width: 24px; height: 24px; border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(168,147,226,.75), rgba(205,190,244,.35) 55%, rgba(205,190,244,0)); opacity: 0; }
+  .hs__spark { position: absolute; left: var(--x); top: var(--y); width: var(--s); height: var(--s); color: rgba(255,255,255,.9); }
+  .hs__spark svg { width: 100%; height: 100%; display: block; }
+  @keyframes hsShine { to { transform: translateX(120%); } }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hs__ch { animation: hsChar 1s var(--hs-out) calc(var(--i) * 45ms + 120ms) backwards; }
+    .hs__copy > * { animation: hsUp .8s var(--hs-out) backwards; }
+    .hs__copy > :nth-child(1) { animation-delay: .35s; }
+    .hs__copy > :nth-child(2) { animation-delay: .43s; }
+    .hs__copy > :nth-child(3) { animation-delay: .51s; }
+    .hs__copy > :nth-child(4) { animation-delay: .59s; }
+    .hs__copy > :nth-child(5) { animation-delay: .67s; }
+    .hs__halo { animation: hsHalo 1.3s var(--hs-out) .15s backwards; }
+    .hs__dots { animation: hsFade .8s ease .9s backwards; }
+    .js .hs.is-entering .hs__slide.is-active { opacity: 0; transform: translateY(40px) scale(.94); filter: blur(10px); }
+    .hs__mist--1 { animation: hsMist 11s ease-in-out infinite alternate; }
+    .hs__mist--2 { animation: hsMist 14s ease-in-out -4s infinite alternate-reverse; }
+    .hs__mist--3 { animation: hsMist 12s ease-in-out -7s infinite alternate; }
+    .hs__spark { animation: hsFloat var(--d) ease-in-out var(--dl) infinite alternate, hsTwinkle calc(var(--d) * .7) ease-in-out var(--dl) infinite alternate; }
+    @keyframes hsChar { from { opacity: 0; transform: translateY(55%) rotate(4deg); } to { opacity: 1; transform: none; } }
+    @keyframes hsUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+    @keyframes hsHalo { from { opacity: 0; transform: scale(.82); } to { opacity: 1; transform: none; } }
+    @keyframes hsFade { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes hsMist { from { transform: translate(-6%, 6%) scale(.92); } to { transform: translate(8%, -10%) scale(1.12); } }
+    @keyframes hsFloat { from { transform: translateY(0) rotate(0deg); } to { transform: translateY(-16px) rotate(18deg); } }
+    @keyframes hsTwinkle { from { opacity: .35; } to { opacity: .95; } }
+  }
+  @media (max-width: 989px) { .hs__spark:nth-child(n+5) { display: none; } }
+
   @media (prefers-reduced-motion: reduce) {
+    .hs__mist, .hs__puff { display: none; }
     .hs, .hs__slide, .hs__halo, .hs__text-swap { transition: none; }
     .hs__slide, .hs__slide.is-leaving { transform: none; filter: none; }
     .hs__dot[aria-current="true"]::after { animation: none; transform: none; }
   }
 </style>
 
-<section class="hs is-auto" id="hs-{{ section.id }}" aria-roledescription="carrusel" aria-label="Perfumes destacados"
+<section class="hs is-auto is-entering" id="hs-{{ section.id }}" aria-roledescription="carrusel" aria-label="Perfumes destacados"
   data-delay="{{ section.settings.delay }}" style="--hs-delay: {{ section.settings.delay }}s;">
-  <p class="hs__word" aria-hidden="true">{{ section.settings.word_1 }} <em>{{ section.settings.word_2 }}</em></p>
+  {%- assign w1 = section.settings.word_1 | split: '' -%}
+  {%- assign w2 = section.settings.word_2 | split: '' -%}
+  <div class="hs__ambient" aria-hidden="true" data-hs-depth="18">
+    {%- assign sparks = '8%,22%,14px,7s,0s|18%,74%,10px,9s,-2s|44%,12%,9px,8s,-5s|86%,18%,16px,10s,-1s|92%,64%,11px,7.5s,-3s|62%,84%,13px,9.5s,-6s' | split: '|' -%}
+    {%- for sp in sparks -%}
+      {%- assign v = sp | split: ',' -%}
+      <span class="hs__spark" style="--x: {{ v[0] }}; --y: {{ v[1] }}; --s: {{ v[2] }}; --d: {{ v[3] }}; --dl: {{ v[4] }};"><svg viewBox="0 0 40 40"><path d="M20 4c1 8.4 4.2 11.8 12.6 12.8C24.2 17.8 21 21.2 20 29.6 19 21.2 15.8 17.8 7.4 16.8 15.8 15.8 19 12.4 20 4Z" fill="currentColor"/></svg></span>
+    {%- endfor -%}
+  </div>
+  <p class="hs__word" aria-hidden="true">
+    {%- for c in w1 -%}<span class="hs__ch" style="--i: {{ forloop.index0 }};">{{ c }}</span>{%- endfor -%}
+    {{ ' ' }}<em>{%- for c in w2 -%}<span class="hs__ch" style="--i: {{ forloop.index0 | plus: w1.size | plus: 1 }};">{{ c }}</span>{%- endfor -%}</em>
+  </p>
   <div class="container hs__inner">
     <div class="hs__copy">
       <p class="hs__eyebrow"><i></i>{{ section.settings.eyebrow }}</p>
@@ -118,7 +181,11 @@
     </div>
 
     <div class="hs__stage">
-      <span class="hs__halo" aria-hidden="true"></span>
+      <span class="hs__halo" aria-hidden="true" data-hs-halo></span>
+      <div class="hs__mistwrap" aria-hidden="true" data-hs-depth="8">
+        <span class="hs__mist hs__mist--1"></span><span class="hs__mist hs__mist--2"></span><span class="hs__mist hs__mist--3"></span>
+      </div>
+      <span class="hs__puff" aria-hidden="true" data-hs-puff></span>
       {%- assign n = 0 -%}
       {%- for i in (1..3) -%}
         {%- assign key = 'product_' | append: i -%}
@@ -162,6 +229,33 @@
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const delay = (parseFloat(root.dataset.delay) || 5.5) * 1000;
     let i = 0, timer = null, paused = false;
+    const halo = root.querySelector('[data-hs-halo]');
+    const puff = root.querySelector('[data-hs-puff]');
+
+    // Rocío de perfume: partículas que salen del pico del frasco y se disuelven
+    function spray() {
+      if (reduce || !puff || !Element.prototype.animate) return;
+      for (let k = 0; k < 18; k++) {
+        const p = document.createElement('span');
+        p.className = 'hs__p';
+        puff.appendChild(p);
+        const ang = (-90 + (Math.random() * 110 - 55)) * Math.PI / 180;
+        const dist = 60 + Math.random() * 120;
+        const x = Math.cos(ang) * dist, y = Math.sin(ang) * dist;
+        const s = .6 + Math.random() * 1.4;
+        p.animate([
+          { transform: 'translate(0,0) scale(.4)', opacity: 0 },
+          { transform: `translate(${x * .35}px, ${y * .35}px) scale(${s})`, opacity: .9, offset: .25 },
+          { transform: `translate(${x}px, ${y}px) scale(${s * 1.8})`, opacity: 0 }
+        ], { duration: 1300 + Math.random() * 600, delay: k * 18, easing: 'cubic-bezier(.23, 1, .32, 1)', fill: 'both' })
+          .onfinish = () => p.remove();
+      }
+    }
+    // Brillo que cruza el círculo de luz
+    function shine() {
+      if (reduce || !halo) return;
+      halo.classList.remove('is-shine'); void halo.offsetWidth; halo.classList.add('is-shine');
+    }
 
     function paint(s, instant) {
       root.style.backgroundColor = s.dataset.tint || '';
@@ -191,6 +285,7 @@
       dots.forEach((d, k) => { d.setAttribute('aria-current', String(k === i)); });
       if (dots[i]) { dots[i].style.animation = 'none'; void dots[i].offsetWidth; dots[i].style.animation = ''; }
       paint(slides[i]);
+      setTimeout(() => { spray(); shine(); }, 350);
       schedule();
     }
     function schedule() {
@@ -205,6 +300,32 @@
     document.addEventListener('visibilitychange', () => { document.hidden ? clearTimeout(timer) : schedule(); });
     if (reduce) root.classList.remove('is-auto');
     if (slides[0]) paint(slides[0], true);
+
+    // Entrada: el primer perfume aparece desenfocado y se enfoca cuando su foto ya cargó
+    const firstImg = slides[0] && slides[0].querySelector('img');
+    const reveal = () => requestAnimationFrame(() => requestAnimationFrame(() => {
+      root.classList.remove('is-entering');
+      setTimeout(() => { spray(); shine(); }, 650);
+    }));
+    if (!firstImg || firstImg.complete) setTimeout(reveal, 250);
+    else { firstImg.addEventListener('load', reveal, { once: true }); setTimeout(reveal, 2500); }
+
+    // Paralaje suave con el mouse (solo computadora): estrellitas y bruma a distintas profundidades
+    if (!reduce && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      const layers = [...root.querySelectorAll('[data-hs-depth]')];
+      let tx = 0, ty = 0, cx = 0, cy = 0, raf = 0;
+      const loop = () => {
+        cx += (tx - cx) * .08; cy += (ty - cy) * .08;
+        layers.forEach((l) => { const d = Number(l.dataset.hsDepth); l.style.transform = `translate3d(${cx * d}px, ${cy * d}px, 0)`; });
+        raf = Math.abs(tx - cx) + Math.abs(ty - cy) > .001 ? requestAnimationFrame(loop) : 0;
+      };
+      root.addEventListener('pointermove', (e) => {
+        const r = root.getBoundingClientRect();
+        tx = (e.clientX - r.left) / r.width - .5; ty = (e.clientY - r.top) / r.height - .5;
+        if (!raf) raf = requestAnimationFrame(loop);
+      });
+      root.addEventListener('pointerleave', () => { tx = 0; ty = 0; if (!raf) raf = requestAnimationFrame(loop); });
+    }
     schedule();
   })();
 </script>
