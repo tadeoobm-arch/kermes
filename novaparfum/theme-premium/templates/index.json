@@ -22,7 +22,8 @@
         "product_3": "creed-aventus",
         "tint_3": "#E6E9E3",
         "shadow_3": "rgba(60, 70, 60, .45)"
-      }
+      },
+      "disabled": true
     },
     "ticker": {
       "type": "benefit-ticker",
@@ -415,10 +416,94 @@
         "handle": "@novaparfum.uy",
         "collection": "destacados"
       }
+    },
+    "aroma": {
+      "type": "scent-lab",
+      "blocks": {
+        "floral": {
+          "type": "family",
+          "settings": {
+            "name": "Floral",
+            "word": "floral",
+            "text": "Rosa, jazmín y peonía. Luminoso, romántico y femenino.",
+            "notes": "rosa, jazmín, peonía, azahar, iris, magnolia",
+            "liq1": "#F4BFD0",
+            "liq2": "#D97A9C",
+            "bg": "#F8E8EE",
+            "link": "/search?q=Floral&type=product"
+          }
+        },
+        "amaderado": {
+          "type": "family",
+          "settings": {
+            "name": "Amaderado",
+            "word": "amaderado",
+            "text": "Sándalo, cedro y vetiver. Cálido, elegante y con carácter.",
+            "notes": "sándalo, cedro, vetiver, pachulí, oud, musgo",
+            "liq1": "#D7B48C",
+            "liq2": "#8F6544",
+            "bg": "#F1E8DE",
+            "link": "/search?q=Amaderada&type=product"
+          }
+        },
+        "oriental": {
+          "type": "family",
+          "settings": {
+            "name": "Oriental",
+            "word": "oriental",
+            "text": "Ámbar, vainilla y especias. Intenso, sensual y envolvente.",
+            "notes": "ámbar, vainilla, canela, incienso, haba tonka, azafrán",
+            "liq1": "#F0B868",
+            "liq2": "#B85E2C",
+            "bg": "#F6E9DA",
+            "link": "/search?q=Oriental&type=product"
+          }
+        },
+        "fresco": {
+          "type": "family",
+          "settings": {
+            "name": "Fresco",
+            "word": "fresco",
+            "text": "Bergamota, limón y menta. Limpio, liviano y para todos los días.",
+            "notes": "bergamota, limón, mandarina, menta, neroli, notas marinas",
+            "liq1": "#E9E58F",
+            "liq2": "#7DBE9A",
+            "bg": "#EDF4E6",
+            "link": "/search?q=Fresca&type=product"
+          }
+        },
+        "dulce": {
+          "type": "family",
+          "settings": {
+            "name": "Dulce",
+            "word": "dulce",
+            "text": "Caramelo, praliné y café. Goloso, adictivo y moderno.",
+            "notes": "caramelo, praliné, café, chocolate, miel, malvavisco",
+            "liq1": "#D8C2F5",
+            "liq2": "#9476D6",
+            "bg": "#EEE8F8",
+            "link": "/search?q=Gourmand&type=product"
+          }
+        }
+      },
+      "block_order": [
+        "floral",
+        "amaderado",
+        "oriental",
+        "fresco",
+        "dulce"
+      ],
+      "settings": {
+        "eyebrow": "Perfumería online · Uruguay",
+        "title": "Encontrá tu aroma",
+        "button2_label": "Ver todos",
+        "button2_link": "shopify://collections/all",
+        "delay": 5
+      }
     }
   },
   "order": [
-    "showcase",
+    "aroma",
     "ticker",
     "marcas",
     "generos",
@@ -437,6 +522,7 @@
     "promo",
     "categorias",
     "suenos",
-    "hero"
+    "hero",
+    "showcase"
   ]
 }

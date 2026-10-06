@@ -32,3 +32,11 @@ Se publica desde Tienda online → Temas → Publicar. Nada se borró: las secci
 - Siempre en movimiento: el frasco flota (sube, baja y se balancea) con sombra en el piso, se inclina en 3D con el mouse,
   y una órbita de 8 perfumes de la colección "destacados" gira alrededor (por delante y por detrás). Se configura en
   Personalizar → Banner con perfumes → Órbita de perfumes (colección, cantidad, segundos por vuelta). Se detiene fuera de pantalla.
+
+## Portada de marca "Encontrá tu aroma" (`sections/scent-lab.liquid`)
+Reemplaza al banner de fotos (que queda desactivado, no borrado). Todo dibujado con código, sin fotos de productos:
+- Frasco NovaParfum en SVG (tapa dorada, etiqueta ✦ novaparfum) con líquido en olas, burbujas y brillo en el vidrio; el frasco flota.
+- El atomizador rocía y del pico salen las notas de la familia (rosa, oud, vainilla…) que suben meciéndose; ondas de aroma alrededor.
+- 5 familias (bloques editables): Floral, Amaderado, Oriental, Fresco, Dulce. Cada una cambia color del líquido y del fondo,
+  la palabra del título, el texto, las notas y el enlace del botón (búsqueda de la tienda). Rotan solas o se eligen.
+- Estrella ✦ del logo gigante girando de fondo. Con "reducir movimiento": sin olas, notas ni giros.

@@ -1,0 +1,317 @@
+{%- comment -%}
+  Portada de marca "Encontrá tu aroma" (sin fotos de productos, todo dibujado y animado con código):
+  - Frasco NovaParfum en SVG: tapa dorada, etiqueta "✦ novaparfum", líquido con olas que se mueven, burbujas
+    y un brillo que recorre el vidrio. El frasco flota.
+  - El atomizador rocía y del pico salen las notas de la familia elegida, que suben meciéndose y se desvanecen;
+    ondas de aroma se expanden alrededor del frasco.
+  - Familias olfativas (bloques): cada una cambia el color del líquido y del fondo, la palabra del título,
+    el texto, las notas y el enlace del botón. Rotan solas; se pausa al pasar el mouse o al elegir una.
+  - De fondo, la estrella ✦ del logo gigante girando lento.
+  - Con "reducir movimiento": sin olas, burbujas, notas ni giros; el cambio de familia es instantáneo.
+{%- endcomment -%}
+{%- assign fams = section.blocks | where: 'type', 'family' -%}
+{%- assign f0 = fams.first.settings -%}
+<style>
+  .lab { --lab-out: cubic-bezier(.23, 1, .32, 1); --lab-io: cubic-bezier(.77, 0, .175, 1);
+    --liq1: {{ f0.liq1 | default: '#E9A5BC' }}; --liq2: {{ f0.liq2 | default: '#C96E92' }}; --lab-bg: {{ f0.bg | default: '#F6E6EC' }};
+    position: relative; overflow: hidden; isolation: isolate; background: var(--lab-bg); transition: background-color 1.2s var(--lab-io);
+    min-height: min(90dvh, 880px); display: grid; align-items: center; }
+  .lab::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background: radial-gradient(50% 60% at 72% 50%, rgba(255,255,255,.7), rgba(255,255,255,0) 70%),
+                radial-gradient(40% 50% at 10% 100%, color-mix(in srgb, var(--liq1) 35%, transparent), transparent 70%); }
+  .lab__star { position: absolute; z-index: -1; right: -12%; top: 50%; width: min(78vw, 980px); aspect-ratio: 1; margin-top: calc(min(78vw, 980px) / -2);
+    color: rgba(255,255,255,.55); pointer-events: none; }
+  .lab__star svg { width: 100%; height: 100%; display: block; }
+  .lab__inner { display: grid; gap: 24px; align-items: center; padding-block: 48px 64px; }
+  .lab__eyebrow { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 18px; padding: 6px 12px; border-radius: 999px;
+    background: rgba(255,255,255,.65); font-size: 11px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--c-ink); }
+  .lab__eyebrow svg { width: 12px; height: 12px; color: var(--c-iris); }
+  .lab__title { margin: 0 0 16px; font: 400 clamp(40px, 6vw, 84px)/.98 var(--f-display, 'Fraunces', serif); letter-spacing: -.03em; color: var(--c-ink); }
+  .lab__title-1 { display: block; }
+  .lab__swap { position: relative; display: inline-grid; overflow: hidden; vertical-align: bottom; padding-bottom: .1em; margin-bottom: -.1em; }
+  .lab__word { grid-area: 1 / 1; font-style: italic; color: color-mix(in srgb, var(--liq2) 82%, var(--c-ink)); transition: color 1.2s var(--lab-io); }
+  .lab__word .ch { display: inline-block; transition: transform .7s var(--lab-out), opacity .5s ease; transition-delay: calc(var(--i) * 28ms); }
+  .lab__word.is-out .ch { transform: translateY(-105%); opacity: 0; }
+  .lab__word.is-in .ch { transform: translateY(105%); opacity: 0; }
+  .lab__sub { margin: 0 0 22px; max-width: 44ch; min-height: 3.2em; color: #4a4560; line-height: 1.6; transition: opacity .4s ease; }
+  .lab__sub.is-out { opacity: 0; }
+  .lab__fams { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 26px; padding: 0; list-style: none; }
+  .lab__fam { position: relative; display: inline-flex; align-items: center; gap: 8px; min-height: 42px; padding: 8px 16px 8px 10px; border: 0; border-radius: 999px;
+    background: rgba(255,255,255,.62); color: var(--c-ink); font-family: inherit; font-size: 14px; font-weight: 600; line-height: 1; cursor: pointer;
+    transition: background-color .35s ease, color .35s ease, transform .16s ease-out, box-shadow .35s ease; }
+  .lab__fam i { width: 16px; height: 16px; border-radius: 50%; background: linear-gradient(160deg, var(--a), var(--b)); box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.7); }
+  .lab__fam[aria-pressed="true"] { background: var(--c-ink); color: #fff; box-shadow: 0 12px 24px -14px rgba(47,42,74,.8); }
+  .lab__fam:active { transform: scale(.97); }
+  @media (hover: hover) and (pointer: fine) { .lab__fam:not([aria-pressed="true"]):hover { background: #fff; } }
+  .lab__cta { display: flex; flex-wrap: wrap; gap: 12px; }
+  .lab-btn { display: inline-flex; align-items: center; gap: 12px; padding: 8px 8px 8px 24px; min-height: 54px; border-radius: 999px;
+    font-weight: 700; text-decoration: none; transition: transform .45s var(--lab-out), box-shadow .45s var(--lab-out), background-color .3s ease; }
+  .lab-btn--main { background: var(--c-ink); color: #fff; box-shadow: 0 18px 34px -18px rgba(47,42,74,.7); }
+  .lab-btn--soft { background: rgba(255,255,255,.7); color: var(--c-ink); padding-right: 24px; }
+  .lab-btn__ico { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,.14); transition: transform .45s var(--lab-out); }
+  .lab-btn__ico svg { width: 16px; height: 16px; }
+  @media (hover: hover) and (pointer: fine) { .lab-btn:hover { transform: translateY(-2px); } .lab-btn:hover .lab-btn__ico { transform: translate(3px, -2px); } .lab-btn--soft:hover { background: #fff; } }
+  .lab-btn:active { transform: scale(.98); transition-duration: .12s; }
+
+  /* Escenario */
+  .lab__stage { position: relative; width: min(100%, 520px); aspect-ratio: 1 / 1.08; justify-self: center; }
+  .lab__rings { position: absolute; left: 50%; top: 56%; width: 70%; aspect-ratio: 1; translate: -50% -50%; pointer-events: none; }
+  .lab__rings span { position: absolute; inset: 0; border-radius: 50%; border: 1.5px solid color-mix(in srgb, var(--liq2) 55%, transparent); opacity: 0; }
+  .lab__bottle { position: absolute; left: 50%; bottom: 4%; width: 64%; translate: -50% 0; overflow: visible; }
+  .lab__float { transform-box: fill-box; transform-origin: 50% 100%; }
+  .lab__notes { position: absolute; inset: 0; pointer-events: none; }
+  .lab__note { position: absolute; left: 0; top: 0; white-space: nowrap; font: italic 400 clamp(15px, 1.6vw, 21px)/1 var(--f-display, 'Fraunces', serif);
+    color: color-mix(in srgb, var(--liq2) 70%, var(--c-ink)); opacity: 0; will-change: transform, opacity; }
+  .lab__p { position: absolute; left: 0; top: 0; width: 22px; height: 22px; margin: -11px 0 0 -11px; border-radius: 50%; opacity: 0;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--liq1) 85%, white), transparent); }
+  .lab stop { transition: stop-color 1.2s var(--lab-io); }
+
+  @media (min-width: 990px) { .lab__inner { grid-template-columns: 1.05fr .95fr; gap: 40px; padding-block: 72px 96px; } }
+  @media (max-width: 989px) {
+    .lab { min-height: auto; }
+    .lab__inner { text-align: center; }
+    .lab__copy { order: 2; }
+    .lab__fams { justify-content: center; }
+    .lab__cta { justify-content: center; }
+    .lab__sub { margin-inline: auto; }
+    .lab__stage { width: min(80vw, 380px); }
+    .lab__star { right: auto; left: 50%; top: 26%; width: 120vw; margin: -60vw 0 0 -60vw; }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .lab__star svg { animation: labSpin 90s linear infinite; }
+    .lab__float { animation: labBob 6s ease-in-out infinite; }
+    .lab__wave--1 { animation: labWave 6s linear infinite; }
+    .lab__wave--2 { animation: labWave 9s linear infinite reverse; }
+    .lab__bubble { animation: labBubble var(--d) ease-in var(--dl) infinite; }
+    .lab__shine { animation: labShine 7s var(--lab-io) 1.5s infinite; }
+    .lab__rings span { animation: labRing 4.5s var(--lab-out) infinite; }
+    .lab__rings span:nth-child(2) { animation-delay: 1.5s; }
+    .lab__rings span:nth-child(3) { animation-delay: 3s; }
+    .lab__level { animation: labFill 2.2s var(--lab-out) .3s backwards; }
+    .lab__copy > * { animation: labUp .9s var(--lab-out) backwards; }
+    .lab__copy > :nth-child(2) { animation-delay: .1s; } .lab__copy > :nth-child(3) { animation-delay: .2s; }
+    .lab__copy > :nth-child(4) { animation-delay: .3s; } .lab__copy > :nth-child(5) { animation-delay: .4s; }
+    .lab__bottle { animation: labIn 1.2s var(--lab-out) .1s backwards; }
+    @keyframes labSpin { to { transform: rotate(360deg); } }
+    @keyframes labBob { 0%, 100% { transform: translateY(0) rotate(-1.5deg); } 50% { transform: translateY(-14px) rotate(1.5deg); } }
+    @keyframes labWave { to { transform: translateX(-200px); } }
+    @keyframes labBubble { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: .9; } 100% { transform: translateY(-190px); opacity: 0; } }
+    @keyframes labShine { 0%, 55% { transform: translateX(-160px) skewX(-18deg); } 100% { transform: translateX(260px) skewX(-18deg); } }
+    @keyframes labRing { from { transform: scale(.55); opacity: .7; } to { transform: scale(1.45); opacity: 0; } }
+    @keyframes labFill { from { transform: translateY(230px); } }
+    @keyframes labUp { from { opacity: 0; transform: translateY(18px); } }
+    @keyframes labIn { from { opacity: 0; transform: translateY(40px) scale(.94); } }
+  }
+  @media (prefers-reduced-motion: reduce) { .lab__notes, .lab__rings { display: none; } .lab__word .ch { transition: none; } }
+</style>
+
+<section class="lab" id="lab-{{ section.id }}" aria-label="Encontrá tu aroma">
+  <div class="lab__star" aria-hidden="true">
+    <svg viewBox="0 0 40 40"><path d="M20 4c1 8.4 4.2 11.8 12.6 12.8C24.2 17.8 21 21.2 20 29.6 19 21.2 15.8 17.8 7.4 16.8 15.8 15.8 19 12.4 20 4Z" fill="none" stroke="currentColor" stroke-width=".35"/></svg>
+  </div>
+  <div class="container lab__inner">
+    <div class="lab__copy">
+      <p class="lab__eyebrow"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 4c1 8.4 4.2 11.8 12.6 12.8C24.2 17.8 21 21.2 20 29.6 19 21.2 15.8 17.8 7.4 16.8 15.8 15.8 19 12.4 20 4Z" fill="currentColor"/></svg>{{ section.settings.eyebrow }}</p>
+      <h1 class="lab__title"><span class="lab__title-1">{{ section.settings.title }}</span>
+        <span class="lab__swap"><span class="lab__word" data-lab-word>{{ f0.word }}</span></span></h1>
+      <p class="lab__sub" data-lab-sub>{{ f0.text }}</p>
+      {%- if fams.size > 1 -%}
+        <ul class="lab__fams" aria-label="Familias olfativas">
+          {%- for b in fams -%}
+            <li><button type="button" class="lab__fam" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}" data-lab-fam="{{ forloop.index0 }}"
+              style="--a: {{ b.settings.liq1 }}; --b: {{ b.settings.liq2 }};" {{ b.shopify_attributes }}><i aria-hidden="true"></i>{{ b.settings.name }}</button></li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+      <div class="lab__cta">
+        <a class="lab-btn lab-btn--main" href="{{ f0.link | default: routes.all_products_collection_url }}" data-lab-link>
+          <span data-lab-cta>Ver perfumes {{ f0.name | downcase }}</span>
+          <span class="lab-btn__ico" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 11 11 5M6 5h5v5"/></svg></span>
+        </a>
+        {%- if section.settings.button2_label != blank -%}<a class="lab-btn lab-btn--soft" href="{{ section.settings.button2_link | default: routes.all_products_collection_url }}">{{ section.settings.button2_label }}</a>{%- endif -%}
+      </div>
+    </div>
+
+    <div class="lab__stage" aria-hidden="true">
+      <div class="lab__rings"><span></span><span></span><span></span></div>
+      <svg class="lab__bottle" viewBox="0 0 300 420" role="presentation">
+        <defs>
+          <linearGradient id="labLiq-{{ section.id }}" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" style="stop-color: var(--liq1)"/><stop offset="1" style="stop-color: var(--liq2)"/>
+          </linearGradient>
+          <linearGradient id="labGold-{{ section.id }}" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#9C7A3C"/><stop offset=".35" stop-color="#F3DDA0"/><stop offset=".6" stop-color="#C9A45A"/><stop offset="1" stop-color="#8A6A30"/>
+          </linearGradient>
+          <linearGradient id="labGlass-{{ section.id }}" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".18" stop-color="#fff" stop-opacity=".12"/>
+            <stop offset=".8" stop-color="#fff" stop-opacity=".06"/><stop offset="1" stop-color="#fff" stop-opacity=".45"/>
+          </linearGradient>
+          <clipPath id="labBody-{{ section.id }}"><rect x="46" y="128" width="208" height="262" rx="34"/></clipPath>
+          <radialGradient id="labFloor-{{ section.id }}"><stop offset="0" stop-color="#2F2A4A" stop-opacity=".28"/><stop offset="1" stop-color="#2F2A4A" stop-opacity="0"/></radialGradient>
+        </defs>
+        <ellipse cx="150" cy="404" rx="118" ry="12" fill="url(#labFloor-{{ section.id }})"/>
+        <g class="lab__float">
+          <!-- tapa y atomizador -->
+          <rect x="136" y="98" width="28" height="34" rx="4" fill="url(#labGold-{{ section.id }})"/>
+          <rect x="108" y="22" width="84" height="80" rx="12" fill="url(#labGold-{{ section.id }})"/>
+          <g opacity=".35" stroke="#6E5424" stroke-width="1">{% for k in (0..9) %}<line x1="{{ k | times: 8 | plus: 114 }}" y1="28" x2="{{ k | times: 8 | plus: 114 }}" y2="96"/>{% endfor %}</g>
+          <rect x="108" y="22" width="84" height="14" rx="7" fill="#fff" opacity=".25"/>
+          <rect x="192" y="44" width="16" height="8" rx="3" fill="#B8954E"/>
+          <!-- cuerpo de vidrio -->
+          <rect x="46" y="128" width="208" height="262" rx="34" fill="rgba(255,255,255,.35)"/>
+          <g clip-path="url(#labBody-{{ section.id }})">
+            <g class="lab__level">
+              <rect x="20" y="196" width="260" height="210" fill="url(#labLiq-{{ section.id }})"/>
+              <path class="lab__wave--1" d="M0 196 q25 -12 50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 V230 H0Z" fill="url(#labLiq-{{ section.id }})"/>
+              <path class="lab__wave--2" d="M0 192 q25 10 50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 V230 H0Z" fill="#fff" opacity=".22"/>
+              {%- assign bub = '72,8,3.6,0|118,5,4.2,1.2|164,7,3,2.4|206,6,4.6,.6|96,4,3.2,3.1|186,3,5,1.8|140,6,3.8,4' | split: '|' -%}
+              {%- for bb in bub -%}{%- assign v = bb | split: ',' -%}
+                <circle class="lab__bubble" cx="{{ v[0] }}" cy="384" r="{{ v[1] }}" fill="#fff" opacity="0" style="--d: {{ v[2] }}s; --dl: {{ v[3] }}s;"/>
+              {%- endfor -%}
+            </g>
+            <rect class="lab__shine" x="40" y="110" width="46" height="300" fill="#fff" opacity=".35"/>
+          </g>
+          <rect x="46" y="128" width="208" height="262" rx="34" fill="url(#labGlass-{{ section.id }})" stroke="rgba(255,255,255,.95)" stroke-width="2.5"/>
+          <rect x="62" y="146" width="10" height="200" rx="5" fill="#fff" opacity=".55"/>
+          <!-- etiqueta -->
+          <rect x="88" y="236" width="124" height="86" rx="10" fill="rgba(255,255,255,.88)" stroke="#C9A45A" stroke-width="1.2"/>
+          <path transform="translate(141 244) scale(.45)" d="M20 4c1 8.4 4.2 11.8 12.6 12.8C24.2 17.8 21 21.2 20 29.6 19 21.2 15.8 17.8 7.4 16.8 15.8 15.8 19 12.4 20 4Z" fill="#7A68B8"/>
+          <text x="150" y="285" text-anchor="middle" font-family="Fraunces, serif" font-size="21" fill="#2F2A4A">nova<tspan fill="#7A68B8">parfum</tspan></text>
+          <text x="150" y="306" text-anchor="middle" font-family="Manrope, sans-serif" font-size="7.5" letter-spacing="2.4" fill="#6E6A78">EAU DE PARFUM</text>
+        </g>
+      </svg>
+      <div class="lab__notes" data-lab-notes></div>
+    </div>
+  </div>
+
+  <script type="application/json" data-lab-fams>
+    [{%- for b in fams -%}{"name": {{ b.settings.name | json }}, "word": {{ b.settings.word | json }}, "text": {{ b.settings.text | json }},
+      "liq1": {{ b.settings.liq1 | json }}, "liq2": {{ b.settings.liq2 | json }}, "bg": {{ b.settings.bg | json }},
+      "notes": {{ b.settings.notes | split: ',' | json }}, "link": {{ b.settings.link | default: routes.all_products_collection_url | json }}}{% unless forloop.last %},{% endunless %}{%- endfor -%}]
+  </script>
+</section>
+
+<script>
+  (() => {
+    const root = document.getElementById('lab-{{ section.id }}');
+    if (!root) return;
+    const fams = JSON.parse(root.querySelector('[data-lab-fams]').textContent || '[]');
+    const word = root.querySelector('[data-lab-word]');
+    const sub = root.querySelector('[data-lab-sub]');
+    const link = root.querySelector('[data-lab-link]');
+    const cta = root.querySelector('[data-lab-cta]');
+    const chips = [...root.querySelectorAll('[data-lab-fam]')];
+    const notesBox = root.querySelector('[data-lab-notes]');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const delay = {{ section.settings.delay | default: 5 }} * 1000;
+    let cur = 0, timer = 0, paused = false, visible = true;
+
+    const letters = (t) => [...t].map((c, k) => `<span class="ch" style="--i:${k}">${c === ' ' ? '&nbsp;' : c.replace(/[&<>]/g, (x) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[x])}</span>`).join('');
+    word.innerHTML = letters(word.textContent.trim());
+
+    function setFam(n, user) {
+      if (!fams.length) return;
+      n = (n + fams.length) % fams.length;
+      const f = fams[n];
+      cur = n;
+      root.style.setProperty('--liq1', f.liq1); root.style.setProperty('--liq2', f.liq2); root.style.setProperty('--lab-bg', f.bg);
+      chips.forEach((c, k) => c.setAttribute('aria-pressed', String(k === n)));
+      link.href = f.link; cta.textContent = 'Ver perfumes ' + f.name.toLowerCase();
+      if (reduce) { word.innerHTML = letters(f.word); sub.textContent = f.text; }
+      else {
+        word.classList.add('is-out'); sub.classList.add('is-out');
+        setTimeout(() => {
+          word.classList.remove('is-out'); word.classList.add('is-in'); word.innerHTML = letters(f.word);
+          sub.textContent = f.text; sub.classList.remove('is-out');
+          requestAnimationFrame(() => requestAnimationFrame(() => word.classList.remove('is-in')));
+        }, 420);
+        spray(); burst = 3;
+      }
+      if (user) { paused = true; clearTimeout(timer); setTimeout(() => { paused = false; schedule(); }, 12000); }
+      else schedule();
+    }
+    function schedule() { clearTimeout(timer); if (!reduce && !paused && fams.length > 1) timer = setTimeout(() => setFam(cur + 1), delay); }
+    chips.forEach((c) => c.addEventListener('click', () => setFam(Number(c.dataset.labFam), true)));
+    root.addEventListener('mouseenter', () => { paused = true; clearTimeout(timer); });
+    root.addEventListener('mouseleave', () => { paused = false; schedule(); });
+
+    if (reduce || !Element.prototype.animate) return;
+
+    // Punto de salida del aroma: el pico del atomizador (coordenadas del SVG 208,48 sobre viewBox 300x420)
+    const svg = root.querySelector('.lab__bottle');
+    const nozzle = () => {
+      const s = svg.getBoundingClientRect(), b = notesBox.getBoundingClientRect();
+      return { x: s.left - b.left + s.width * (210 / 300), y: s.top - b.top + s.height * (48 / 420) };
+    };
+    // Rocío de partículas de color del perfume
+    function spray() {
+      const o = nozzle();
+      for (let k = 0; k < 16; k++) {
+        const p = document.createElement('span'); p.className = 'lab__p'; notesBox.appendChild(p);
+        const a = (-25 + Math.random() * 50) * Math.PI / 180, d = 50 + Math.random() * 130, s = .5 + Math.random() * 1.3;
+        p.animate([
+          { transform: `translate(${o.x}px, ${o.y}px) scale(.3)`, opacity: 0 },
+          { transform: `translate(${o.x + Math.cos(a) * d * .35}px, ${o.y + Math.sin(a) * d * .35 - 6}px) scale(${s})`, opacity: .95, offset: .2 },
+          { transform: `translate(${o.x + Math.cos(a) * d}px, ${o.y + Math.sin(a) * d - 30}px) scale(${s * 2})`, opacity: 0 }
+        ], { duration: 1400 + Math.random() * 600, delay: k * 16, easing: 'cubic-bezier(.23,1,.32,1)', fill: 'both' }).onfinish = () => p.remove();
+      }
+    }
+    // Notas que salen del pico y suben meciéndose
+    let burst = 0;
+    function note() {
+      const f = fams[cur]; if (!f || !f.notes.length) return;
+      const o = nozzle();
+      const el = document.createElement('span'); el.className = 'lab__note';
+      el.textContent = f.notes[Math.floor(Math.random() * f.notes.length)].trim();
+      notesBox.appendChild(el);
+      const w = notesBox.offsetWidth, dir = Math.random() < .5 ? -1 : 1;
+      const x0 = o.x - 10, y0 = o.y - 10;
+      const x1 = Math.max(0, Math.min(w - 120, x0 + dir * (40 + Math.random() * 60)));
+      const x2 = Math.max(0, Math.min(w - 120, x0 - dir * (20 + Math.random() * 90)));
+      const rise = Math.min(140 + Math.random() * 120, Math.max(70, o.y + 10)); // no pasar del borde superior del escenario
+      el.animate([
+        { transform: `translate(${x0}px, ${y0}px) scale(.7)`, opacity: 0, filter: 'blur(4px)' },
+        { transform: `translate(${x1}px, ${y0 - rise * .35}px) scale(1)`, opacity: 1, filter: 'blur(0)', offset: .3 },
+        { transform: `translate(${x2}px, ${y0 - rise * .75}px) scale(1.05)`, opacity: .85, filter: 'blur(0)', offset: .7 },
+        { transform: `translate(${(x1 + x2) / 2}px, ${y0 - rise}px) scale(1.1)`, opacity: 0, filter: 'blur(6px)' }
+      ], { duration: 4200 + Math.random() * 1600, easing: 'cubic-bezier(.33,0,.2,1)', fill: 'both' }).onfinish = () => el.remove();
+    }
+    let last = 0, raf = 0;
+    const tick = (t) => {
+      if (t - last > (burst > 0 ? 260 : 1100)) { last = t; note(); if (burst > 0) burst--; }
+      raf = visible && !document.hidden ? requestAnimationFrame(tick) : 0;
+    };
+    new IntersectionObserver(([en]) => { visible = en.isIntersecting; if (visible && !raf) raf = requestAnimationFrame(tick); }).observe(root);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden && visible && !raf) raf = requestAnimationFrame(tick); });
+    setTimeout(() => { spray(); burst = 3; raf = requestAnimationFrame(tick); }, 1400);
+    schedule();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Portada de aroma",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Etiqueta", "default": "Perfumería online · Uruguay" },
+    { "type": "text", "id": "title", "label": "Título", "default": "Encontrá tu aroma" },
+    { "type": "text", "id": "button2_label", "label": "Botón secundario", "default": "Ver todos" },
+    { "type": "url", "id": "button2_link", "label": "Enlace del botón secundario" },
+    { "type": "range", "id": "delay", "label": "Segundos por familia", "min": 3, "max": 12, "step": 1, "default": 5 }
+  ],
+  "blocks": [
+    { "type": "family", "name": "Familia olfativa", "settings": [
+      { "type": "text", "id": "name", "label": "Nombre (botón)", "default": "Floral" },
+      { "type": "text", "id": "word", "label": "Palabra del título", "default": "floral" },
+      { "type": "textarea", "id": "text", "label": "Texto" },
+      { "type": "text", "id": "notes", "label": "Notas que flotan (separadas por coma)", "default": "rosa, jazmín, peonía" },
+      { "type": "color", "id": "liq1", "label": "Color del líquido (arriba)", "default": "#F2B8C9" },
+      { "type": "color", "id": "liq2", "label": "Color del líquido (abajo)", "default": "#D9809F" },
+      { "type": "color", "id": "bg", "label": "Color de fondo", "default": "#F7E7ED" },
+      { "type": "url", "id": "link", "label": "Enlace del botón" }
+    ] }
+  ],
+  "max_blocks": 6,
+  "presets": [{ "name": "Portada de aroma", "blocks": [{ "type": "family" }] }]
+}
+{% endschema %}
