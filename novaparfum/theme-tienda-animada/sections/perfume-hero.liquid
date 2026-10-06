@@ -1,0 +1,251 @@
+{%- comment -%}
+  Portada: frasco NovaParfum (SVG propio) sobre "NOVA PARFUM" gigante. Al cargar, el frasco inclinado se abre
+  en piezas (tapa, atomizador, aro y tubito en diagonal), se cierra y después se endereza y queda al costado.
+  Después: el frasco flota suave, hay destellos que suben y aparecen la frase y los botones.
+  Liviano: SVG en línea + CSS (y un toque de JS para que los destellos sigan al mouse en computadora).
+  Con "reducir movimiento" se muestra directamente el estado final.
+{%- endcomment -%}
+<style>
+  .ph { position: relative; overflow: hidden; min-height: min(80vh, 780px); display: grid; place-items: center;
+    background: radial-gradient(60% 55% at 50% 50%, #F4F0F8 0%, rgba(244,240,248,0) 70%), linear-gradient(160deg, #E7E1EF 0%, #D9D1E6 100%); }
+  .ph__title { position: absolute; inset: 0; display: grid; place-content: center; margin: 0; text-align: center; pointer-events: none;
+    font: 800 clamp(64px, 17vw, 230px)/.86 var(--f-body); letter-spacing: .04em; text-transform: uppercase; color: rgba(255,255,255,.8); }
+  .ph__title span { display: block; }
+  .ph__art { position: relative; z-index: 1; width: min(84vw, 560px); height: min(70vh, 640px); }
+  .ph__art svg { width: 100%; height: 100%; overflow: visible; }
+  /* 1) De costado: cada pieza se corre a lo largo del eje del frasco (se abre) y vuelve (se cierra) */
+  .ph__part { animation: phPart 2.2s cubic-bezier(.65,0,.35,1) .5s both; }
+  @keyframes phPart {
+    0%, 6% { transform: translateY(0); }
+    38%, 56% { transform: translateY(var(--d)); }
+    92%, 100% { transform: translateY(0); }
+  }
+  /* 2) Al terminar: el frasco cerrado se endereza y queda al costado */
+  .ph__tilt { transform-box: view-box; transform-origin: 150px 300px; transform: rotate(-32deg);
+    animation: phStand 1s cubic-bezier(.65,0,.35,1) 2.8s forwards; }
+  @keyframes phStand { to { transform: rotate(0deg); } }
+  .ph__shadow { transform-box: fill-box; transform-origin: center; animation: phShadow 1s cubic-bezier(.65,0,.35,1) 2.8s forwards; }
+  @keyframes phShadow { to { transform: translate(-100px, -56px) scaleX(.8); } }
+  .ph__art { --ph-side: min(26vw, 340px); animation: phSide 1s cubic-bezier(.65,0,.35,1) 2.8s forwards; }
+  @keyframes phSide { to { transform: translateX(var(--ph-side)); } }
+  /* El título se achica y se corre a la izquierda para dejar aire al frasco (no toca la M) */
+  .ph__title { transform-origin: left center; animation: phTitle 1s cubic-bezier(.65,0,.35,1) 2.8s forwards; }
+  @keyframes phTitle { to { transform: translateX(var(--ph-title, -6vw)) scale(var(--ph-title-s, .78)); } }
+  .ph__tag { position: absolute; z-index: 2; left: 0; right: 0; bottom: 24px; margin: 0; text-align: center; font-size: 12px; font-weight: 700;
+    letter-spacing: .3em; text-transform: uppercase; color: var(--c-ink); opacity: .7; }
+
+  /* 3) Ya quieto: el frasco flota y respira */
+  .ph__float { width: 100%; height: 100%; animation: phFloat 6s ease-in-out 3.9s infinite; }
+  @keyframes phFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+
+  /* Halo de luz que late detrás */
+  .ph__glow { position: absolute; z-index: 0; width: min(70vw, 760px); aspect-ratio: 1; border-radius: 50%; pointer-events: none;
+    background: radial-gradient(circle, rgba(255,255,255,.75) 0%, rgba(214,201,246,.45) 38%, rgba(214,201,246,0) 68%);
+    animation: phGlow 7s ease-in-out infinite; }
+  @keyframes phGlow { 0%, 100% { transform: scale(.92); opacity: .75; } 50% { transform: scale(1.06); opacity: 1; } }
+
+  /* Destellos que suben (como perfume en el aire) */
+  .ph__sparks { position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    transform: translate3d(calc(var(--mx, 0) * 18px), calc(var(--my, 0) * 18px), 0); transition: transform .8s cubic-bezier(.22,1,.36,1); }
+  .ph__spark { position: absolute; left: var(--x); bottom: -24px; width: var(--s); height: var(--s); color: #fff; opacity: 0;
+    animation: phRise var(--t) linear var(--w) infinite; }
+  .ph__spark:nth-child(3n) { color: #B7A5EC; }
+  .ph__spark svg { width: 100%; height: 100%; display: block; animation: phTwinkle 1.8s ease-in-out infinite alternate; }
+  @keyframes phRise {
+    0% { transform: translate(0, 0) rotate(0); opacity: 0; }
+    12% { opacity: .95; }
+    70% { opacity: .8; }
+    100% { transform: translate(var(--dx), -105vh) rotate(160deg); opacity: 0; }
+  }
+  @keyframes phTwinkle { from { transform: scale(.7); } to { transform: scale(1.15); } }
+
+  /* 4) Frase y botones: entran cuando el frasco ya se acomodó */
+  .ph__cta { position: absolute; z-index: 3; left: 0; right: 0; bottom: 64px; display: flex; flex-direction: column; align-items: center; gap: 16px;
+    padding: 0 20px; text-align: center; }
+  .ph__sub { max-width: 34ch; margin: 0; font-size: clamp(15px, 1.3vw, 18px); line-height: 1.5; color: var(--c-ink);
+    text-wrap: balance; animation: phUp .9s cubic-bezier(.22,1,.36,1) 3.5s both; }
+  .ph__btns { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+  .ph__btns .btn { animation: phUp .9s cubic-bezier(.22,1,.36,1) both; }
+  .ph__btns .btn:nth-child(1) { animation-delay: 3.65s; }
+  .ph__btns .btn:nth-child(2) { animation-delay: 3.78s; }
+  .ph__btns .btn--ghost { background: rgba(255,255,255,.55); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+  @keyframes phUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+  .ph__tag { animation: phUp .9s cubic-bezier(.22,1,.36,1) 3.9s both; }
+
+  /* Indicador para bajar */
+  .ph__scroll { position: absolute; z-index: 3; right: clamp(16px, 4vw, 48px); bottom: 22px; width: 22px; height: 36px; border: 1.5px solid rgba(47,42,74,.45);
+    border-radius: 12px; animation: phUp .9s cubic-bezier(.22,1,.36,1) 4.1s both; }
+  .ph__scroll::before { content: ''; position: absolute; left: 50%; top: 7px; width: 3px; height: 7px; margin-left: -1.5px; border-radius: 2px;
+    background: var(--c-ink); animation: phWheel 1.8s cubic-bezier(.65,0,.35,1) infinite; }
+  @keyframes phWheel { 0% { transform: translateY(0); opacity: 1; } 80%, 100% { transform: translateY(12px); opacity: 0; } }
+
+  /* Computadora: el título sube un poco para que la frase y los botones queden debajo, sin tocar las letras */
+  @media (min-width: 750px) {
+    .ph { min-height: min(90vh, 880px); }
+    .ph__title { padding-bottom: clamp(120px, 17vh, 170px); }
+    .ph__cta { align-items: flex-start; left: clamp(24px, 7vw, 120px); right: auto; bottom: 70px; padding: 0; text-align: left; }
+    .ph__sub { max-width: 46ch; }
+    .ph__btns { justify-content: flex-start; }
+  }
+
+  /* Celular: título arriba y frasco en su propio espacio debajo (las piezas nunca tocan las letras);
+     al terminar queda derecho y centrado */
+  @media (max-width: 749px) {
+    .ph { min-height: calc(100svh - 100px); display: flex; flex-direction: column; align-items: center; padding: 5vh 0 56px; }
+    .ph__title { position: relative; inset: auto; display: block; font-size: 22vw; --ph-title: 0px; --ph-title-s: 1; }
+    .ph { padding-top: 4vh; }
+    .ph__art { width: 72vw; height: auto; margin-top: 12px; --ph-side: -7.9vw; }
+    .ph__art svg { height: auto; }
+    .ph__glow { top: 28%; width: 120vw; }
+    .ph__cta { position: relative; bottom: auto; margin-top: 4px; }
+    .ph__scroll { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ph__part, .ph__tilt, .ph__shadow, .ph__art, .ph__title { animation: none; }
+    .ph__tilt { transform: none; } .ph__shadow { transform: translate(-100px, -56px) scaleX(.8); }
+    .ph__art { transform: translateX(var(--ph-side)); }
+    .ph__title { transform: translateX(var(--ph-title, -6vw)) scale(var(--ph-title-s, .78)); }
+    .ph__float, .ph__glow, .ph__sub, .ph__btns .btn, .ph__tag, .ph__scroll, .ph__scroll::before { animation: none; }
+    .ph__sparks { display: none; }
+  }
+</style>
+
+<section class="ph" data-ph>
+  <div class="ph__glow" aria-hidden="true"></div>
+  <div class="ph__sparks" aria-hidden="true">
+    {%- assign spark_path = 'M20 4c1 8.4 4.2 11.8 12.6 12.8C24.2 17.8 21 21.2 20 29.6 19 21.2 15.8 17.8 7.4 16.8 15.8 15.8 19 12.4 20 4Z' -%}
+    {%- assign xs = '6,14,23,31,42,51,58,66,74,83,90,96' | split: ',' -%}
+    {%- for x in xs -%}
+      {%- assign s = forloop.index | modulo: 3 | times: 5 | plus: 9 -%}
+      {%- assign t = forloop.index | modulo: 4 | times: 3 | plus: 11 -%}
+      {%- assign w = forloop.index | times: 1.3 -%}
+      {%- assign dx = forloop.index | modulo: 2 | times: 60 | minus: 30 -%}
+      <span class="ph__spark" style="--x: {{ x }}%; --s: {{ s }}px; --t: {{ t }}s; --w: {{ w }}s; --dx: {{ dx }}px">
+        <svg viewBox="0 0 40 40"><path d="{{ spark_path }}" fill="currentColor"/></svg>
+      </span>
+    {%- endfor -%}
+  </div>
+
+  <h1 class="ph__title">
+    <span>{{ section.settings.line1 }}</span><span>{{ section.settings.line2 }}</span>
+    {%- if section.settings.tagline != blank -%}<span class="visually-hidden"> — {{ section.settings.tagline }}</span>{%- endif -%}
+  </h1>
+
+  <div class="ph__art" aria-hidden="true">
+    <div class="ph__float">
+    <svg viewBox="-210 -215 590 795">
+      <defs>
+        <linearGradient id="phGlass" x1="0" x2="1">
+          <stop offset="0" stop-color="#B9A9E6" stop-opacity=".85"/>
+          <stop offset=".45" stop-color="#E9E2FA" stop-opacity=".55"/>
+          <stop offset="1" stop-color="#9C88D8" stop-opacity=".9"/>
+        </linearGradient>
+        <linearGradient id="phJuice" x1="0" x2="1">
+          <stop offset="0" stop-color="#8E78D3"/>
+          <stop offset=".5" stop-color="#B7A5EC"/>
+          <stop offset="1" stop-color="#7A68B8"/>
+        </linearGradient>
+        <linearGradient id="phInk" x1="0" x2="1">
+          <stop offset="0" stop-color="#1F1B36"/>
+          <stop offset=".35" stop-color="#4A4372"/>
+          <stop offset=".6" stop-color="#2F2A4A"/>
+          <stop offset="1" stop-color="#16132A"/>
+        </linearGradient>
+        <linearGradient id="phMetal" x1="0" x2="1">
+          <stop offset="0" stop-color="#8F8AA6"/>
+          <stop offset=".4" stop-color="#F1EFF7"/>
+          <stop offset=".7" stop-color="#B9B4CC"/>
+          <stop offset="1" stop-color="#7C7794"/>
+        </linearGradient>
+        <radialGradient id="phShadow"><stop offset="0" stop-color="#2F2A4A" stop-opacity=".28"/><stop offset="1" stop-color="#2F2A4A" stop-opacity="0"/></radialGradient>
+      </defs>
+      <ellipse class="ph__shadow" cx="250" cy="548" rx="170" ry="22" fill="url(#phShadow)"/>
+      <g class="ph__tilt">
+        <!-- Tubito -->
+        <g class="ph__part" style="--d: -110px">
+          <rect x="147" y="176" width="6" height="296" rx="3" fill="#FFFFFF" fill-opacity=".75"/>
+        </g>
+        <!-- Vidrio + perfume + etiqueta -->
+        <g class="ph__part" style="--d: 40px">
+          <rect x="126" y="178" width="48" height="30" rx="6" fill="url(#phGlass)"/>
+          <rect x="40" y="200" width="220" height="292" rx="30" fill="url(#phGlass)" stroke="#FFFFFF" stroke-opacity=".7" stroke-width="2"/>
+          <rect x="54" y="262" width="192" height="216" rx="20" fill="url(#phJuice)" fill-opacity=".85"/>
+          <rect x="62" y="214" width="14" height="250" rx="7" fill="#FFFFFF" fill-opacity=".55"/>
+          <rect x="88" y="300" width="124" height="128" rx="6" fill="#F7F4F0" fill-opacity=".95"/>
+          <path transform="translate(136 318) scale(.7)" d="M20 4c1 8.4 4.2 11.8 12.6 12.8C24.2 17.8 21 21.2 20 29.6 19 21.2 15.8 17.8 7.4 16.8 15.8 15.8 19 12.4 20 4Z" fill="#2F2A4A"/>
+          <text x="150" y="378" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-size="21" fill="#2F2A4A">nova<tspan fill="#7A68B8">parfum</tspan></text>
+          <text x="150" y="402" text-anchor="middle" font-family="Manrope, Arial, sans-serif" font-size="8.5" letter-spacing="2.4" fill="#6E6A78">EAU DE PARFUM</text>
+        </g>
+        <!-- Aro metálico -->
+        <g class="ph__part" style="--d: -170px">
+          <rect x="116" y="160" width="68" height="30" rx="7" fill="url(#phMetal)"/>
+          <rect x="116" y="168" width="68" height="3" fill="#FFFFFF" fill-opacity=".6"/>
+        </g>
+        <!-- Atomizador -->
+        <g class="ph__part" style="--d: -240px">
+          <rect x="132" y="126" width="36" height="36" rx="7" fill="url(#phInk)"/>
+          <circle cx="160" cy="140" r="3.2" fill="#0E0C1C"/>
+          <rect x="146" y="160" width="8" height="10" fill="url(#phMetal)"/>
+        </g>
+        <!-- Tapa -->
+        <g class="ph__part" style="--d: -330px">
+          <rect x="102" y="66" width="96" height="124" rx="16" fill="url(#phInk)"/>
+          <rect x="116" y="76" width="10" height="104" rx="5" fill="#FFFFFF" fill-opacity=".22"/>
+          <rect x="102" y="176" width="96" height="14" rx="6" fill="#16132A" fill-opacity=".6"/>
+        </g>
+      </g>
+    </svg>
+    </div>
+  </div>
+
+  {%- if section.settings.subtitle != blank or section.settings.button_label != blank or section.settings.button2_label != blank -%}
+    <div class="ph__cta">
+      {%- if section.settings.subtitle != blank -%}<p class="ph__sub">{{ section.settings.subtitle }}</p>{%- endif -%}
+      <div class="ph__btns">
+        {%- if section.settings.button_label != blank -%}
+          <a href="{{ section.settings.button_link | default: '/collections/all' }}" class="btn btn--primary btn--lg">{{ section.settings.button_label }}</a>
+        {%- endif -%}
+        {%- if section.settings.button2_label != blank -%}
+          <a href="{{ section.settings.button2_link | default: '/collections/ofertas' }}" class="btn btn--ghost btn--lg">{{ section.settings.button2_label }}</a>
+        {%- endif -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- if section.settings.tagline != blank -%}<p class="ph__tag" aria-hidden="true">{{ section.settings.tagline }}</p>{%- endif -%}
+  <span class="ph__scroll" aria-hidden="true"></span>
+</section>
+
+<script>
+  (function () {
+    var ph = document.querySelector('[data-ph]');
+    if (!ph || !window.matchMedia('(hover: hover) and (prefers-reduced-motion: no-preference)').matches) return;
+    var raf;
+    ph.addEventListener('pointermove', function (e) {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(function () {
+        var r = ph.getBoundingClientRect();
+        ph.style.setProperty('--mx', ((e.clientX - r.left) / r.width - .5).toFixed(3));
+        ph.style.setProperty('--my', ((e.clientY - r.top) / r.height - .5).toFixed(3));
+      });
+    });
+    ph.addEventListener('pointerleave', function () { ph.style.setProperty('--mx', 0); ph.style.setProperty('--my', 0); });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Portada frasco",
+  "settings": [
+    { "type": "text", "id": "line1", "label": "Título (línea 1)", "default": "Nova" },
+    { "type": "text", "id": "line2", "label": "Título (línea 2)", "default": "Parfum" },
+    { "type": "text", "id": "tagline", "label": "Frase de abajo", "default": "Perfumería online · Uruguay" },
+    { "type": "text", "id": "subtitle", "label": "Texto debajo del título", "default": "Perfumes de diseñador y árabes seleccionados. Pagá con Mercado Pago y recibilo en todo Uruguay." },
+    { "type": "text", "id": "button_label", "label": "Botón principal", "default": "Ver perfumes" },
+    { "type": "url", "id": "button_link", "label": "Enlace botón principal" },
+    { "type": "text", "id": "button2_label", "label": "Botón secundario", "default": "Ofertas" },
+    { "type": "url", "id": "button2_link", "label": "Enlace botón secundario" }
+  ],
+  "presets": [{ "name": "Portada frasco" }]
+}
+{% endschema %}
