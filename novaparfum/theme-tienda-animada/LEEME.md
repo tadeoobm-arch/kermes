@@ -19,3 +19,7 @@ Vista previa: https://pj3pch-eh.myshopify.com/?preview_theme_id=188900868350
 muestra la foto que cada perfume tenía antes de cargar las imágenes oficiales (la primera que no dice "imagen oficial"
 en el texto alternativo). Se puede apagar en Personalizar → Carrusel de perfumes → "Usar la foto anterior".
 El resto de la tienda (tarjetas, fichas de producto) sigue usando la foto oficial.
+
+## Tarjetas sin segunda foto
+`snippets/product-card.liquid` (mismo tema 188901327102): las tarjetas muestran solo la foto principal. Antes, al pasar el
+mouse o tocar un perfume aparecía encima la foto anterior.
