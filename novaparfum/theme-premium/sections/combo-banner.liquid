@@ -1,0 +1,115 @@
+{%- comment -%}
+  Banner de combos partido: collage de 3 perfumes a un lado, beneficios por cantidad al otro.
+  Los porcentajes se "cuentan" una sola vez cuando el banner entra en pantalla.
+  El descuento real lo aplica el descuento automático configurado en Shopify (esto solo lo muestra).
+{%- endcomment -%}
+<style>
+  .cb { padding-block: clamp(56px, 8vw, 104px); }
+  .cb__shell { padding: 8px; border-radius: 36px; background: rgba(122,104,184,.08); box-shadow: inset 0 0 0 1px rgba(122,104,184,.12); }
+  .cb__core { display: grid; gap: 28px; align-items: center; overflow: hidden; border-radius: 28px; padding: 28px 22px;
+    background: radial-gradient(70% 90% at 0% 0%, #EFE8F8 0%, rgba(239,232,248,0) 70%), linear-gradient(135deg, #F7F2FB 0%, #F4E4E8 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.8); }
+  .cb__art { position: relative; height: 260px; }
+  .cb__bottle { position: absolute; bottom: 0; width: 46%; aspect-ratio: 3 / 4; display: grid; place-items: center; border-radius: 24px;
+    background: #fff; box-shadow: 0 30px 50px -30px rgba(74,56,140,.55); transition: transform .8s cubic-bezier(.32,.72,0,1); }
+  .cb__bottle img { width: 82%; height: 82%; object-fit: contain; mix-blend-mode: multiply; }
+  .cb__bottle--1 { left: 0; transform: rotate(-7deg) translateY(6px); z-index: 1; }
+  .cb__bottle--2 { left: 27%; z-index: 3; bottom: 12px; width: 48%; }
+  .cb__bottle--3 { right: 0; transform: rotate(7deg) translateY(6px); z-index: 2; }
+  @media (hover: hover) and (pointer: fine) {
+    .cb__core:hover .cb__bottle--1 { transform: rotate(-11deg) translate(-10px, 0); }
+    .cb__core:hover .cb__bottle--2 { transform: translateY(-10px); }
+    .cb__core:hover .cb__bottle--3 { transform: rotate(11deg) translate(10px, 0); }
+  }
+  .cb__eyebrow { display: inline-block; margin: 0 0 12px; padding: 5px 12px; border-radius: 999px; background: rgba(255,255,255,.8);
+    font-size: 11px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--c-iris); }
+  .cb__title { margin: 0 0 10px; font: 400 clamp(32px, 4.4vw, 52px)/1.04 var(--f-display, 'Fraunces', serif); letter-spacing: -.02em; text-wrap: balance; }
+  .cb__title em { color: var(--c-iris); }
+  .cb__text { margin: 0 0 22px; color: #4a4560; max-width: 44ch; line-height: 1.6; }
+  .cb__tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0 0 24px; padding: 0; list-style: none; }
+  .cb__tier { padding: 16px 10px; border-radius: 20px; background: rgba(255,255,255,.78); text-align: center; }
+  .cb__tier--hl { background: var(--c-ink); color: #fff; box-shadow: 0 20px 34px -20px rgba(47,42,74,.8); }
+  .cb__qty { display: block; font-size: 12px; font-weight: 600; opacity: .7; }
+  .cb__pct { display: block; margin: 2px 0; font: 500 clamp(28px, 3.4vw, 40px)/1 var(--f-display, 'Fraunces', serif); font-variant-numeric: tabular-nums; }
+  .cb__lbl { display: block; font-size: 12px; font-weight: 700; }
+  .cb__btn { display: inline-flex; align-items: center; gap: 12px; padding: 8px 8px 8px 24px; min-height: 52px; border-radius: 999px;
+    background: var(--c-ink); color: #fff; font-weight: 700; text-decoration: none; transition: transform .5s cubic-bezier(.32,.72,0,1); }
+  .cb__btn span { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,.14);
+    transition: transform .5s cubic-bezier(.32,.72,0,1); }
+  .cb__btn svg { width: 16px; height: 16px; }
+  @media (hover: hover) and (pointer: fine) { .cb__btn:hover { transform: translateY(-2px); } .cb__btn:hover span { transform: translate(3px, -2px); } }
+  .cb__btn:active { transform: scale(.98); }
+  @media (min-width: 990px) {
+    .cb__core { grid-template-columns: .95fr 1.05fr; gap: 56px; padding: 48px 56px; }
+    .cb__art { height: 380px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .cb__bottle, .cb__btn, .cb__btn span { transition: none; } }
+</style>
+<section class="cb" id="combos">
+  <div class="container">
+    <div class="cb__shell">
+      <div class="cb__core">
+        <div class="cb__art" aria-hidden="true">
+          {%- for i in (1..3) -%}
+            {%- assign key = 'product_' | append: i -%}
+            {%- assign p = section.settings[key] -%}
+            {%- if p != blank and p.featured_image -%}
+              <div class="cb__bottle cb__bottle--{{ i }}">{{ p.featured_image | image_url: width: 500 | image_tag: loading: 'lazy', widths: '260, 400, 500', sizes: '(min-width: 990px) 20vw, 45vw', alt: '' }}</div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+        <div>
+          <p class="cb__eyebrow">{{ section.settings.eyebrow }}</p>
+          <h2 class="cb__title">{{ section.settings.title }}</h2>
+          <p class="cb__text">{{ section.settings.text }}</p>
+          <ul class="cb__tiers" data-cb-tiers>
+            <li class="cb__tier"><span class="cb__qty">1 perfume</span><span class="cb__pct">—</span><span class="cb__lbl">Precio normal</span></li>
+            <li class="cb__tier"><span class="cb__qty">2 perfumes</span><span class="cb__pct" data-count="{{ section.settings.pct_2 }}">{{ section.settings.pct_2 }}%</span><span class="cb__lbl">de descuento</span></li>
+            <li class="cb__tier cb__tier--hl"><span class="cb__qty">3 o más</span><span class="cb__pct" data-count="{{ section.settings.pct_3 }}">{{ section.settings.pct_3 }}%</span><span class="cb__lbl">de descuento</span></li>
+          </ul>
+          <a class="cb__btn" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">{{ section.settings.button_label }}
+            <span aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 11 11 5M6 5h5v5"/></svg></span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+  (() => {
+    const box = document.querySelector('#shopify-section-{{ section.id }} [data-cb-tiers]');
+    if (!box || !('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const nums = [...box.querySelectorAll('[data-count]')];
+    nums.forEach((n) => (n.textContent = '0%'));
+    const io = new IntersectionObserver((es) => {
+      if (!es[0].isIntersecting) return;
+      io.disconnect();
+      const t0 = performance.now(), dur = 900;
+      const tick = (t) => {
+        const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+        nums.forEach((n) => (n.textContent = Math.round(Number(n.dataset.count) * e) + '%'));
+        if (k < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }, { threshold: .4 });
+    io.observe(box);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Banner de combos",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Etiqueta", "default": "Combos" },
+    { "type": "text", "id": "title", "label": "Título", "default": "Cuantos más, <em>mejor</em>" },
+    { "type": "textarea", "id": "text", "label": "Texto", "default": "Combiná los perfumes que quieras. El descuento se aplica solo en el carrito." },
+    { "type": "number", "id": "pct_2", "label": "% con 2 perfumes", "default": 10 },
+    { "type": "number", "id": "pct_3", "label": "% con 3 o más", "default": 15 },
+    { "type": "text", "id": "button_label", "label": "Botón", "default": "Armar mi combo" },
+    { "type": "url", "id": "button_link", "label": "Enlace del botón" },
+    { "type": "product", "id": "product_1", "label": "Perfume 1 (izquierda)" },
+    { "type": "product", "id": "product_2", "label": "Perfume 2 (centro)" },
+    { "type": "product", "id": "product_3", "label": "Perfume 3 (derecha)" }
+  ],
+  "presets": [{ "name": "Banner de combos" }]
+}
+{% endschema %}

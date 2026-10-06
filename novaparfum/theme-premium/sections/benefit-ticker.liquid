@@ -1,0 +1,50 @@
+{%- comment -%}
+  Franja de beneficios que se desliza sola (debajo del banner). Se pausa al pasar el mouse.
+  Con "reducir movimiento" queda quieta y se puede deslizar a mano.
+{%- endcomment -%}
+{%- assign items = section.settings.items | split: '|' -%}
+<style>
+  .bt { --bt-speed: {{ section.settings.speed }}s; position: relative; overflow: hidden; background: var(--c-ink); color: #F3EEFA;
+    border-block: 1px solid rgba(255,255,255,.06); }
+  .bt__track { display: flex; width: max-content; animation: btScroll var(--bt-speed) linear infinite; }
+  .bt:hover .bt__track { animation-play-state: paused; }
+  .bt__list { display: flex; align-items: center; margin: 0; padding: 0; list-style: none; }
+  .bt__item { display: inline-flex; align-items: center; gap: 12px; padding: 14px 28px; font-size: 13px; font-weight: 600; letter-spacing: .04em; white-space: nowrap; }
+  .bt__item::after { content: ''; width: 14px; height: 14px; margin-left: 28px; flex: none; opacity: .7;
+    background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M20 4c1 8.4 4.2 11.8 12.6 12.8C24.2 17.8 21 21.2 20 29.6 19 21.2 15.8 17.8 7.4 16.8 15.8 15.8 19 12.4 20 4Z'/%3E%3C/svg%3E") center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M20 4c1 8.4 4.2 11.8 12.6 12.8C24.2 17.8 21 21.2 20 29.6 19 21.2 15.8 17.8 7.4 16.8 15.8 15.8 19 12.4 20 4Z'/%3E%3C/svg%3E") center / contain no-repeat;
+    color: #CDBEF4; }
+  .bt__item strong { color: #CDBEF4; font-weight: 700; }
+  @keyframes btScroll { to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) {
+    .bt { overflow-x: auto; }
+    .bt__track { animation: none; }
+    .bt__list[aria-hidden="true"] { display: none; }
+  }
+</style>
+<div class="bt" role="region" aria-label="Beneficios">
+  <div class="bt__track">
+    {%- for copy in (1..2) -%}
+      <ul class="bt__list"{% if copy == 2 %} aria-hidden="true"{% endif %}>
+        {%- for x in (1..2) -%}
+          {%- for it in items -%}
+            {%- assign t = it | strip -%}
+            {%- if t != blank -%}<li class="bt__item">{{ t }}</li>{%- endif -%}
+          {%- endfor -%}
+        {%- endfor -%}
+      </ul>
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Franja de beneficios",
+  "settings": [
+    { "type": "textarea", "id": "items", "label": "Beneficios (separados con |)", "info": "Podés usar <strong> para destacar.",
+      "default": "Envíos a todo Uruguay en <strong>48 a 72 h</strong> | Envío a cobrar: lo pagás al recibir | Retiro en agencia o a domicilio | Pagá con <strong>Mercado Pago</strong> | Perfumes originales de diseñador y árabes" },
+    { "type": "range", "id": "speed", "label": "Duración de una vuelta (segundos)", "min": 20, "max": 90, "step": 5, "default": 45 }
+  ],
+  "presets": [{ "name": "Franja de beneficios" }]
+}
+{% endschema %}

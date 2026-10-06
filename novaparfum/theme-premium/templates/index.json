@@ -1,0 +1,442 @@
+{
+  "sections": {
+    "showcase": {
+      "type": "hero-showcase",
+      "settings": {
+        "word_1": "Nova",
+        "word_2": "Parfum",
+        "eyebrow": "Perfumería online · Uruguay",
+        "fallback_title": "Tu próxima fragancia favorita",
+        "subtitle": "Perfumes de diseñador y árabes seleccionados. Pagá con Mercado Pago y recibilo en todo Uruguay en 48 a 72 horas.",
+        "button_label": "Ver perfumes",
+        "button_link": "shopify://collections/all",
+        "button2_label": "Ver combos",
+        "button2_link": "#combos",
+        "delay": 5.5,
+        "product_1": "sauvage-dior-100ml-edp",
+        "tint_1": "#DDE3F1",
+        "shadow_1": "rgba(44, 62, 120, .55)",
+        "product_2": "maison-francis-kurkdjian-baccarat-rouge-540-edp",
+        "tint_2": "#F2E0DF",
+        "shadow_2": "rgba(150, 52, 48, .45)",
+        "product_3": "creed-aventus",
+        "tint_3": "#E6E9E3",
+        "shadow_3": "rgba(60, 70, 60, .45)"
+      }
+    },
+    "ticker": {
+      "type": "benefit-ticker",
+      "settings": {
+        "items": "Envíos a todo Uruguay en <strong>48 a 72 h</strong> | Envío a cobrar: lo pagás al recibir | Retiro en agencia o a domicilio | Pagá con <strong>Mercado Pago</strong> | Perfumes de diseñador y árabes",
+        "speed": 45
+      }
+    },
+    "portada": {
+      "type": "perfume-hero",
+      "disabled": true,
+      "settings": {
+        "line1": "Nova",
+        "line2": "Parfum",
+        "tagline": "Perfumería online · Uruguay",
+        "subtitle": "Perfumes de diseñador y árabes seleccionados. Pagá con Mercado Pago y recibilo en todo Uruguay.",
+        "button_label": "Ver perfumes",
+        "button_link": "shopify://collections/all",
+        "button2_label": "Ofertas",
+        "button2_link": "shopify://collections/ofertas"
+      }
+    },
+    "marcas": {
+      "type": "brand-marquee",
+      "settings": {
+        "eyebrow": "Las marcas que traemos",
+        "speed": 2.5,
+        "exclude": "A confirmar"
+      }
+    },
+    "generos": {
+      "type": "gender-tabs",
+      "settings": {
+        "eyebrow": "Elegí tu estilo",
+        "title": "¿Para quién es tu perfume?",
+        "label_1": "Hombre",
+        "handle_1": "hombre",
+        "label_2": "Mujer",
+        "handle_2": "mujer",
+        "label_3": "Unisex",
+        "handle_3": "unisex",
+        "limit": 8
+      }
+    },
+    "suenos": {
+      "type": "dream-perfume",
+      "disabled": true,
+      "settings": {
+        "eyebrow": "Pedidos especiales",
+        "title": "Te traemos el perfume de tus sueños",
+        "text": "¿Buscás un perfume que no ves en la tienda? Decinos cuál y de cuántos ml, y te lo conseguimos.",
+        "placeholder": "Ej: Baccarat Rouge 540, Khamrah, Sauvage Elixir…",
+        "sizes": "30 ml, 50 ml, 75 ml, 90 ml, 100 ml, 125 ml, 200 ml",
+        "button_label": "Pedirlo por WhatsApp",
+        "note": "Te respondemos por WhatsApp con precio y plazo de entrega."
+      }
+    },
+    "hero": {
+      "type": "hero",
+      "disabled": true,
+      "settings": {
+        "overlay": 15,
+        "eyebrow": "Perfumería online · Uruguay",
+        "title": "Tu próxima fragancia favorita",
+        "text": "Perfumes de diseñador y árabes seleccionados. Comprá en minutos y recibilo en todo el país.",
+        "button_label": "Ver perfumes",
+        "button2_label": "Ofertas"
+      }
+    },
+    "slider": {
+      "type": "perfume-slider",
+      "settings": {
+        "eyebrow": "Selección NovaParfum",
+        "title": "Tu próxima fragancia favorita",
+        "handle": "destacados",
+        "limit": 8,
+        "autoplay": 0,
+        "button_label": "Ver perfume"
+      }
+    },
+    "categorias": {
+      "type": "category-grid",
+      "blocks": {
+        "mujer": {
+          "type": "category",
+          "settings": {
+            "handle": "mujer",
+            "label": "Mujer",
+            "tone": "powder"
+          }
+        },
+        "hombre": {
+          "type": "category",
+          "settings": {
+            "handle": "hombre",
+            "label": "Hombre",
+            "tone": "iris"
+          }
+        },
+        "unisex": {
+          "type": "category",
+          "settings": {
+            "handle": "unisex",
+            "label": "Unisex",
+            "tone": "sage"
+          }
+        },
+        "ofertas": {
+          "type": "category",
+          "settings": {
+            "handle": "ofertas",
+            "label": "Ofertas",
+            "tone": "mist"
+          }
+        }
+      },
+      "block_order": [
+        "mujer",
+        "hombre",
+        "unisex",
+        "ofertas"
+      ],
+      "disabled": true,
+      "settings": {
+        "title": "Encontrá tu perfume"
+      }
+    },
+    "destacados": {
+      "type": "featured-collection",
+      "settings": {
+        "eyebrow": "Selección NovaParfum",
+        "title": "Perfumes destacados",
+        "handle": "destacados",
+        "limit": 8
+      }
+    },
+    "combos": {
+      "type": "combo-banner",
+      "settings": {
+        "eyebrow": "Combos",
+        "title": "Cuantos más, <em>mejor</em>",
+        "text": "Combiná los perfumes que quieras. El descuento se aplica solo en el carrito.",
+        "pct_2": 10,
+        "pct_3": 15,
+        "button_label": "Armar mi combo",
+        "button_link": "shopify://collections/all",
+        "product_1": "libre-ysl",
+        "product_2": "bleu-de-chanel",
+        "product_3": "carolina-herrera-good-girl"
+      }
+    },
+    "promo": {
+      "type": "bundle-offer",
+      "disabled": true,
+      "blocks": {
+        "t1": {
+          "type": "tier",
+          "settings": {
+            "qty": "1",
+            "label": "perfume",
+            "benefit": "Precio normal"
+          }
+        },
+        "t2": {
+          "type": "tier",
+          "settings": {
+            "qty": "2",
+            "label": "perfumes",
+            "benefit": "10% OFF"
+          }
+        },
+        "t3": {
+          "type": "tier",
+          "settings": {
+            "qty": "3+",
+            "label": "perfumes",
+            "benefit": "15% OFF",
+            "highlight": true
+          }
+        }
+      },
+      "block_order": [
+        "t1",
+        "t2",
+        "t3"
+      ],
+      "settings": {}
+    },
+    "mas_vendidos": {
+      "type": "featured-collection",
+      "settings": {
+        "eyebrow": "Los que más salen",
+        "title": "Más vendidos",
+        "handle": "mas-vendidos",
+        "limit": 8,
+        "tinted": true
+      }
+    },
+    "nuevos": {
+      "type": "featured-collection",
+      "disabled": true,
+      "settings": {
+        "eyebrow": "Recién llegados",
+        "title": "Nuevos",
+        "handle": "nuevos",
+        "limit": 4
+      }
+    },
+    "ofertas": {
+      "type": "featured-collection",
+      "disabled": true,
+      "settings": {
+        "eyebrow": "Por tiempo limitado",
+        "title": "Ofertas",
+        "handle": "ofertas",
+        "limit": 4
+      }
+    },
+    "beneficios": {
+      "type": "benefits",
+      "blocks": {
+        "b1": {
+          "type": "benefit",
+          "settings": {
+            "icon": "truck",
+            "title": "Envíos a todo Uruguay",
+            "text": "Llega en 48 a 72 horas, a tu casa o a la agencia de tu localidad. Envío a cobrar."
+          }
+        },
+        "b2": {
+          "type": "benefit",
+          "settings": {
+            "icon": "card",
+            "title": "Pagá con Mercado Pago",
+            "text": "Tarjetas de crédito, débito o dinero en tu cuenta."
+          }
+        },
+        "b3": {
+          "type": "benefit",
+          "settings": {
+            "icon": "shield",
+            "title": "Compra protegida",
+            "text": "Checkout seguro de Shopify y pago procesado por Mercado Pago."
+          }
+        },
+        "b4": {
+          "type": "benefit",
+          "settings": {
+            "icon": "chat",
+            "title": "Te asesoramos",
+            "text": "¿No sabés cuál elegir? Escribinos por WhatsApp."
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2",
+        "b3",
+        "b4"
+      ],
+      "settings": {}
+    },
+    "envios": {
+      "type": "shipping-info",
+      "blocks": {
+        "s1": {
+          "type": "step",
+          "settings": {
+            "title": "Comprás y pagás",
+            "text": "Con Mercado Pago. Nos dejás tu cédula y elegís domicilio o agencia."
+          }
+        },
+        "s2": {
+          "type": "step",
+          "settings": {
+            "title": "Preparamos tu pedido",
+            "text": "Te confirmamos el pago por email."
+          }
+        },
+        "s3": {
+          "type": "step",
+          "settings": {
+            "title": "Sale tu envío",
+            "text": "Recibís el número de seguimiento."
+          }
+        },
+        "s4": {
+          "type": "step",
+          "settings": {
+            "title": "Lo recibís",
+            "text": "En 48 a 72 horas. Pagás el envío al recibirlo o retirarlo."
+          }
+        }
+      },
+      "block_order": [
+        "s1",
+        "s2",
+        "s3",
+        "s4"
+      ],
+      "settings": {
+        "title": "Recibilo en todo Uruguay",
+        "text": "<p>Enviamos a los 19 departamentos y tu pedido llega en <strong>48 a 72 horas</strong>, a tu casa o a la agencia de tu localidad. <strong>El envío es a cobrar:</strong> en la web pagás solo los perfumes y el envío lo pagás al recibirlo o al retirarlo.</p>"
+      }
+    },
+    "faq": {
+      "type": "faq",
+      "blocks": {
+        "q1": {
+          "type": "qa",
+          "settings": {
+            "question": "¿Cómo pago?",
+            "answer": "<p>Con Mercado Pago: tarjetas de crédito, débito o dinero en tu cuenta de Mercado Pago. Tu pedido se confirma automáticamente cuando Mercado Pago aprueba el pago.</p>"
+          }
+        },
+        "q2": {
+          "type": "qa",
+          "settings": {
+            "question": "¿Hacen envíos a todo Uruguay? ¿Cuánto cuesta?",
+            "answer": "<p>Sí, enviamos a los 19 departamentos y llega en 48 a 72 horas. Podés recibirlo en tu casa o retirarlo en la agencia de tu localidad. El envío es a cobrar: lo pagás al recibirlo o al retirarlo. Al comprar te pedimos tu cédula de identidad para el envío.</p>"
+          }
+        },
+        "q3": {
+          "type": "qa",
+          "settings": {
+            "question": "¿Cómo sigo mi pedido?",
+            "answer": "<p>Cuando tu pedido sale te enviamos el número de seguimiento por email. También podés consultarlo en <a href=\"/pages/segui-tu-pedido\">Seguí tu pedido</a>.</p>"
+          }
+        },
+        "q4": {
+          "type": "qa",
+          "settings": {
+            "question": "¿Qué diferencia hay entre Eau de Parfum y Eau de Toilette?",
+            "answer": "<p>La concentración de esencia: el Eau de Parfum suele tener mayor concentración y duración que el Eau de Toilette.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "q1",
+        "q2",
+        "q3",
+        "q4"
+      ],
+      "settings": {}
+    },
+    "instagram": {
+      "type": "instagram",
+      "disabled": true,
+      "blocks": {
+        "p1": {
+          "type": "post",
+          "settings": {}
+        },
+        "p2": {
+          "type": "post",
+          "settings": {}
+        },
+        "p3": {
+          "type": "post",
+          "settings": {}
+        },
+        "p4": {
+          "type": "post",
+          "settings": {}
+        },
+        "p5": {
+          "type": "post",
+          "settings": {}
+        },
+        "p6": {
+          "type": "post",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "p1",
+        "p2",
+        "p3",
+        "p4",
+        "p5",
+        "p6"
+      ],
+      "settings": {}
+    },
+    "seguinos": {
+      "type": "ig-cta",
+      "settings": {
+        "title": "Seguinos en Instagram",
+        "text": "Novedades, lanzamientos y los perfumes que van llegando.",
+        "handle": "@novaparfum.uy",
+        "collection": "destacados"
+      }
+    }
+  },
+  "order": [
+    "showcase",
+    "ticker",
+    "marcas",
+    "generos",
+    "slider",
+    "destacados",
+    "combos",
+    "mas_vendidos",
+    "beneficios",
+    "envios",
+    "faq",
+    "seguinos",
+    "portada",
+    "instagram",
+    "nuevos",
+    "ofertas",
+    "promo",
+    "categorias",
+    "suenos",
+    "hero"
+  ]
+}
