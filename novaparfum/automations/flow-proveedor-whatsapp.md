@@ -24,9 +24,11 @@ Perfumes:
 Cliente: {{order.shippingAddress.name}}
 Teléfono: {{order.shippingAddress.phone}}
 Dirección: {{order.shippingAddress.address1}} {{order.shippingAddress.address2}}, {{order.shippingAddress.city}}, {{order.shippingAddress.province}}
+{% for a in order.customAttributes %}{{a.key}}: {{a.value}}
+{% endfor %}Envío: A COBRAR (lo paga el cliente al recibir/retirar)
 
 Tocá este link para mandárselo al proveedor por WhatsApp:
-https://wa.me/598XXXXXXXX?text=Nuevo%20pedido%20{{order.name | url_encode}}%20-%20pagado%0A%0AEnviar%3A%0A{% for li in order.lineItems %}-%20{{li.title | url_encode}}%20{{li.variantTitle | url_encode}}%20x{{li.quantity}}%0A{% endfor %}%0ACliente%3A%20{{order.shippingAddress.name | url_encode}}%0ATel%3A%20{{order.shippingAddress.phone | url_encode}}%0ADirecci%C3%B3n%3A%20{{order.shippingAddress.address1 | url_encode}}%20{{order.shippingAddress.address2 | url_encode}}%2C%20{{order.shippingAddress.city | url_encode}}%2C%20{{order.shippingAddress.province | url_encode}}
+https://wa.me/598XXXXXXXX?text=Nuevo%20pedido%20{{order.name | url_encode}}%20-%20pagado%0A%0AEnviar%3A%0A{% for li in order.lineItems %}-%20{{li.title | url_encode}}%20{{li.variantTitle | url_encode}}%20x{{li.quantity}}%0A{% endfor %}%0ACliente%3A%20{{order.shippingAddress.name | url_encode}}%0ATel%3A%20{{order.shippingAddress.phone | url_encode}}%0ADirecci%C3%B3n%3A%20{{order.shippingAddress.address1 | url_encode}}%20{{order.shippingAddress.address2 | url_encode}}%2C%20{{order.shippingAddress.city | url_encode}}%2C%20{{order.shippingAddress.province | url_encode}}%0A{% for a in order.customAttributes %}{{a.key | url_encode}}%3A%20{{a.value | url_encode}}%0A{% endfor %}Env%C3%ADo%3A%20A%20COBRAR
 ```
 `598XXXXXXXX` = WhatsApp del proveedor con 598 adelante y sin el 0 inicial.
 
@@ -36,3 +38,11 @@ Flow → abrir el flujo → acción "Send internal email" → cambiar el número
 ## Más adelante (opcional)
 Envío 100 % automático sin tocar nada: WhatsApp Business API (pago por mensaje) + la app `novaparfum/app`
 desplegada en un servidor. Ver `docs/AUTOMATIONS.md`.
+
+
+## Cédula, modalidad de entrega y envío a cobrar
+
+- En el **carrito** se pide la cédula (obligatoria, se valida el dígito verificador) y cómo recibirlo:
+  *Envío a domicilio* o *Retiro en agencia* (con agencia y localidad). "Comprar ahora" también pasa por el carrito.
+- Se guardan como atributos del pedido: `Cédula`, `Entrega`, `Agencia`. En Flow: `order.customAttributes` (`key` / `value`).
+- La tarifa de envío de Uruguay es **$0 – "Envío a cobrar (lo pagás al recibir o al retirar en agencia)"**: el cliente paga el envío a la agencia al recibir o retirar.
