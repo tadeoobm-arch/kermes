@@ -40,3 +40,12 @@ Reemplaza al banner de fotos (que queda desactivado, no borrado). Todo dibujado 
 - 5 familias (bloques editables): Floral, Amaderado, Oriental, Fresco, Dulce. Cada una cambia color del líquido y del fondo,
   la palabra del título, el texto, las notas y el enlace del botón (búsqueda de la tienda). Rotan solas o se eligen.
 - Estrella ✦ del logo gigante girando de fondo. Con "reducir movimiento": sin olas, notas ni giros.
+
+## Portada inmersiva "Nova No. 01" (`sections/nova-experience.liquid`) — portada actual
+Inspirada en webs de perfumería de lujo ("el perfume como experiencia"). La sección mide ~4 pantallas; el escenario
+queda fijo mientras se baja y cuenta 4 capítulos: intro → salida (cítricos) → corazón (flores) → fondo (vainilla, madera,
+ámbar, humo, tono oscuro). Frasco de la marca en SVG (vidrio facetado, tapa negra con collar dorado, etiqueta NOVA No. 01,
+reflejo en el piso, haz de luz); el líquido cambia de color por capítulo y se inclina con la velocidad del scroll.
+Ingredientes dibujados en SVG (sin imágenes de terceros) que aparecen desde la profundidad y flotan con paralaje.
+Textos editables en Personalizar → Portada inmersiva. Con "reducir movimiento" se ve la intro quieta.
+La portada "Encontrá tu aroma" y el banner de fotos quedan desactivados (no borrados).

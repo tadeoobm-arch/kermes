@@ -499,11 +499,30 @@
         "button2_label": "Ver todos",
         "button2_link": "shopify://collections/all",
         "delay": 5
+      },
+      "disabled": true
+    },
+    "experiencia": {
+      "type": "nova-experience",
+      "settings": {
+        "eyebrow": "Nova Parfum · Colección",
+        "name": "Nova No. 01",
+        "text_0": "El perfume es una experiencia. Deslizá y descubrí cómo se construye una fragancia, nota por nota.",
+        "button": "Descubrir perfumes",
+        "link": "shopify://collections/all",
+        "button2": "Ver más vendidos",
+        "link2": "shopify://collections/mas-vendidos",
+        "title_1": "Bergamota & <em>mandarina</em>",
+        "text_1": "Lo primero que sentís: cítricos brillantes y frescos que abren la fragancia.",
+        "title_2": "Rosa & <em>jazmín</em>",
+        "text_2": "El corazón del perfume: flores que aparecen a los minutos y le dan su carácter.",
+        "title_3": "Ámbar, vainilla & <em>oud</em>",
+        "text_3": "Lo que queda en tu piel durante horas: maderas, ámbar y vainilla. Tu firma."
       }
     }
   },
   "order": [
-    "aroma",
+    "experiencia",
     "ticker",
     "marcas",
     "generos",
@@ -523,6 +542,7 @@
     "categorias",
     "suenos",
     "hero",
-    "showcase"
+    "showcase",
+    "aroma"
   ]
 }
