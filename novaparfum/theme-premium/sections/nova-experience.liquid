@@ -49,7 +49,7 @@
   .nx-btn:active { transform: scale(.98); }
 
   /* Frasco */
-  .nx__bottle-wrap { position: absolute; z-index: 2; left: 62%; top: 50%; width: min(34vmin, 330px); translate: -50% -46%; }
+  .nx__bottle-wrap { position: absolute; z-index: 2; left: 62%; top: 50%; width: min(44vmin, 420px); translate: -50% -46%; }
   .nx__bottle { width: 100%; display: block; overflow: visible; filter: drop-shadow(0 40px 40px rgba(60,35,10,.28)); }
   .nx__stage.is-dark .nx__bottle { filter: drop-shadow(0 30px 50px rgba(0,0,0,.6)) drop-shadow(0 0 40px rgba(226,160,80,.25)); }
   .nx__turn { transform-box: fill-box; transform-origin: 50% 50%; }
@@ -80,18 +80,22 @@
 
   @media (max-width: 989px) {
     .nx { height: 380vh; }
-    .nx__copy { left: 20px; right: 20px; top: auto; bottom: 7%; translate: none; width: auto; height: 42%; text-align: center; }
+    .nx__copy { left: 20px; right: 20px; top: auto; bottom: calc(env(safe-area-inset-bottom) + 28px); translate: none; width: auto; height: 40%; text-align: center; }
     .nx__ch { top: auto; bottom: 0; translate: none; }
     .nx__eyebrow { justify-content: center; }
     .nx__eyebrow::before { display: none; }
-    .nx__title { font-size: clamp(38px, 11vw, 56px); margin-bottom: 10px; }
-    .nx__text { margin: 0 auto 18px; font-size: 15px; }
+    .nx__title { font-size: clamp(34px, 10vw, 52px); margin-bottom: 8px; }
+    .nx__eyebrow { margin-bottom: 10px; }
+    .nx__text { margin: 0 auto 14px; font-size: 14px; line-height: 1.55; }
     .nx__btns { justify-content: center; }
-    .nx__bottle-wrap { left: 50%; top: 30%; width: min(36vw, 190px); }
+    .nx__bottle-wrap { left: 50%; top: 28%; width: min(38vw, 180px); }
     .nx__glow, .nx__rays { left: 50%; top: 30%; }
     .nx__nav { right: 12px; top: 30%; }
     .nx__nav li { font-size: 0; } .nx__nav li::after { width: 10px; } .nx__nav li.is-on::after { width: 22px; }
     .nx__hint { display: none; }
+    /* Antes de empezar a bajar, el escenario arranca debajo del menú: subimos el texto para que no se corte */
+    .nx__copy { transition: bottom .5s var(--nx-out); }
+    .nx:not(.is-scrolled) .nx__copy { bottom: calc(env(safe-area-inset-bottom) + 118px); }
   }
   @media (prefers-reduced-motion: reduce) {
     .nx { height: auto; }
