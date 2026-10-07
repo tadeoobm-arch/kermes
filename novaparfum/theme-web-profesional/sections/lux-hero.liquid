@@ -1,0 +1,181 @@
+{%- comment -%}
+  Portada de lujo (oscura): título que aparece línea por línea, frasco NovaParfum que emerge de la oscuridad
+  entre flores de jazmín, humo que sube, polvo dorado y un haz de luz. Paralaje suave con el mouse (computadora).
+  Abajo, tres beneficios separados por líneas doradas. Con "reducir movimiento": todo quieto y visible.
+{%- endcomment -%}
+<style>
+  .lh { --lh-gold: #C9A46A; --lh-gold-2: #E8CF9C; --lh-ink: #F3ECE2; --lh-soft: #A89D91; --lh-out: cubic-bezier(.23, 1, .32, 1);
+    position: relative; overflow: hidden; isolation: isolate; color: var(--lh-ink);
+    background: radial-gradient(60% 70% at 68% 45%, #2A211B 0%, #14100D 55%, #0A0807 100%); min-height: min(100dvh, 940px); display: grid; }
+  .lh::after { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: .5;
+    background: radial-gradient(28% 40% at 68% 50%, rgba(232,207,156,.20), rgba(232,207,156,0) 70%); }
+  .lh__inner { display: grid; align-items: center; gap: 32px; padding-block: 72px 132px; }
+  .lh__eyebrow { display: flex; align-items: center; gap: 12px; margin: 0 0 22px; font-size: 11px; font-weight: 700; letter-spacing: .3em; text-transform: uppercase; color: var(--lh-gold); }
+  .lh__eyebrow::before { content: ''; width: 36px; height: 1px; background: currentColor; }
+  .lh__title { margin: 0 0 22px; font: 400 clamp(44px, 6.6vw, 104px)/.95 var(--f-display, 'Fraunces', serif); letter-spacing: -.035em; }
+  .lh__line { display: block; overflow: hidden; padding-bottom: .06em; }
+  .lh__line > span { display: inline-block; }
+  .lh__title em { font-style: italic; color: var(--lh-gold-2); }
+  .lh__text { margin: 0 0 30px; max-width: 42ch; color: var(--lh-soft); font-size: 16px; line-height: 1.7; }
+  .lh__cta { display: flex; flex-wrap: wrap; gap: 12px; }
+  .lh-btn { display: inline-flex; align-items: center; gap: 12px; min-height: 54px; padding: 8px 8px 8px 26px; border-radius: 999px; font-weight: 700; text-decoration: none;
+    background: linear-gradient(135deg, #E8CF9C, #C9A46A 55%, #A9824A); color: #16110D; box-shadow: 0 18px 40px -20px rgba(201,164,106,.7);
+    transition: transform .45s var(--lh-out), box-shadow .45s var(--lh-out); }
+  .lh-btn span { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: rgba(22,17,13,.12); transition: transform .45s var(--lh-out); }
+  .lh-btn svg { width: 16px; height: 16px; }
+  .lh-btn--line { background: transparent; color: var(--lh-ink); box-shadow: inset 0 0 0 1px rgba(243,236,226,.35); padding-right: 26px; }
+  @media (hover: hover) and (pointer: fine) {
+    .lh-btn:hover { transform: translateY(-2px); box-shadow: 0 24px 46px -18px rgba(201,164,106,.8); }
+    .lh-btn:hover span { transform: translate(3px, -2px); }
+    .lh-btn--line:hover { box-shadow: inset 0 0 0 1px var(--lh-gold); }
+  }
+  .lh-btn:active { transform: scale(.98); }
+
+  .lh__stage { position: relative; width: min(100%, 560px); aspect-ratio: 1 / 1.05; justify-self: center; }
+  .lh__beam { position: absolute; left: 50%; top: -30%; width: 70%; height: 120%; translate: -50% 0; pointer-events: none;
+    background: linear-gradient(to bottom, rgba(232,207,156,.22), rgba(232,207,156,0) 80%); clip-path: polygon(38% 0, 62% 0, 100% 100%, 0 100%); filter: blur(6px); }
+  .lh__plinth { position: absolute; left: 50%; bottom: 6%; width: 64%; height: 9%; translate: -50% 0; border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(232,207,156,.25), rgba(232,207,156,0)); }
+  .lh__bottle { position: absolute; left: 50%; bottom: 9%; width: 44%; translate: -50% 0; }
+  .lh__bottle .nb { width: 100%; display: block; overflow: visible; filter: drop-shadow(0 30px 40px rgba(0,0,0,.65)) drop-shadow(0 0 50px rgba(232,207,156,.18)); }
+  .lh__flowers, .lh__smoke, .lh__dust { position: absolute; inset: 0; pointer-events: none; }
+  .lh__fl { position: absolute; width: var(--s); height: var(--s); left: var(--x); top: var(--y); }
+  .lh__fl svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .lh__smoke path { fill: none; stroke: rgba(243,236,226,.16); stroke-width: 10; stroke-linecap: round; filter: blur(5px); }
+  .lh__dust i { position: absolute; left: var(--x); top: var(--y); width: var(--s); height: var(--s); border-radius: 50%; background: var(--lh-gold-2);
+    box-shadow: 0 0 10px rgba(232,207,156,.8); opacity: .0; }
+
+  .lh__usp { position: absolute; left: 0; right: 0; bottom: 0; border-top: 1px solid rgba(201,164,106,.18); }
+  .lh__usp ul { display: grid; grid-template-columns: repeat(3, 1fr); margin: 0; padding: 0; list-style: none; }
+  .lh__usp li { padding: 20px 16px; text-align: center; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--lh-soft); }
+  .lh__usp li + li { border-left: 1px solid rgba(201,164,106,.18); }
+  .lh__usp strong { display: block; margin-bottom: 4px; font: 400 18px/1.2 var(--f-display, 'Fraunces', serif); letter-spacing: 0; text-transform: none; color: var(--lh-ink); }
+
+  @media (min-width: 990px) { .lh__inner { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 989px) {
+    .lh__inner { text-align: center; padding-block: 28px 150px; }
+    .lh__copy { order: 2; }
+    .lh__eyebrow { justify-content: center; } .lh__eyebrow::before { display: none; }
+    .lh__text { margin-inline: auto; }
+    .lh__cta { justify-content: center; }
+    .lh__stage { width: min(84vw, 400px); }
+    .lh__usp li { padding: 14px 6px; font-size: 9.5px; letter-spacing: .08em; }
+    .lh__usp strong { font-size: 14px; }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .lh__line > span { animation: lhLine 1.1s var(--lh-out) backwards; }
+    .lh__line:nth-child(2) > span { animation-delay: .12s; }
+    .lh__eyebrow, .lh__text, .lh__cta { animation: lhUp .9s var(--lh-out) backwards; }
+    .lh__eyebrow { animation-delay: .05s; } .lh__text { animation-delay: .35s; } .lh__cta { animation-delay: .45s; }
+    .lh__bottle { animation: lhRise 1.6s var(--lh-out) .2s backwards; }
+    .lh__bottle .nb { animation: lhFloat 7s ease-in-out 1.8s infinite; }
+    .lh__beam { animation: lhBeam 2.2s ease .1s backwards, lhBreath 6s ease-in-out 2.3s infinite; }
+    .lh .nb__sheen { animation: lhSheen 6s var(--lh-out) 1.6s infinite; }
+    .lh__fl { animation: lhBloom 1.4s var(--lh-out) calc(.6s + var(--i) * .08s) backwards; }
+    .lh__fl svg { animation: lhSway calc(6s + var(--i) * .7s) ease-in-out infinite alternate; transform-origin: 50% 80%; }
+    .lh__smoke path { stroke-dasharray: 400; animation: lhSmoke var(--d) ease-in-out var(--dl) infinite; }
+    .lh__dust i { animation: lhDust var(--d) linear var(--dl) infinite; }
+    .lh__usp li { animation: lhUp .9s var(--lh-out) backwards; }
+    .lh__usp li:nth-child(1) { animation-delay: .7s; } .lh__usp li:nth-child(2) { animation-delay: .78s; } .lh__usp li:nth-child(3) { animation-delay: .86s; }
+    @keyframes lhLine { from { transform: translateY(105%); } }
+    @keyframes lhUp { from { opacity: 0; transform: translateY(16px); } }
+    @keyframes lhRise { from { opacity: 0; transform: translateY(60px) scale(.94); filter: brightness(.2); } }
+    @keyframes lhFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+    @keyframes lhBeam { from { opacity: 0; } }
+    @keyframes lhBreath { 0%, 100% { opacity: 1; } 50% { opacity: .65; } }
+    @keyframes lhSheen { 0%, 60% { transform: translateX(0) skewX(-14deg); } 100% { transform: translateX(330px) skewX(-14deg); } }
+    @keyframes lhBloom { from { opacity: 0; transform: scale(.6) rotate(-20deg); } }
+    @keyframes lhSway { from { transform: rotate(-4deg); } to { transform: rotate(5deg); } }
+    @keyframes lhSmoke { 0% { stroke-dashoffset: 400; opacity: 0; transform: translateY(20px); } 30% { opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 0; transform: translateY(-60px); } }
+    @keyframes lhDust { 0% { opacity: 0; transform: translateY(0); } 20% { opacity: .9; } 100% { opacity: 0; transform: translateY(-140px) translateX(20px); } }
+  }
+</style>
+
+<section class="lh" id="lh-{{ section.id }}">
+  <div class="container lh__inner">
+    <div class="lh__copy">
+      <p class="lh__eyebrow">{{ section.settings.eyebrow }}</p>
+      <h1 class="lh__title"><span class="lh__line"><span>{{ section.settings.line_1 }}</span></span><span class="lh__line"><span>{{ section.settings.line_2 }}</span></span></h1>
+      <p class="lh__text">{{ section.settings.text }}</p>
+      <div class="lh__cta">
+        <a class="lh-btn" href="{{ section.settings.link | default: routes.all_products_collection_url }}">{{ section.settings.button }}<span aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 11 11 5M6 5h5v5"/></svg></span></a>
+        {%- if section.settings.button2 != blank -%}<a class="lh-btn lh-btn--line" href="{{ section.settings.link2 | default: '#anatomia' }}">{{ section.settings.button2 }}</a>{%- endif -%}
+      </div>
+    </div>
+    <div class="lh__stage" aria-hidden="true">
+      <div class="lh__beam"></div>
+      <svg class="lh__smoke" viewBox="0 0 400 420" preserveAspectRatio="none">
+        <path d="M150 300 C120 240 190 210 160 150 C135 100 185 70 170 20" style="--d: 7s; --dl: 1.5s;"/>
+        <path d="M250 310 C280 250 215 220 245 160 C270 110 220 80 240 30" style="--d: 8.5s; --dl: 3.2s;"/>
+        <path d="M200 290 C175 230 230 200 205 140 C185 95 225 60 210 10" style="--d: 9.5s; --dl: 5s;"/>
+      </svg>
+      <div class="lh__plinth"></div>
+      <div class="lh__bottle" data-lh-depth="6">{% render 'nova-bottle', uid: section.id, liquid_a: '#F3C877', liquid_b: '#C9852F', liquid_c: '#6E3810' %}</div>
+      <div class="lh__flowers" data-lh-depth="14">
+        {%- assign fls = '8%,62%,22%,0|74%,62%,20%,1|16%,78%,15%,2|80%,40%,14%,3|0%,38%,12%,4|68%,82%,13%,5' | split: '|' -%}
+        {%- for f in fls -%}{%- assign v = f | split: ',' -%}
+          <span class="lh__fl" style="--x: {{ v[0] }}; --y: {{ v[1] }}; --s: {{ v[2] }}; --i: {{ v[3] }};">
+            <svg viewBox="-50 -50 100 100">
+              {%- if v[3] == '3' or v[3] == '4' -%}
+                <path d="M-40 30 C-30 -30 20 -45 42 -40 C40 -10 10 35 -40 30Z" fill="#2F3B2A"/><path d="M-38 28 C-10 0 15 -22 40 -38" stroke="#4E6440" stroke-width="2" fill="none"/>
+              {%- else -%}
+                <g fill="#F8F3EA" stroke="#D9CDB8" stroke-width="1.2">{% for k in (0..4) %}<path transform="rotate({{ k | times: 72 }})" d="M0 -6 C-14 -16 -14 -40 0 -46 C14 -40 14 -16 0 -6Z"/>{% endfor %}</g>
+                <circle r="7" fill="#E8C873"/><circle r="3" fill="#C99A3A"/>
+              {%- endif -%}
+            </svg>
+          </span>
+        {%- endfor -%}
+      </div>
+      <div class="lh__dust" data-lh-depth="22">
+        {%- assign ds = '22%,70%,4px,6s,0s|48%,78%,3px,7s,1.2s|62%,66%,5px,8s,2.4s|36%,60%,3px,6.5s,3.1s|70%,74%,4px,7.5s,.6s|54%,58%,2px,5.5s,4s|30%,82%,3px,9s,2s|76%,56%,3px,6s,3.6s' | split: '|' -%}
+        {%- for d in ds -%}{%- assign v = d | split: ',' -%}<i style="--x: {{ v[0] }}; --y: {{ v[1] }}; --s: {{ v[2] }}; --d: {{ v[3] }}; --dl: {{ v[4] }};"></i>{%- endfor -%}
+      </div>
+    </div>
+  </div>
+  <div class="lh__usp">
+    <ul class="container">
+      <li><strong>{{ section.settings.usp_1_title }}</strong>{{ section.settings.usp_1_text }}</li>
+      <li><strong>{{ section.settings.usp_2_title }}</strong>{{ section.settings.usp_2_text }}</li>
+      <li><strong>{{ section.settings.usp_3_title }}</strong>{{ section.settings.usp_3_text }}</li>
+    </ul>
+  </div>
+</section>
+<script>
+  (() => {
+    const root = document.getElementById('lh-{{ section.id }}');
+    if (!root || window.matchMedia('(prefers-reduced-motion: reduce)').matches || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    const layers = [...root.querySelectorAll('[data-lh-depth]')];
+    let tx = 0, ty = 0, cx = 0, cy = 0, raf = 0;
+    const loop = () => {
+      cx += (tx - cx) * .07; cy += (ty - cy) * .07;
+      layers.forEach((l) => { const d = +l.dataset.lhDepth; l.style.transform = `translate3d(${(cx * d).toFixed(2)}px, ${(cy * d).toFixed(2)}px, 0)`; });
+      raf = Math.abs(tx - cx) + Math.abs(ty - cy) > .002 ? requestAnimationFrame(loop) : 0;
+    };
+    root.addEventListener('pointermove', (e) => { const r = root.getBoundingClientRect(); tx = (e.clientX - r.left) / r.width - .5; ty = (e.clientY - r.top) / r.height - .5; if (!raf) raf = requestAnimationFrame(loop); });
+    root.addEventListener('pointerleave', () => { tx = 0; ty = 0; if (!raf) raf = requestAnimationFrame(loop); });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Portada de lujo",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Etiqueta", "default": "Nova Parfum · Perfumería" },
+    { "type": "text", "id": "line_1", "label": "Título · línea 1", "default": "Más que una fragancia." },
+    { "type": "text", "id": "line_2", "label": "Título · línea 2", "default": "Una <em>presencia.</em>" },
+    { "type": "textarea", "id": "text", "label": "Texto", "default": "Perfumes de diseñador y árabes, elegidos uno por uno. Envíos a todo Uruguay en 48 a 72 horas." },
+    { "type": "text", "id": "button", "label": "Botón", "default": "Ver colección" },
+    { "type": "url", "id": "link", "label": "Enlace del botón" },
+    { "type": "text", "id": "button2", "label": "Botón secundario", "default": "Descubrí las notas" },
+    { "type": "url", "id": "link2", "label": "Enlace del botón secundario" },
+    { "type": "text", "id": "usp_1_title", "label": "Beneficio 1 · título", "default": "48 a 72 h" },
+    { "type": "text", "id": "usp_1_text", "label": "Beneficio 1 · texto", "default": "Envíos a todo Uruguay" },
+    { "type": "text", "id": "usp_2_title", "label": "Beneficio 2 · título", "default": "Mercado Pago" },
+    { "type": "text", "id": "usp_2_text", "label": "Beneficio 2 · texto", "default": "Pago seguro" },
+    { "type": "text", "id": "usp_3_title", "label": "Beneficio 3 · título", "default": "Asesoramiento" },
+    { "type": "text", "id": "usp_3_text", "label": "Beneficio 3 · texto", "default": "Por WhatsApp" }
+  ],
+  "presets": [{ "name": "Portada de lujo" }]
+}
+{% endschema %}
