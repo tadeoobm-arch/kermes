@@ -17,3 +17,15 @@
 | Enlaces y detalles | #7A68B8 |
 
 Tipografía segura para emails: Georgia (la más parecida a Fraunces).
+
+## Imagen para compartir (WhatsApp, Facebook, Google)
+`novaparfum-compartir.png` (1200 × 630). Se genera desde `novaparfum-compartir.html` (Fraunces y Manrope, fondo
+#2F2A4A). Subida a Shopify → Archivos el 8/10/2026. Se elige en Tienda online → Preferencias → Imagen para compartir
+en redes sociales.
+
+Texto sugerido para Tienda online → Preferencias:
+- **Título de la página de inicio:** Nova Parfum | Perfumes con envío a todo Uruguay
+- **Metadescripción:** Perfumes de dama, caballero y unisex. Pagá con Mercado Pago y recibilo en 48 a 72 horas en todo
+  Uruguay, a domicilio o en agencia.
+
+Antes del cambio la web no tenía descripción ni imagen: al compartir el link salía solo "Nova Parfum".
