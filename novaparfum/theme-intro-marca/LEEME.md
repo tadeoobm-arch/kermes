@@ -1,6 +1,6 @@
 # NovaParfum · Intro de marca
 
-Tema de Shopify: **"NovaParfum (intro de marca)"** (ID 188980560126), sin publicar. Es una copia del tema publicado ("portada título") donde solo cambia la portada.
+Tema de Shopify: **"NovaParfum (intro de marca)"** (ID 188980560126). **Publicado el 8 de octubre de 2026** y verificado en vivo (computadora y celular, sin errores). Es una copia del tema publicado ("portada título") donde solo cambia la portada.
 Vista previa: https://pj3pch-eh.myshopify.com/?preview_theme_id=188980560126
 
 ## Idea
