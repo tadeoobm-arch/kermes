@@ -19,6 +19,14 @@ la API de WhatsApp (de pago). Por eso el catálogo se arma en Meta y después se
   - **No usar** "Products for Tadeo personal catalog": es el catálogo personal de Marketplace.
   - Uso compartido de datos: **Conservador** (sin datos personales de clientes). Píxel de Meta creado.
   - No se instaló "Prueba WhatsApp en Shopify" ni se crearon anuncios.
+- WhatsApp Business (+598 2312 8537) vinculado a Instagram **novaparfum.uy** y a la página de Facebook **Novaparfum**.
+- La app de WhatsApp Business **sí ofrece** "Conectar un catálogo de Meta Business Suite"
+  (Herramientas para la empresa → Catálogo, o Ajustes del catálogo → Conectar catálogo).
+  El primer intento dio "Se produjo un error" (8/10/2026, minutos después de crear el catálogo). Antes de reintentar:
+  - business.facebook.com/settings → novaparfum.uy → Orígenes de datos → Catálogos → el catálogo de Shopify →
+    asignar a la persona dueña con **Control total**.
+  - Revisar que el catálogo ya tenga artículos en el Administrador de ventas.
+  - Reintentar con la app de Facebook con la sesión iniciada en el teléfono.
 - **Pendiente:** "Alpha for Him" tiene la marca "A confirmar". Hay que corregir la marca o sacarlo del canal
   (Productos → Alpha for Him → Canales de ventas).
 
