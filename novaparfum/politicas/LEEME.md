@@ -23,3 +23,12 @@ También confirmado:
   de la dirección de la tienda: para sacarla hay que editar esa política a mano.
 
 Base legal del derecho de arrepentimiento: Ley 17.250, artículo 16 (5 días hábiles).
+
+## Estado al 8/10/2026
+- Las 4 políticas ya están pegadas en Shopify. Verificado en la tienda: todas responden y ninguna muestra la dirección.
+- La Política de privacidad automática todavía dice "llámenos al ," sin número en el párrafo "Contacto".
+- Menú "Menú de pie de página" (columna **Ayuda**): Buscar, **Envíos** y **Cambios y devoluciones**, que llevan a las
+  políticas. Los cinco enlaces de políticas también aparecen solos en la barra inferior del pie.
+- Páginas actualizadas para que coincidan con las políticas (la versión anterior quedó en `*.ANTERIOR.html`):
+  - `/pages/envios-y-devoluciones` → `pagina-envios-y-devoluciones.html`
+  - `/pages/contacto` → `pagina-contacto.html` (se agregaron WhatsApp e Instagram)
