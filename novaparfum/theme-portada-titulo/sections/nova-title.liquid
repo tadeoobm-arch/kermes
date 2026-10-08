@@ -1,7 +1,7 @@
 {%- comment -%}
   Portada "Título": el nombre novaparfum enorme es el protagonista y el frasco se para entre
   "nova" y "parfum" como una letra más. Las letras aparecen una por una desde la bruma, el frasco
-  crece en su lugar, la tapa se levanta y queda flotando, y el atomizador rocía bruma sobre "nova".
+  aparece del mismo alto que las letras, la tapa sube derecha, rocía bruma hacia arriba y vuelve a cerrar.
   En computadora cada letra se eleva al pasar el mouse. Tocar el frasco vuelve a rociar.
   Con "reducir movimiento" se ve la escena final, quieta.
 {%- endcomment -%}
@@ -18,19 +18,18 @@
   .nt::before { content: ''; position: absolute; z-index: -1; left: 50%; top: 46%; width: min(90vw, 900px); aspect-ratio: 1.6; translate: -50% -50%; border-radius: 50%;
     background: radial-gradient(closest-side, rgba(180,160,235,.35), rgba(180,160,235,0)); filter: blur(30px); pointer-events: none; }
   .nt__eyebrow { margin: 0 0 clamp(30px, 6vh, 64px); font-size: 11px; font-weight: 700; letter-spacing: .36em; text-transform: uppercase; color: var(--nt-soft); }
-  .nt__title { margin: 0; padding-bottom: .16em; display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline; column-gap: .1em;
+  .nt__title { margin: 0; padding-bottom: .16em; display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline; column-gap: .14em;
     font: 400 clamp(64px, 13.6vw, 232px)/.9 var(--f-display, 'Fraunces', serif); letter-spacing: -.05em; color: var(--nt-ink); }
   .nt__w { white-space: nowrap; }
   .nt__w--2 { font-style: italic; color: var(--nt-iris); }
   .nt__ch { display: inline-block; transition: transform .5s var(--nt-out), color .3s ease; }
   @media (hover: hover) and (pointer: fine) { .nt__ch:hover { transform: translateY(-.08em); } .nt__w--1 .nt__ch:hover { color: var(--nt-iris); } }
 
-  .nt__btl { all: unset; position: relative; display: inline-block; width: .74em; aspect-ratio: 172 / 280; margin-bottom: -.04em; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .nt__btl { all: unset; position: relative; display: inline-block; width: .44em; aspect-ratio: 160 / 264; margin-bottom: -.01em; cursor: pointer; -webkit-tap-highlight-color: transparent; }
   .nt__btl:focus-visible { outline: 2px solid var(--nt-iris); outline-offset: 8px; border-radius: 12px; }
   .nt__svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; transition: transform .25s var(--nt-out); }
   .nt__btl:active .nt__svg { transform: scale(.97); }
-  .nt__svg .cap { transform-box: fill-box; transform-origin: 50% 50%; transform: translate(92px, -6px) rotate(22deg); }
-  .nt__svg .cap-in { transform-box: fill-box; transform-origin: 50% 50%; }
+  .nt__svg .cap { transform-box: fill-box; transform-origin: 50% 50%; }
   .nt__svg .wave { transform-box: fill-box; }
   .nt__svg .sheen { transform-box: fill-box; transform: translateX(-170px) skewX(-16deg); }
 
@@ -57,7 +56,7 @@
 
   @media (max-width: 749px) {
     .nt__title { font-size: clamp(64px, 25vw, 150px); row-gap: .02em; }
-    .nt__btl { width: .7em; }
+    .nt__btl { width: .44em; }
     .nt__eyebrow { margin-bottom: 46px; }
     .nt__sub { font-size: 15px; }
   }
@@ -65,22 +64,15 @@
   @media (prefers-reduced-motion: no-preference) {
     .nt__eyebrow { animation: ntUp .9s var(--nt-out) .1s backwards; }
     .nt__ch { animation: ntMist 1.2s var(--nt-out) calc(.15s + var(--i) * 70ms) backwards; }
-    .nt__btl { animation: ntGrow 1.3s var(--nt-out) .55s backwards; }
-    .nt__svg .cap { animation: ntCap 1.2s cubic-bezier(.65, 0, .35, 1) 1.5s backwards; }
-    .nt__svg .cap-in { animation: ntCapFloat 5s ease-in-out 2.8s infinite alternate; }
+    .nt__btl { animation: ntMist 1.2s var(--nt-out) .43s backwards; }
+    .nt__svg .cap { animation: ntCap 1.1s cubic-bezier(.65, 0, .35, 1) 1.7s; }
     .nt__svg .wave { animation: ntWave 5s linear infinite; }
     .nt__svg .sheen { animation: ntSheen 6.5s var(--nt-out) 3s infinite; }
     .nt__sub { animation: ntUp .9s var(--nt-out) 1.2s backwards; }
     .nt__cta { animation: ntUp .9s var(--nt-out) 1.35s backwards; }
     .nt__hint { animation: ntFade 1s ease 3.4s backwards; }
     @keyframes ntMist { from { opacity: 0; filter: blur(12px); transform: translateY(.3em) rotate(3deg); } 55% { filter: blur(0); } }
-    @keyframes ntGrow { from { opacity: 0; transform: translateY(.25em) scale(.7); } }
-    @keyframes ntCap {
-      0% { transform: none; }
-      30% { transform: translateY(-30px) rotate(-4deg); }
-      100% { transform: translate(92px, -6px) rotate(22deg); }
-    }
-    @keyframes ntCapFloat { from { transform: translateY(0) rotate(0); } to { transform: translateY(-8px) rotate(-4deg); } }
+    @keyframes ntCap { 0%, 100% { transform: none; } 35%, 62% { transform: translateY(-46px); } }
     @keyframes ntWave { to { transform: translateX(-120px); } }
     @keyframes ntSheen { 0%, 60% { transform: translateX(-170px) skewX(-16deg); } 100% { transform: translateX(210px) skewX(-16deg); } }
     @keyframes ntUp { from { opacity: 0; transform: translateY(14px); } }
@@ -94,7 +86,7 @@
     <h1 class="nt__title" aria-label="{{ section.settings.word_1 }}{{ section.settings.word_2 }}">
       <span class="nt__w nt__w--1" aria-hidden="true">{%- for ch in c1 -%}<span class="nt__ch" style="--i: {{ forloop.index0 }};">{{ ch }}</span>{%- endfor -%}</span>
       <button class="nt__btl" type="button" aria-label="Rociar perfume" data-nt-btl>
-        <svg class="nt__svg" viewBox="24 30 172 280" aria-hidden="true">
+        <svg class="nt__svg" viewBox="30 40 160 264" aria-hidden="true">
           <defs>
             <linearGradient id="ntGlass-{{ u }}" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0" stop-color="#fff" stop-opacity=".8"/><stop offset=".12" stop-color="#fff" stop-opacity=".3"/>
@@ -113,7 +105,6 @@
             <clipPath id="ntBody-{{ u }}"><rect x="30" y="116" width="160" height="186" rx="16"/></clipPath>
             <clipPath id="ntIn-{{ u }}"><rect x="42" y="128" width="136" height="150" rx="9"/></clipPath>
           </defs>
-          <ellipse cx="110" cy="303" rx="96" ry="7" fill="url(#ntShadow-{{ u }})"/>
 
           <rect x="104" y="82" width="12" height="20" fill="#8E6C3C"/>
           <rect x="94" y="66" width="32" height="20" rx="5" fill="url(#ntGold-{{ u }})"/>
@@ -141,12 +132,12 @@
           <text x="110" y="234" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="11" letter-spacing="2" fill="#fff" opacity=".95">parfum</text>
           <text x="110" y="262" text-anchor="middle" font-family="Manrope, sans-serif" font-style="normal" font-size="5.5" font-weight="700" letter-spacing="2.2" fill="#fff" opacity=".8">EAU DE PARFUM · 100 ML</text>
 
-          <g class="cap"><g class="cap-in">
+          <g class="cap">
             <rect x="80" y="40" width="60" height="78" rx="7" fill="url(#ntCap-{{ u }})"/>
             <rect x="80" y="40" width="60" height="7" rx="3" fill="#fff" opacity=".12"/>
             <rect x="88" y="46" width="5" height="60" rx="2.5" fill="#fff" opacity=".2"/>
             <rect x="80" y="110" width="60" height="8" rx="2" fill="url(#ntGold-{{ u }})"/>
-          </g></g>
+          </g>
         </svg>
       </button>
       <span class="nt__w nt__w--2" aria-hidden="true">{%- for ch in c2 -%}<span class="nt__ch" style="--i: {{ forloop.index0 | plus: n1 }};">{{ ch }}</span>{%- endfor -%}</span>
@@ -168,21 +159,21 @@
     const root = document.getElementById('nt-{{ u }}');
     if (!root || !root.animate) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const fx = root.querySelector('.nt__fx'), nozzle = root.querySelector('.nozzle'), btl = root.querySelector('[data-nt-btl]');
+    const fx = root.querySelector('.nt__fx'), btl = root.querySelector('[data-nt-btl]'), cap = root.querySelector('.cap');
     let ready = false, busy = false;
 
-    // Rocío: la bruma sale del atomizador hacia la izquierda, por encima de "nova"
+    // Rocío: la tapa sube derecha, la bruma sale del atomizador hacia arriba (pareja a los dos lados) y la tapa vuelve a cerrar
     const spray = (n) => {
-      const r = root.getBoundingClientRect(), z = nozzle.getBoundingClientRect();
-      const ox = z.left + z.width / 2 - r.left, oy = z.top + z.height / 2 - r.top;
-      const k = Math.min(1.3, Math.max(.6, btl.offsetHeight / 260));
+      const r = root.getBoundingClientRect(), b = btl.getBoundingClientRect();
+      const ox = b.left + b.width / 2 - r.left, oy = b.top + b.height * (26 / 264) - r.top;
+      const k = Math.min(1.2, Math.max(.6, btl.offsetHeight / 180));
       for (let i = 0; i < n; i++) {
         const p = document.createElement('i'); p.className = 'nt__p';
         const s = (8 + Math.random() * 24) * k;
         p.style.width = p.style.height = s + 'px'; p.style.left = ox + 'px'; p.style.top = oy + 'px';
         fx.appendChild(p);
-        const a = (196 + (Math.random() - .5) * 40) * Math.PI / 180, d = (90 + Math.random() * 300) * k;
-        const dx = Math.cos(a) * d, dy = Math.sin(a) * d - Math.random() * 40 * k;
+        const a = (-90 + (Math.random() - .5) * 110) * Math.PI / 180, d = (60 + Math.random() * 200) * k;
+        const dx = Math.cos(a) * d, dy = Math.sin(a) * d;
         p.animate([
           { opacity: 0, transform: 'translate(-50%,-50%) scale(.3)' },
           { opacity: .85, offset: .1 },
@@ -191,10 +182,13 @@
       }
     };
 
-    setTimeout(() => { ready = true; spray(40); }, 2550);
+    setTimeout(() => { ready = true; spray(36); }, 2100);
     btl.addEventListener('click', () => {
       if (!ready || busy) return;
-      busy = true; spray(30); setTimeout(() => (busy = false), 450);
+      busy = true;
+      cap.animate([{ transform: 'none' }, { transform: 'translateY(-46px)', offset: .35 }, { transform: 'translateY(-46px)', offset: .62 }, { transform: 'none' }],
+        { duration: 1100, easing: 'cubic-bezier(.65,0,.35,1)' }).onfinish = () => (busy = false);
+      setTimeout(() => spray(28), 400);
     });
   })();
 </script>
