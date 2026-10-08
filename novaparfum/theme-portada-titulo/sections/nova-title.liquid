@@ -1,0 +1,220 @@
+{%- comment -%}
+  Portada "Título": el nombre novaparfum enorme es el protagonista y el frasco se para entre
+  "nova" y "parfum" como una letra más. Las letras aparecen una por una desde la bruma, el frasco
+  crece en su lugar, la tapa se levanta y queda flotando, y el atomizador rocía bruma sobre "nova".
+  En computadora cada letra se eleva al pasar el mouse. Tocar el frasco vuelve a rociar.
+  Con "reducir movimiento" se ve la escena final, quieta.
+{%- endcomment -%}
+{%- liquid
+  assign u = section.id
+  assign c1 = section.settings.word_1 | split: ''
+  assign c2 = section.settings.word_2 | split: ''
+  assign n1 = c1.size
+-%}
+<style>
+  .nt { --nt-ink: var(--c-ink, #1F1B2E); --nt-iris: var(--c-iris, #6E5BB5); --nt-soft: #77708A; --nt-out: cubic-bezier(.23, 1, .32, 1);
+    position: relative; overflow: hidden; isolation: isolate; background: var(--c-bg, #F7F3EE); text-align: center;
+    min-height: max(560px, calc(100svh - 112px)); display: grid; place-items: center; padding: clamp(28px, 5vh, 64px) 16px clamp(40px, 7vh, 80px); }
+  .nt::before { content: ''; position: absolute; z-index: -1; left: 50%; top: 46%; width: min(90vw, 900px); aspect-ratio: 1.6; translate: -50% -50%; border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(180,160,235,.35), rgba(180,160,235,0)); filter: blur(30px); pointer-events: none; }
+  .nt__eyebrow { margin: 0 0 clamp(30px, 6vh, 64px); font-size: 11px; font-weight: 700; letter-spacing: .36em; text-transform: uppercase; color: var(--nt-soft); }
+  .nt__title { margin: 0; padding-bottom: .16em; display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline; column-gap: .1em;
+    font: 400 clamp(64px, 13.6vw, 232px)/.9 var(--f-display, 'Fraunces', serif); letter-spacing: -.05em; color: var(--nt-ink); }
+  .nt__w { white-space: nowrap; }
+  .nt__w--2 { font-style: italic; color: var(--nt-iris); }
+  .nt__ch { display: inline-block; transition: transform .5s var(--nt-out), color .3s ease; }
+  @media (hover: hover) and (pointer: fine) { .nt__ch:hover { transform: translateY(-.08em); } .nt__w--1 .nt__ch:hover { color: var(--nt-iris); } }
+
+  .nt__btl { all: unset; position: relative; display: inline-block; width: .74em; aspect-ratio: 172 / 280; margin-bottom: -.04em; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .nt__btl:focus-visible { outline: 2px solid var(--nt-iris); outline-offset: 8px; border-radius: 12px; }
+  .nt__svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; transition: transform .25s var(--nt-out); }
+  .nt__btl:active .nt__svg { transform: scale(.97); }
+  .nt__svg .cap { transform-box: fill-box; transform-origin: 50% 50%; transform: translate(92px, -6px) rotate(22deg); }
+  .nt__svg .cap-in { transform-box: fill-box; transform-origin: 50% 50%; }
+  .nt__svg .wave { transform-box: fill-box; }
+  .nt__svg .sheen { transform-box: fill-box; transform: translateX(-170px) skewX(-16deg); }
+
+  .nt__foot { display: grid; justify-items: center; margin-top: clamp(6px, 1.5vh, 16px); }
+  .nt__sub { margin: 0; max-width: 52ch; color: var(--nt-soft); font-size: 16px; line-height: 1.65; }
+  .nt__cta { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px 26px; margin-top: clamp(16px, 2.6vh, 26px); }
+  .nt-btn { display: inline-flex; align-items: center; gap: 12px; min-height: 54px; padding: 8px 8px 8px 26px; border-radius: 999px; text-decoration: none; font-weight: 700;
+    background: var(--nt-ink); color: #fff; box-shadow: 0 18px 36px -22px rgba(31,27,46,.7); transition: transform .45s var(--nt-out), box-shadow .45s var(--nt-out); }
+  .nt-btn span { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,.14); transition: transform .45s var(--nt-out); }
+  .nt-btn svg { width: 16px; height: 16px; }
+  .nt-link { position: relative; padding: 6px 0; font-weight: 700; color: var(--nt-ink); text-decoration: none; }
+  .nt-link::after { content: ''; position: absolute; left: 0; right: 0; bottom: 2px; height: 1px; background: currentColor; transform-origin: right; transition: transform .5s var(--nt-out); }
+  @media (hover: hover) and (pointer: fine) {
+    .nt-btn:hover { transform: translateY(-2px); box-shadow: 0 24px 40px -20px rgba(31,27,46,.6); }
+    .nt-btn:hover span { transform: translate(3px, -2px); }
+    .nt-link:hover::after { transform: scaleX(0); }
+  }
+  .nt-btn:active { transform: scale(.98); }
+  .nt__hint { margin: 14px 0 0; font-size: 10.5px; font-weight: 700; letter-spacing: .26em; text-transform: uppercase; color: rgba(110,91,181,.75); }
+
+  .nt__fx { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
+  .nt__p { position: absolute; left: 0; top: 0; border-radius: 50%; pointer-events: none;
+    background: radial-gradient(circle, rgba(140,116,220,.6) 0%, rgba(140,116,220,.22) 45%, rgba(140,116,220,0) 70%); }
+
+  @media (max-width: 749px) {
+    .nt__title { font-size: clamp(64px, 25vw, 150px); row-gap: .02em; }
+    .nt__btl { width: .7em; }
+    .nt__eyebrow { margin-bottom: 46px; }
+    .nt__sub { font-size: 15px; }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .nt__eyebrow { animation: ntUp .9s var(--nt-out) .1s backwards; }
+    .nt__ch { animation: ntMist 1.2s var(--nt-out) calc(.15s + var(--i) * 70ms) backwards; }
+    .nt__btl { animation: ntGrow 1.3s var(--nt-out) .55s backwards; }
+    .nt__svg .cap { animation: ntCap 1.2s cubic-bezier(.65, 0, .35, 1) 1.5s backwards; }
+    .nt__svg .cap-in { animation: ntCapFloat 5s ease-in-out 2.8s infinite alternate; }
+    .nt__svg .wave { animation: ntWave 5s linear infinite; }
+    .nt__svg .sheen { animation: ntSheen 6.5s var(--nt-out) 3s infinite; }
+    .nt__sub { animation: ntUp .9s var(--nt-out) 1.2s backwards; }
+    .nt__cta { animation: ntUp .9s var(--nt-out) 1.35s backwards; }
+    .nt__hint { animation: ntFade 1s ease 3.4s backwards; }
+    @keyframes ntMist { from { opacity: 0; filter: blur(12px); transform: translateY(.3em) rotate(3deg); } 55% { filter: blur(0); } }
+    @keyframes ntGrow { from { opacity: 0; transform: translateY(.25em) scale(.7); } }
+    @keyframes ntCap {
+      0% { transform: none; }
+      30% { transform: translateY(-30px) rotate(-4deg); }
+      100% { transform: translate(92px, -6px) rotate(22deg); }
+    }
+    @keyframes ntCapFloat { from { transform: translateY(0) rotate(0); } to { transform: translateY(-8px) rotate(-4deg); } }
+    @keyframes ntWave { to { transform: translateX(-120px); } }
+    @keyframes ntSheen { 0%, 60% { transform: translateX(-170px) skewX(-16deg); } 100% { transform: translateX(210px) skewX(-16deg); } }
+    @keyframes ntUp { from { opacity: 0; transform: translateY(14px); } }
+    @keyframes ntFade { from { opacity: 0; } }
+  }
+</style>
+
+<section class="nt" id="nt-{{ u }}">
+  <div class="nt__inner">
+    {%- if section.settings.eyebrow != blank -%}<p class="nt__eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}
+    <h1 class="nt__title" aria-label="{{ section.settings.word_1 }}{{ section.settings.word_2 }}">
+      <span class="nt__w nt__w--1" aria-hidden="true">{%- for ch in c1 -%}<span class="nt__ch" style="--i: {{ forloop.index0 }};">{{ ch }}</span>{%- endfor -%}</span>
+      <button class="nt__btl" type="button" aria-label="Rociar perfume" data-nt-btl>
+        <svg class="nt__svg" viewBox="24 30 172 280" aria-hidden="true">
+          <defs>
+            <linearGradient id="ntGlass-{{ u }}" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#fff" stop-opacity=".8"/><stop offset=".12" stop-color="#fff" stop-opacity=".3"/>
+              <stop offset=".85" stop-color="#fff" stop-opacity=".2"/><stop offset="1" stop-color="#fff" stop-opacity=".7"/>
+            </linearGradient>
+            <linearGradient id="ntLiq-{{ u }}" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="{{ section.settings.liquid_top }}"/><stop offset="1" stop-color="{{ section.settings.liquid_bottom }}"/>
+            </linearGradient>
+            <linearGradient id="ntGold-{{ u }}" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#8E6C3C"/><stop offset=".4" stop-color="#F3E1B5"/><stop offset=".65" stop-color="#C9A46A"/><stop offset="1" stop-color="#7E6034"/>
+            </linearGradient>
+            <linearGradient id="ntCap-{{ u }}" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#211A33"/><stop offset=".28" stop-color="#5A4C8C"/><stop offset=".5" stop-color="#352B55"/><stop offset="1" stop-color="#14101E"/>
+            </linearGradient>
+            <radialGradient id="ntShadow-{{ u }}"><stop offset="0" stop-color="#1F1B2E" stop-opacity=".3"/><stop offset="1" stop-color="#1F1B2E" stop-opacity="0"/></radialGradient>
+            <clipPath id="ntBody-{{ u }}"><rect x="30" y="116" width="160" height="186" rx="16"/></clipPath>
+            <clipPath id="ntIn-{{ u }}"><rect x="42" y="128" width="136" height="150" rx="9"/></clipPath>
+          </defs>
+          <ellipse cx="110" cy="303" rx="96" ry="7" fill="url(#ntShadow-{{ u }})"/>
+
+          <rect x="104" y="82" width="12" height="20" fill="#8E6C3C"/>
+          <rect x="94" y="66" width="32" height="20" rx="5" fill="url(#ntGold-{{ u }})"/>
+          <circle class="nozzle" cx="95.5" cy="75" r="2.2" fill="#4A3A24"/>
+          <rect x="86" y="98" width="48" height="20" rx="3" fill="url(#ntGold-{{ u }})"/>
+          <path d="M86 104 H134 M86 110 H134" stroke="#7E6034" stroke-width=".7" opacity=".7"/>
+
+          <g clip-path="url(#ntBody-{{ u }})">
+            <rect x="30" y="116" width="160" height="186" fill="#fff" opacity=".45"/>
+            <rect x="34" y="278" width="152" height="22" fill="{{ section.settings.liquid_bottom }}" opacity=".28"/>
+          </g>
+          <g clip-path="url(#ntIn-{{ u }})">
+            <g class="wave"><path d="M0 146 C20 139 40 139 60 146 S100 153 120 146 S160 139 180 146 S220 153 240 146 S280 139 300 146 S340 153 360 146 V290 H0Z" fill="url(#ntLiq-{{ u }})"/></g>
+            <rect x="42" y="128" width="136" height="150" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="2"/>
+          </g>
+          <g clip-path="url(#ntBody-{{ u }})"><rect class="sheen" x="40" y="100" width="30" height="230" fill="#fff" opacity=".5"/></g>
+          <rect x="30" y="116" width="160" height="186" rx="16" fill="url(#ntGlass-{{ u }})" stroke="rgba(60,48,96,.2)" stroke-width="1.2"/>
+          <rect x="38" y="126" width="5" height="168" rx="2.5" fill="#fff" opacity=".85"/>
+          <rect x="180" y="132" width="2.5" height="150" rx="1.25" fill="#fff" opacity=".6"/>
+          <path d="M48 121 H172" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".7"/>
+          <path d="M40 292 H180" stroke="#fff" stroke-width="1.5" stroke-linecap="round" opacity=".6"/>
+
+          <text x="110" y="210" text-anchor="middle" font-family="Fraunces, serif" font-style="normal" font-size="23" letter-spacing="7" fill="#fff" opacity=".95">NOVA</text>
+          <path d="M84 220 H136" stroke="#fff" stroke-width=".8" opacity=".8"/>
+          <text x="110" y="234" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="11" letter-spacing="2" fill="#fff" opacity=".95">parfum</text>
+          <text x="110" y="262" text-anchor="middle" font-family="Manrope, sans-serif" font-style="normal" font-size="5.5" font-weight="700" letter-spacing="2.2" fill="#fff" opacity=".8">EAU DE PARFUM · 100 ML</text>
+
+          <g class="cap"><g class="cap-in">
+            <rect x="80" y="40" width="60" height="78" rx="7" fill="url(#ntCap-{{ u }})"/>
+            <rect x="80" y="40" width="60" height="7" rx="3" fill="#fff" opacity=".12"/>
+            <rect x="88" y="46" width="5" height="60" rx="2.5" fill="#fff" opacity=".2"/>
+            <rect x="80" y="110" width="60" height="8" rx="2" fill="url(#ntGold-{{ u }})"/>
+          </g></g>
+        </svg>
+      </button>
+      <span class="nt__w nt__w--2" aria-hidden="true">{%- for ch in c2 -%}<span class="nt__ch" style="--i: {{ forloop.index0 | plus: n1 }};">{{ ch }}</span>{%- endfor -%}</span>
+    </h1>
+
+    <div class="nt__foot">
+      {%- if section.settings.subtitle != blank -%}<p class="nt__sub">{{ section.settings.subtitle }}</p>{%- endif -%}
+      <div class="nt__cta">
+        <a class="nt-btn" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">{{ section.settings.button_label }}<span aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 11 11 5M6 5h5v5"/></svg></span></a>
+        {%- if section.settings.button2_label != blank -%}<a class="nt-link" href="{{ section.settings.button2_link | default: '#combos' }}">{{ section.settings.button2_label }}</a>{%- endif -%}
+      </div>
+      {%- if section.settings.hint != blank -%}<p class="nt__hint" aria-hidden="true">{{ section.settings.hint }}</p>{%- endif -%}
+    </div>
+  </div>
+  <div class="nt__fx" aria-hidden="true"></div>
+</section>
+<script>
+  (() => {
+    const root = document.getElementById('nt-{{ u }}');
+    if (!root || !root.animate) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const fx = root.querySelector('.nt__fx'), nozzle = root.querySelector('.nozzle'), btl = root.querySelector('[data-nt-btl]');
+    let ready = false, busy = false;
+
+    // Rocío: la bruma sale del atomizador hacia la izquierda, por encima de "nova"
+    const spray = (n) => {
+      const r = root.getBoundingClientRect(), z = nozzle.getBoundingClientRect();
+      const ox = z.left + z.width / 2 - r.left, oy = z.top + z.height / 2 - r.top;
+      const k = Math.min(1.3, Math.max(.6, btl.offsetHeight / 260));
+      for (let i = 0; i < n; i++) {
+        const p = document.createElement('i'); p.className = 'nt__p';
+        const s = (8 + Math.random() * 24) * k;
+        p.style.width = p.style.height = s + 'px'; p.style.left = ox + 'px'; p.style.top = oy + 'px';
+        fx.appendChild(p);
+        const a = (196 + (Math.random() - .5) * 40) * Math.PI / 180, d = (90 + Math.random() * 300) * k;
+        const dx = Math.cos(a) * d, dy = Math.sin(a) * d - Math.random() * 40 * k;
+        p.animate([
+          { opacity: 0, transform: 'translate(-50%,-50%) scale(.3)' },
+          { opacity: .85, offset: .1 },
+          { opacity: 0, transform: `translate(calc(-50% + ${dx.toFixed(1)}px), calc(-50% + ${dy.toFixed(1)}px)) scale(${(1.8 + Math.random() * 2.6).toFixed(2)})` }
+        ], { duration: 1800 + Math.random() * 1500, delay: i * 12, easing: 'cubic-bezier(.16,1,.3,1)' }).onfinish = () => p.remove();
+      }
+    };
+
+    setTimeout(() => { ready = true; spray(40); }, 2550);
+    btl.addEventListener('click', () => {
+      if (!ready || busy) return;
+      busy = true; spray(30); setTimeout(() => (busy = false), 450);
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Portada: título",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Etiqueta", "default": "Perfumería online · Uruguay" },
+    { "type": "text", "id": "word_1", "label": "Nombre · parte 1", "default": "nova" },
+    { "type": "text", "id": "word_2", "label": "Nombre · parte 2 (en color)", "default": "parfum" },
+    { "type": "textarea", "id": "subtitle", "label": "Texto", "default": "Perfumes de diseñador y árabes, elegidos uno por uno. Pagá con Mercado Pago y recibilo en todo Uruguay en 48 a 72 horas." },
+    { "type": "text", "id": "button_label", "label": "Botón", "default": "Ver perfumes" },
+    { "type": "url", "id": "button_link", "label": "Enlace del botón" },
+    { "type": "text", "id": "button2_label", "label": "Enlace secundario", "default": "Ver combos" },
+    { "type": "url", "id": "button2_link", "label": "Destino del enlace secundario" },
+    { "type": "text", "id": "hint", "label": "Pista bajo los botones", "default": "Tocá el frasco ✦" },
+    { "type": "color", "id": "liquid_top", "label": "Color del perfume (arriba)", "default": "#D9C6F2" },
+    { "type": "color", "id": "liquid_bottom", "label": "Color del perfume (abajo)", "default": "#8E72CF" }
+  ],
+  "presets": [{ "name": "Portada: título" }]
+}
+{% endschema %}
