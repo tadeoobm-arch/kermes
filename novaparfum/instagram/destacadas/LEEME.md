@@ -16,6 +16,8 @@ Las genera `generar.mjs` con Playwright: `node generar.mjs <carpeta-de-salida>`.
 Los textos salen de las políticas publicadas el 8/10/2026 (envío a cobrar, 48 a 72 horas, DAC, Ley 17.250,
 perfume cerrado, WhatsApp +598 2312 8537). Si cambian las políticas, hay que regenerar las historias.
 
+"Cómo comprar" y "Contacto" dejan espacio libre abajo de la lista para el sticker de enlace (pedido 8/10/2026).
+
 Instagram no permite crear destacadas por API: se suben como historia desde la app y se agregan a la destacada.
 En "Cómo comprar" y "Catálogo" conviene agregar el sticker de enlace (https://novaparfumuy.myshopify.com y
 https://novaparfumuy.myshopify.com/pages/catalogo).

@@ -13,10 +13,10 @@ const I = {
 const items = [
   { k: 'nosotros', n: 'NOSOTROS', title: 'Nova Parfum', lines: [['Tienda online de perfumes en Montevideo.', ''], ['Dama, caballero y unisex.', ''], ['Envíos a todo Uruguay.', '']], foot: 'Tu próxima fragancia favorita, a un clic.' },
   { k: 'envios', n: 'ENVÍOS', title: 'Envíos a todo Uruguay', lines: [['Con DAC y otras empresas de envío', ''], ['A domicilio o retiro en agencia', ''], ['Llega en 48 a 72 horas', 'desde que se confirma el pago'], ['Envío a cobrar', 'lo pagás al recibir o retirar']] },
-  { k: 'comprar', n: 'CÓMO COMPRAR', title: 'Cómo comprar', num: true, lines: [['Entrá a la web', 'link en nuestro perfil'], ['Elegí tu perfume', 'y agregalo al carrito'], ['Completá tus datos', 'cédula y forma de entrega'], ['Pagá con Mercado Pago', ''], ['Te llega en 48 a 72 horas', '']], foot: '¿Dudas? WhatsApp 2312 8537' },
+  { k: 'comprar', n: 'CÓMO COMPRAR', title: 'Cómo comprar', num: true, sticker: true, lines: [['Entrá a la web', 'link en nuestro perfil'], ['Elegí tu perfume', 'y agregalo al carrito'], ['Completá tus datos', 'cédula y forma de entrega'], ['Pagá con Mercado Pago', ''], ['Te llega en 48 a 72 horas', '']], foot: '¿Dudas? WhatsApp 2312 8537' },
   { k: 'pagos', n: 'PAGOS', title: 'Pagás con Mercado Pago', lines: [['Pago seguro dentro de la web', ''], ['Tu pedido se confirma', 'cuando se acredita el pago'], ['El envío se paga aparte', 'al recibir o retirar']] },
   { k: 'cambios', n: 'CAMBIOS', title: 'Cambios y devoluciones', lines: [['5 días hábiles para arrepentirte', 'desde que recibís tu pedido (Ley 17.250)'], ['El perfume tiene que estar cerrado', 'con el sello intacto y en su caja'], ['¿Llegó dañado o equivocado?', 'Avisanos en 48 horas y te lo cambiamos sin costo']] },
-  { k: 'contacto', n: 'CONTACTO', title: 'Escribinos', lines: [['WhatsApp', '+598 2312 8537'], ['Email', 'novaparfum.uy@gmail.com'], ['Instagram', '@novaparfum.uy']], foot: 'Te ayudamos a elegir tu perfume.' },
+  { k: 'contacto', n: 'CONTACTO', title: 'Escribinos', sticker: true, lines: [['WhatsApp', '+598 2312 8537'], ['Email', 'novaparfum.uy@gmail.com'], ['Instagram', '@novaparfum.uy']], foot: 'Te ayudamos a elegir tu perfume.' },
   { k: 'catalogo', n: 'CATÁLOGO', title: 'Nuestro catálogo', lines: [['Más de 250 perfumes', ''], ['Dama · Caballero · Unisex', ''], ['Descargalo en PDF', 'en la web, sección Catálogo']] },
 ];
 const icon = k => k === 'nosotros'
@@ -48,6 +48,7 @@ html,body{margin:0}
 .story .bul svg{width:26px;height:26px}
 .story .t{font:500 47px/1.2 Manrope,sans-serif}.story .s{font:400 35px/1.3 Manrope,sans-serif;color:rgba(247,244,240,.68);margin-top:6px}
 .story.compact li{padding:20px 0}.story.compact .badge{margin-bottom:34px;width:180px;height:180px}.story.compact ul{margin-top:44px}.story.compact .main{bottom:440px}
+.story.stk .main{top:370px;bottom:670px}.story.stk .badge{width:170px;height:170px;margin-bottom:36px}.story.stk .badge .ic{width:92px;height:92px}.story.stk ul{margin-top:48px}.story.stk.compact .badge{display:none}.story.stk.compact h1{font-size:96px}
 .story .foot{position:absolute;left:90px;right:90px;bottom:310px;text-align:center;font:400 42px Fraunces,serif;color:#E9C9CF}
 .story .url{position:absolute;left:0;right:0;bottom:250px;text-align:center;font:500 26px Manrope,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:rgba(247,244,240,.55)}
 `;
@@ -69,14 +70,14 @@ for (const it of items) {
   await p.evaluate(() => document.fonts.ready);
   await p.locator('.c').screenshot({ path: `${OUT}/portada-${nn}-${it.k}.png` });
   const lis = it.lines.map((l, j) => `<li><div class="bul">${it.num ? j + 1 : check}</div><div><div class="t">${l[0]}</div>${l[1] ? `<div class="s">${l[1]}</div>` : ''}</div></li>`).join('');
-  await p.setContent(page(`<div class="c story${it.lines.length >= 5 ? ' compact' : ''}">${sparks}
+  await p.setContent(page(`<div class="c story${it.lines.length >= 5 ? ' compact' : ''}${it.sticker ? ' stk' : ''}">${sparks}
    <div class="logo"><svg viewBox="0 0 40 40"><path d="${STAR}" fill="#E9C9CF"/><circle cx="30.5" cy="29.5" r="2.6" fill="#B3A6E4"/></svg><b>nova<span>parfum</span></b></div>
    <div class="main"><div class="badge">${icon(it.k)}</div><h1>${it.title}</h1><ul>${lis}</ul></div>
    ${it.foot ? `<div class="foot">${it.foot}</div>` : ''}<div class="url">novaparfumuy.myshopify.com</div></div>`), { waitUntil: 'networkidle' });
   await p.evaluate(() => document.fonts.ready);
   // place list under the title
   const top = await p.evaluate(() => { const ul = document.querySelector('ul'); const r = ul.getBoundingClientRect(); const m = document.querySelector('.main'); if (m.scrollHeight > m.clientHeight) console.log('overflow'); const f = document.querySelector('.foot'); return { ulBottom: Math.round(r.bottom), footTop: f ? Math.round(f.getBoundingClientRect().top) : 1620 }; });
-  console.log(it.k, JSON.stringify(top), top.ulBottom > top.footTop - 30 ? 'SE PISA' : 'ok');
+  const free = top.footTop - top.ulBottom; console.log(it.k, JSON.stringify(top), it.sticker ? ('espacio sticker ' + free + 'px') : '', top.ulBottom > top.footTop - 30 ? 'SE PISA' : 'ok', await p.evaluate(() => { const m = document.querySelector('.main'); return m.scrollHeight > m.clientHeight + 2 ? 'DESBORDA' : ''; }));
   await p.locator('.c').screenshot({ path: `${OUT}/historia-${nn}-${it.k}.png` });
 }
 await b.close();
