@@ -1,7 +1,7 @@
 # Políticas de la tienda (borrador)
 
-Textos de las políticas de NovaParfum. **Todavía no están publicados en Shopify**: falta que la dueña o el dueño
-de la tienda los apruebe.
+Textos de las políticas de NovaParfum, aprobados el 8/10/2026. La app conectada a Shopify no tiene permiso para
+editar políticas (`write_legal_policies`), así que se pegan a mano en **Configuración → Políticas**.
 
 | Archivo | Política en Shopify |
 |---|---|
@@ -15,10 +15,11 @@ Datos confirmados por la tienda (8/10/2026):
 - Envío a cobrar por DAC y otras empresas de envío.
 - Entrega en 48 a 72 horas.
 
-Supuestos que hay que confirmar antes de publicar:
+También confirmado:
 - Si el producto llega dañado o es el equivocado, se cambia sin costo avisando dentro de las 48 horas.
 - WhatsApp de contacto: +598 2312 8537.
-- La dirección Argelia 58, Montevideo (sacada de la configuración de la tienda) queda pública.
 - Los pedidos de fin de semana o feriado salen el siguiente día hábil.
+- **No** mostrar la dirección de la calle. La Política de privacidad automática de Shopify sí la muestra, porque la saca
+  de la dirección de la tienda: para sacarla hay que editar esa política a mano.
 
 Base legal del derecho de arrepentimiento: Ley 17.250, artículo 16 (5 días hábiles).
