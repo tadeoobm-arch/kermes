@@ -12,6 +12,13 @@ la API de WhatsApp (de pago). Por eso el catálogo se arma en Meta y después se
   (`gid://shopify/Publication/225085620478`).
 - **259 perfumes** publicados en ese canal: todos los activos. "Amber Oud Al Haramain 200ml" está archivado y no entra.
 - Revisión de datos para Meta: todos tienen foto, descripción, precio y stock.
+- Configuración del canal terminada el 8/10/2026:
+  - Portfolio comercial: **novaparfum.uy** (no "NovaParfum", que es un duplicado vacío).
+  - Catálogo nuevo creado por Shopify: **"Shopify Product Catalog (pj3pch-eh.myshopify.com) - 2026-10-08 System User"**,
+    identificador 3299567733571858.
+  - **No usar** "Products for Tadeo personal catalog": es el catálogo personal de Marketplace.
+  - Uso compartido de datos: **Conservador** (sin datos personales de clientes). Píxel de Meta creado.
+  - No se instaló "Prueba WhatsApp en Shopify" ni se crearon anuncios.
 - **Pendiente:** "Alpha for Him" tiene la marca "A confirmar". Hay que corregir la marca o sacarlo del canal
   (Productos → Alpha for Him → Canales de ventas).
 
