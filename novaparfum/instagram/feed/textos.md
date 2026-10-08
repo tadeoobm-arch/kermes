@@ -1,5 +1,8 @@
 # Primeras 6 publicaciones del feed (@novaparfum.uy)
 
+> **Reemplazadas por `../posts-100ml/`** (8/10/2026): estas no tienen la etiqueta de 100 ml, Eros EDP tiene el precio viejo
+> y Paradoxe Intense es de 90 ml. La presentación (post 1) la reemplaza el tríptico de `../triptico/`. Se dejan como referencia.
+
 Imágenes de 1080 × 1350 (4:5). Fotos de productos de Shopify con el fondo quitado y precios del 8/10/2026.
 Si cambia un precio, hay que regenerar la imagen (`generar.mjs <carpeta-recortes> <carpeta-salida>`).
 
