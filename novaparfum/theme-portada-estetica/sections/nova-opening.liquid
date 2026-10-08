@@ -1,0 +1,245 @@
+{%- comment -%}
+  Portada "Apertura": el frasco NovaParfum aparece, se le levanta la tapa, rocía una bruma lila
+  y de esa bruma se forma el nombre novaparfum letra por letra. Después queda respirando:
+  el frasco flota, el líquido ondula, la tapa se mece y un brillo recorre el vidrio.
+  Tocar el frasco vuelve a rociar. Con "reducir movimiento" se ve la escena final, quieta.
+{%- endcomment -%}
+{%- liquid
+  assign u = section.id
+  assign w1 = section.settings.word_1 | default: 'nova'
+  assign w2 = section.settings.word_2 | default: 'parfum'
+  assign c1 = w1 | split: ''
+  assign c2 = w2 | split: ''
+-%}
+<style>
+  .no { --no-ink: var(--c-ink, #1F1B2E); --no-iris: var(--c-iris, #6E5BB5); --no-soft: #77708A; --no-out: cubic-bezier(.23, 1, .32, 1);
+    position: relative; overflow: hidden; isolation: isolate; display: grid; place-items: center; text-align: center;
+    min-height: max(600px, calc(100svh - 112px)); padding: clamp(28px, 5vh, 64px) 20px clamp(56px, 9vh, 96px);
+    background: var(--c-bg, #F7F3EE); }
+  .no__aura { position: absolute; z-index: -1; border-radius: 50%; filter: blur(70px); pointer-events: none; }
+  .no__aura--1 { width: 52vmax; height: 52vmax; left: 50%; top: 38%; translate: -50% -50%; background: radial-gradient(closest-side, rgba(170,150,230,.30), rgba(170,150,230,0)); }
+  .no__aura--2 { width: 34vmax; height: 34vmax; left: 18%; top: 78%; translate: -50% -50%; background: radial-gradient(closest-side, rgba(236,196,206,.35), rgba(236,196,206,0)); }
+  .no__aura--3 { width: 30vmax; height: 30vmax; left: 84%; top: 22%; translate: -50% -50%; background: radial-gradient(closest-side, rgba(200,214,230,.35), rgba(200,214,230,0)); }
+
+  .no__inner { display: grid; justify-items: center; width: 100%; max-width: 1100px; }
+  .no__eyebrow { margin: 0 0 clamp(14px, 2.4vh, 26px); font-size: 11px; font-weight: 700; letter-spacing: .34em; text-transform: uppercase; color: var(--no-soft); }
+
+  .no__stage { position: relative; height: clamp(220px, 31vh, 340px); aspect-ratio: 200 / 300; }
+  .no__btl { all: unset; position: absolute; inset: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .no__btl:focus-visible { outline: 2px solid var(--no-iris); outline-offset: 10px; border-radius: 24px; }
+  .no__rise, .no__float { position: absolute; inset: 0; }
+  .no__svg { width: 100%; height: 100%; display: block; overflow: visible; transition: transform .25s var(--no-out); }
+  .no__btl:active .no__svg { transform: scale(.97); }
+  .no__svg .cap { transform-box: fill-box; transform-origin: 50% 50%; transform: translate(80px, -18px) rotate(24deg); }
+  .no__svg .cap-in { transform-box: fill-box; transform-origin: 50% 100%; }
+  .no__svg .wave { transform-box: fill-box; }
+  .no__svg .sheen { transform-box: fill-box; transform: translateX(-160px) skewX(-18deg); }
+  .no__shadow { position: absolute; left: 50%; bottom: -4%; width: 70%; height: 7%; translate: -50% 0; border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(31,27,46,.22), rgba(31,27,46,0)); }
+  .no__fx { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
+  .no__p { position: absolute; left: 0; top: 0; border-radius: 50%; pointer-events: none;
+    background: radial-gradient(circle, rgba(140,116,220,.75) 0%, rgba(140,116,220,.28) 45%, rgba(150,128,222,0) 70%); }
+  .no__cloud { position: absolute; width: 180px; height: 180px; margin: -90px 0 0 -90px; border-radius: 50%; pointer-events: none; opacity: 0;
+    background: radial-gradient(closest-side, rgba(150,128,224,.5), rgba(150,128,224,0)); filter: blur(8px); }
+
+  .no__word { margin: clamp(18px, 3vh, 34px) 0 0; padding-bottom: .14em; font: 400 clamp(56px, 10.5vw, 156px)/.9 var(--f-display, 'Fraunces', serif); letter-spacing: -.045em; color: var(--no-ink); white-space: nowrap; }
+  .no__word span { display: inline-block; }
+  .no__word .w2 { font-style: italic; color: var(--no-iris); }
+  .no__sub { margin: 0 auto; max-width: 54ch; color: var(--no-soft); font-size: 16px; line-height: 1.65; }
+  .no__cta { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px 26px; margin-top: clamp(20px, 3.4vh, 32px); }
+  .no-btn { display: inline-flex; align-items: center; gap: 12px; min-height: 54px; padding: 8px 8px 8px 26px; border-radius: 999px; text-decoration: none; font-weight: 700;
+    background: var(--no-ink); color: #fff; transition: transform .45s var(--no-out), box-shadow .45s var(--no-out); box-shadow: 0 18px 36px -22px rgba(31,27,46,.7); }
+  .no-btn span { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,.14); transition: transform .45s var(--no-out); }
+  .no-btn svg { width: 16px; height: 16px; }
+  .no-link { position: relative; padding: 6px 0; font-weight: 700; color: var(--no-ink); text-decoration: none; }
+  .no-link::after { content: ''; position: absolute; left: 0; right: 0; bottom: 2px; height: 1px; background: currentColor; transform-origin: right; transition: transform .5s var(--no-out); }
+  @media (hover: hover) and (pointer: fine) {
+    .no-btn:hover { transform: translateY(-2px); box-shadow: 0 24px 40px -20px rgba(31,27,46,.6); }
+    .no-btn:hover span { transform: translate(3px, -2px); }
+    .no-link:hover::after { transform: scaleX(0); }
+  }
+  .no-btn:active { transform: scale(.98); }
+  .no__hint { margin: 16px 0 0; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--no-soft); opacity: .8; }
+  .no__scroll { position: absolute; left: 50%; bottom: 22px; translate: -50% 0; width: 1px; height: 46px; background: rgba(31,27,46,.15); overflow: hidden; }
+  .no__scroll::after { content: ''; position: absolute; left: 0; top: 0; width: 1px; height: 14px; background: var(--no-ink); }
+
+  @media (max-width: 749px) {
+    .no__sub { font-size: 15px; }
+    .no__scroll { display: none; }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .no__aura--1 { animation: noAura 18s ease-in-out infinite alternate; }
+    .no__aura--2 { animation: noAura 22s ease-in-out -6s infinite alternate-reverse; }
+    .no__aura--3 { animation: noAura 20s ease-in-out -3s infinite alternate; }
+    .no__eyebrow { animation: noUp 1s var(--no-out) .15s backwards; }
+    .no__rise { animation: noRise 1.3s var(--no-out) .1s backwards; }
+    .no__shadow { animation: noFade 1.3s ease .1s backwards; }
+    .no__float { animation: noFloat 7s ease-in-out 2.4s infinite; }
+    .no__svg .cap { animation: noCap 1.15s cubic-bezier(.77, 0, .175, 1) 1s backwards; }
+    .no__svg .cap-in { animation: noCapFloat 5.5s ease-in-out 2.2s infinite alternate; }
+    .no__svg .wave { animation: noWave 5s linear infinite; }
+    .no__svg .sheen { animation: noSheen 7s var(--no-out) 2.6s infinite; }
+    .no__word span { animation: noMist 1.25s var(--no-out) calc(1.95s + var(--i) * 60ms) backwards; }
+    .no__sub { animation: noUp 1s var(--no-out) 2.75s backwards; }
+    .no__cta { animation: noUp 1s var(--no-out) 2.9s backwards; }
+    .no__hint { animation: noFade 1s ease 3.6s backwards; }
+    .no__scroll { animation: noFade 1s ease 3.4s backwards; }
+    .no__scroll::after { animation: noDrop 2.2s cubic-bezier(.77, 0, .175, 1) 3.6s infinite; }
+    @keyframes noAura { to { transform: translate(4%, -5%) scale(1.08); } }
+    @keyframes noUp { from { opacity: 0; transform: translateY(14px); } }
+    @keyframes noFade { from { opacity: 0; } }
+    @keyframes noRise { from { opacity: 0; transform: translateY(46px) scale(.96); } }
+    @keyframes noFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    @keyframes noCap {
+      0% { transform: none; }
+      28% { transform: translateY(-22px); }
+      62% { transform: translate(60px, -46px) rotate(14deg); }
+      100% { transform: translate(80px, -18px) rotate(24deg); }
+    }
+    @keyframes noCapFloat { from { transform: translateY(0) rotate(0); } to { transform: translateY(-7px) rotate(-3deg); } }
+    @keyframes noWave { to { transform: translateX(-120px); } }
+    @keyframes noSheen { 0%, 62% { transform: translateX(-160px) skewX(-18deg); } 100% { transform: translateX(200px) skewX(-18deg); } }
+    @keyframes noMist { from { opacity: 0; filter: blur(14px); transform: translateY(.22em) scale(1.08); } 60% { filter: blur(0); } }
+    @keyframes noDrop { 0% { transform: translateY(-14px); } 100% { transform: translateY(46px); } }
+  }
+</style>
+
+<section class="no" id="no-{{ u }}" data-no>
+  <span class="no__aura no__aura--1" aria-hidden="true"></span>
+  <span class="no__aura no__aura--2" aria-hidden="true"></span>
+  <span class="no__aura no__aura--3" aria-hidden="true"></span>
+
+  <div class="no__inner">
+    {%- if section.settings.eyebrow != blank -%}<p class="no__eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}
+
+    <div class="no__stage">
+      <span class="no__shadow" aria-hidden="true"></span>
+      <div class="no__rise"><div class="no__float">
+        <button class="no__btl" type="button" aria-label="{{ section.settings.hint | default: 'Rociar perfume' | escape }}" data-no-btl>
+          <svg class="no__svg" viewBox="0 0 200 300" aria-hidden="true">
+            <defs>
+              <linearGradient id="noGlass-{{ u }}" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#fff" stop-opacity=".75"/><stop offset=".18" stop-color="#fff" stop-opacity=".25"/>
+                <stop offset=".8" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#fff" stop-opacity=".6"/>
+              </linearGradient>
+              <linearGradient id="noLiquid-{{ u }}" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="{{ section.settings.liquid_top }}"/><stop offset="1" stop-color="{{ section.settings.liquid_bottom }}"/>
+              </linearGradient>
+              <linearGradient id="noGold-{{ u }}" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#9C7A45"/><stop offset=".45" stop-color="#F1DDAE"/><stop offset=".7" stop-color="#C9A46A"/><stop offset="1" stop-color="#8A6A3A"/>
+              </linearGradient>
+              <linearGradient id="noCapG-{{ u }}" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#231E33"/><stop offset=".35" stop-color="#4A3F70"/><stop offset=".6" stop-color="#2E2744"/><stop offset="1" stop-color="#17131F"/>
+              </linearGradient>
+              <clipPath id="noClip-{{ u }}"><rect x="30" y="86" width="140" height="196" rx="26"/></clipPath>
+            </defs>
+
+            <!-- atomizador (se ve cuando sale la tapa) -->
+            <rect x="94" y="50" width="12" height="14" rx="2" fill="url(#noGold-{{ u }})"/>
+            <rect x="97" y="46" width="6" height="6" rx="1.5" fill="#6B5332"/>
+            <rect x="80" y="62" width="40" height="26" rx="3" fill="url(#noGold-{{ u }})"/>
+            <path d="M80 70 H120 M80 78 H120" stroke="#8A6A3A" stroke-width=".8" opacity=".6"/>
+
+            <!-- vidrio y líquido -->
+            <g clip-path="url(#noClip-{{ u }})">
+              <rect x="30" y="86" width="140" height="196" fill="#fff" opacity=".35"/>
+              <g class="wave">
+                <path d="M0 132 C20 124 40 124 60 132 S100 140 120 132 S160 124 180 132 S220 140 240 132 S280 124 300 132 S340 140 360 132 V300 H0Z" fill="url(#noLiquid-{{ u }})"/>
+              </g>
+              <rect class="sheen" x="40" y="70" width="34" height="240" fill="#fff" opacity=".45"/>
+            </g>
+            <rect x="30" y="86" width="140" height="196" rx="26" fill="url(#noGlass-{{ u }})" stroke="rgba(31,27,46,.16)" stroke-width="1.2"/>
+            <rect x="42" y="100" width="7" height="160" rx="3.5" fill="#fff" opacity=".7"/>
+            <!-- etiqueta grabada -->
+            <rect x="62" y="168" width="76" height="58" rx="3" fill="#FBF8F3" opacity=".92"/>
+            <rect x="66" y="172" width="68" height="50" rx="2" fill="none" stroke="#C9A46A" stroke-width=".7"/>
+            <text x="100" y="196" text-anchor="middle" font-family="Fraunces, serif" font-size="15" letter-spacing="3" fill="#1F1B2E">NOVA</text>
+            <text x="100" y="211" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" letter-spacing="1" fill="#6E5BB5">parfum</text>
+
+            <!-- tapa -->
+            <g class="cap"><g class="cap-in">
+              <rect x="70" y="30" width="60" height="58" rx="7" fill="url(#noCapG-{{ u }})"/>
+              <rect x="76" y="34" width="5" height="50" rx="2.5" fill="#fff" opacity=".18"/>
+              <rect x="70" y="80" width="60" height="8" rx="2" fill="url(#noGold-{{ u }})"/>
+            </g></g>
+          </svg>
+        </button>
+      </div></div>
+      <div class="no__fx" aria-hidden="true"><span class="no__cloud"></span></div>
+    </div>
+
+    <h1 class="no__word" aria-label="{{ w1 }}{{ w2 }}">
+      {%- assign i = 0 -%}
+      {%- for ch in c1 -%}<span class="w1" style="--i: {{ i }};" aria-hidden="true">{{ ch }}</span>{%- assign i = i | plus: 1 -%}{%- endfor -%}
+      {%- for ch in c2 -%}<span class="w2" style="--i: {{ i }};" aria-hidden="true">{{ ch }}</span>{%- assign i = i | plus: 1 -%}{%- endfor -%}
+    </h1>
+    {%- if section.settings.subtitle != blank -%}<p class="no__sub">{{ section.settings.subtitle }}</p>{%- endif -%}
+    <div class="no__cta">
+      <a class="no-btn" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">{{ section.settings.button_label }}<span aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 11 11 5M6 5h5v5"/></svg></span></a>
+      {%- if section.settings.button2_label != blank -%}<a class="no-link" href="{{ section.settings.button2_link | default: '#combos' }}">{{ section.settings.button2_label }}</a>{%- endif -%}
+    </div>
+    {%- if section.settings.hint != blank -%}<p class="no__hint" aria-hidden="true">{{ section.settings.hint }}</p>{%- endif -%}
+  </div>
+  <span class="no__scroll" aria-hidden="true"></span>
+</section>
+<script>
+  (() => {
+    const root = document.getElementById('no-{{ u }}');
+    if (!root || !root.animate) return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const stage = root.querySelector('.no__stage'), fx = root.querySelector('.no__fx'), cloud = root.querySelector('.no__cloud');
+    const btl = root.querySelector('[data-no-btl]');
+    let ready = reduce, busy = false;
+
+    // Rocío: partículas de bruma que salen del atomizador hacia arriba a la izquierda
+    const spray = (n) => {
+      if (reduce) return;
+      const h = stage.offsetHeight, k = h / 300;
+      const ox = stage.offsetWidth * .5, oy = h * (48 / 300);
+      cloud.style.left = (ox - 40 * k) + 'px'; cloud.style.top = (oy - 30 * k) + 'px';
+      cloud.animate([{ opacity: 0, transform: 'scale(.2)' }, { opacity: 1, offset: .2 }, { opacity: 0, transform: 'scale(2.6) translate(-14px,-10px)' }],
+        { duration: 2600, easing: 'cubic-bezier(.16,1,.3,1)' });
+      for (let i = 0; i < n; i++) {
+        const p = document.createElement('i'); p.className = 'no__p';
+        const s = (6 + Math.random() * 18) * Math.max(.8, k);
+        p.style.width = p.style.height = s + 'px';
+        p.style.left = ox + 'px'; p.style.top = oy + 'px';
+        fx.appendChild(p);
+        const a = (-130 + (Math.random() - .5) * 64) * Math.PI / 180, d = (70 + Math.random() * 190) * k;
+        const dx = Math.cos(a) * d, dy = Math.sin(a) * d - Math.random() * 30 * k;
+        p.animate([
+          { opacity: 0, transform: 'translate(-50%,-50%) scale(.3)' },
+          { opacity: .95, offset: .12 },
+          { opacity: 0, transform: `translate(calc(-50% + ${dx.toFixed(1)}px), calc(-50% + ${dy.toFixed(1)}px)) scale(${(1.6 + Math.random() * 2).toFixed(2)})` }
+        ], { duration: 1500 + Math.random() * 1400, delay: i * 14, easing: 'cubic-bezier(.16,1,.3,1)' }).onfinish = () => p.remove();
+      }
+    };
+
+    if (!reduce) setTimeout(() => { ready = true; spray(34); }, 1750);
+    btl.addEventListener('click', () => {
+      if (!ready || busy) return;
+      busy = true; spray(26); setTimeout(() => (busy = false), 450);
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Portada: apertura",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Etiqueta", "default": "Perfumería online · Uruguay" },
+    { "type": "text", "id": "word_1", "label": "Nombre · parte 1", "default": "nova" },
+    { "type": "text", "id": "word_2", "label": "Nombre · parte 2 (en color)", "default": "parfum" },
+    { "type": "textarea", "id": "subtitle", "label": "Texto", "default": "Perfumes de diseñador y árabes, elegidos uno por uno. Pagá con Mercado Pago y recibilo en todo Uruguay en 48 a 72 horas." },
+    { "type": "text", "id": "button_label", "label": "Botón", "default": "Ver perfumes" },
+    { "type": "url", "id": "button_link", "label": "Enlace del botón" },
+    { "type": "text", "id": "button2_label", "label": "Enlace secundario", "default": "Ver combos" },
+    { "type": "url", "id": "button2_link", "label": "Destino del enlace secundario" },
+    { "type": "text", "id": "hint", "label": "Pista bajo los botones", "default": "Tocá el frasco ✦" },
+    { "type": "color", "id": "liquid_top", "label": "Color del perfume (arriba)", "default": "#E7D9F3" },
+    { "type": "color", "id": "liquid_bottom", "label": "Color del perfume (abajo)", "default": "#A992DA" }
+  ],
+  "presets": [{ "name": "Portada: apertura" }]
+}
+{% endschema %}
