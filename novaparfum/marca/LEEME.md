@@ -29,3 +29,9 @@ Texto sugerido para Tienda online → Preferencias:
   Uruguay, a domicilio o en agencia.
 
 Antes del cambio la web no tenía descripción ni imagen: al compartir el link salía solo "Nova Parfum".
+
+Versión liviana para WhatsApp: `novaparfum-compartir-wpp.jpg` (33 KB). El PNG que sirve el CDN de Shopify pesa unos
+270 KB, cerca del límite en que WhatsApp deja de mostrar la imagen. Se recomienda usar el JPG en Preferencias.
+Verificado el 8/10/2026: la web ya publica título, descripción y og:image nuevos.
+WhatsApp arma la vista previa en el teléfono de quien manda el link y la guarda un tiempo: para probar, usar un link
+nuevo (por ejemplo `https://novaparfumuy.myshopify.com/?wpp=2`).
