@@ -1,0 +1,166 @@
+<title>Catálogo WhatsApp Nova Parfum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Manrope:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: una columna de fichas de carga (foto + campos con "Copiar"), en el orden de los campos de WhatsApp Business */
+:root{
+  --bg:#F7F4F0; --surface:#FFFFFF; --ink:#2F2A4A; --muted:#6B6585; --line:#E6E0EC;
+  --accent:#7A68B8; --accent-ink:#FFFFFF; --soft:#EFEAF6; --powder:#E9C9CF; --ok:#3F7A5A; --ok-soft:#E3F0E8;
+  --f-display:'Fraunces',Georgia,'Times New Roman',serif;
+  --f-body:'Manrope',-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1C1830; --surface:#262140; --ink:#F2EEF7; --muted:#ABA4C4; --line:#3A3458;
+  --accent:#B3A6E4; --accent-ink:#1C1830; --soft:#2F2950; --powder:#E9C9CF; --ok:#8FD0AB; --ok-soft:#24392F; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1C1830; --surface:#262140; --ink:#F2EEF7; --muted:#ABA4C4; --line:#3A3458;
+  --accent:#B3A6E4; --accent-ink:#1C1830; --soft:#2F2950; --powder:#E9C9CF; --ok:#8FD0AB; --ok-soft:#24392F; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:400 15px/1.55 var(--f-body);-webkit-font-smoothing:antialiased}
+.wrap{max-width:760px;margin:0 auto;padding-inline:16px;padding-block:28px 64px;display:grid;gap:22px}
+header{display:grid;gap:10px}
+.brand{display:flex;align-items:center;gap:8px;font:400 20px/1 var(--f-display);color:var(--ink)}
+.brand svg{width:24px;height:24px}
+.brand span{color:var(--accent)}
+h1{font:400 clamp(28px,7vw,40px)/1.08 var(--f-display);letter-spacing:-.01em;margin:4px 0 0;text-wrap:balance}
+.lead{color:var(--muted);margin:0;max-width:62ch}
+.how{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 18px;display:grid;gap:10px}
+.how h2{font:600 13px/1.2 var(--f-body);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:0}
+.how ol{margin:0;padding-left:20px;display:grid;gap:4px}
+.how p{margin:0;color:var(--muted);font-size:14px}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px;display:grid;gap:10px;border-bottom:1px solid var(--line)}
+.progress{display:flex;align-items:center;gap:12px;font-weight:600;font-variant-numeric:tabular-nums}
+.meter{flex:1;height:8px;border-radius:99px;background:var(--soft);overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s ease}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:99px;padding:7px 14px;font:600 13px var(--f-body);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.list{display:grid;gap:14px}
+.group{font:400 22px/1.2 var(--f-display);margin:14px 0 0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px;display:grid;gap:12px}
+.card.done{border-color:var(--ok);background:linear-gradient(0deg,var(--ok-soft),var(--ok-soft)) padding-box}
+.top{display:grid;grid-template-columns:112px minmax(0,1fr);gap:14px;align-items:start}
+.photo{width:112px;aspect-ratio:1;max-width:100%;border-radius:12px;background:#fff;object-fit:contain;border:1px solid var(--line)}
+.head{display:grid;gap:4px;min-width:0}
+.num{font:600 12px var(--f-body);letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
+.name{font:500 19px/1.2 var(--f-display);margin:0;text-wrap:balance}
+.price{font:700 18px var(--f-body);color:var(--accent);font-variant-numeric:tabular-nums}
+.check{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px;cursor:pointer;margin-top:4px}
+.check input{width:20px;height:20px;accent-color:var(--ok)}
+.hint{font-size:12px;color:var(--muted)}
+.fields{display:grid;gap:8px}
+.field{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:start;border-top:1px solid var(--line);padding-top:8px}
+.field label{display:block;font:600 11px var(--f-body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.field .v{white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px}
+.field .v.link{color:var(--accent)}
+.copy{border:0;border-radius:99px;background:var(--soft);color:var(--ink);font:700 13px var(--f-body);padding:8px 14px;cursor:pointer;min-width:84px}
+.copy.ok{background:var(--accent);color:var(--accent-ink)}
+.copy:focus-visible,.chip:focus-visible,.check input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.note{font-size:13px;color:var(--muted);margin:0}
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:99px;font-weight:600;font-size:14px;max-width:calc(100% - 32px)}
+@media (prefers-reduced-motion:reduce){.meter i{transition:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="brand"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 4c1 8.4 4.2 11.8 12.6 12.8C24.2 17.8 21 21.2 20 29.6 19 21.2 15.8 17.8 7.4 16.8 15.8 15.8 19 12.4 20 4Z" fill="#E9C9CF"/><circle cx="30.5" cy="29.5" r="2.6" fill="#B3A6E4"/></svg>nova<span>parfum</span></div>
+    <h1>Catálogo para WhatsApp Business</h1>
+    <p class="lead">27 perfumes de 100 ml listos para cargar a mano. Cada ficha tiene los campos en el mismo orden que te pide WhatsApp: tocás <b>Copiar</b> y pegás.</p>
+  </header>
+
+  <section class="how" aria-labelledby="how-t">
+    <h2 id="how-t">Cómo cargar cada perfume</h2>
+    <ol>
+      <li>Guardá la foto en el celular: mantené apretada la foto de la ficha y elegí <b>Guardar en Fotos</b>.</li>
+      <li>En WhatsApp Business: <b>Herramientas → Catálogo → Agregar artículo nuevo</b>.</li>
+      <li>Agregá la foto y pegá <b>Nombre</b>, <b>Precio</b>, <b>Descripción</b>, <b>Enlace</b> y <b>Código del artículo</b>.</li>
+      <li>Guardá y marcá <b>Ya lo cargué</b> en la ficha.</li>
+    </ol>
+    <p>Al final, en el catálogo, creá las colecciones <b>Árabes</b>, <b>Caballero</b>, <b>Dama</b> y <b>Unisex y nicho</b>, y poné cada perfume en la suya. Precios de la web al 9/10/2026: si cambiás un precio en Shopify, cambialo también acá.</p>
+  </section>
+
+  <div class="bar">
+    <div class="progress"><span id="count">0 de 27 cargados</span><div class="meter" aria-hidden="true"><i id="meter"></i></div></div>
+    <div class="chips" role="group" aria-label="Filtrar por colección" id="chips"></div>
+  </div>
+
+  <div class="list" id="list"></div>
+  <p class="note">Las fotos son las de la web, menos Tom Ford Ombré Leather, que usa la foto oficial del frasco de 100 ml.</p>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const ITEMS = [{"n": 1, "cat": "Árabes", "name": "Lattafa Yara 100 ml", "price": "3300", "sku": "", "desc": "Perfume de 100 ml. Envío a todo Uruguay en 48 a 72 horas.", "link": "https://novaparfumuy.myshopify.com/products/lattafa-yara", "foto": "fotos/01-lattafa-yara.jpg"}, {"n": 2, "cat": "Árabes", "name": "Lattafa Asad 100 ml", "price": "3200", "sku": "", "desc": "Perfume de 100 ml. Envío a todo Uruguay en 48 a 72 horas.", "link": "https://novaparfumuy.myshopify.com/products/lattafa-asad", "foto": "fotos/02-lattafa-asad.jpg"}, {"n": 3, "cat": "Árabes", "name": "Rasasi Hawas Ice 100 ml", "price": "4390", "sku": "", "desc": "Perfume de 100 ml. Envío a todo Uruguay en 48 a 72 horas.", "link": "https://novaparfumuy.myshopify.com/products/rasasi-hawas-ice", "foto": "fotos/03-rasasi-hawas-ice.jpg"}, {"n": 4, "cat": "Árabes", "name": "Rasasi Hawas for Her 100 ml", "price": "4290", "sku": "", "desc": "Perfume de 100 ml. Envío a todo Uruguay en 48 a 72 horas.", "link": "https://novaparfumuy.myshopify.com/products/rasasi-hawas-for-her", "foto": "fotos/04-rasasi-hawas-for-her.jpg"}, {"n": 5, "cat": "Árabes", "name": "Armaf Odyssey Homme 100 ml", "price": "3700", "sku": "", "desc": "Perfume de 100 ml. Envío a todo Uruguay en 48 a 72 horas.", "link": "https://novaparfumuy.myshopify.com/products/armaf-odyssey-homme", "foto": "fotos/05-armaf-odyssey-homme.jpg"}, {"n": 6, "cat": "Árabes", "name": "Armaf Odyssey Mandarin Sky Elixir 100 ml", "price": "4300", "sku": "", "desc": "Perfume de 100 ml. Envío a todo Uruguay en 48 a 72 horas.", "link": "https://novaparfumuy.myshopify.com/products/armaf-odyssey-mandarin-sky-elixir", "foto": "fotos/06-armaf-odyssey-mandarin-sky-elixir.jpg"}, {"n": 7, "cat": "Caballero", "name": "Paco Rabanne Invictus 100 ml", "price": "5990", "sku": "PER-030", "desc": "Fragancia masculina fresca y deportiva, con un toque marino ganador.\nFamilia olfativa: Acuático amaderado\nNotas principales: mandarina, pomelo, notas marinas, hoja de violeta, lavanda, madera de guayaco y ambroxan\nIdeal para: primavera y verano, de día.\n\nPerfume de 100 ml. Envío a todo Uruguay en 48 a 72 horas.", "link": "https://novaparfumuy.myshopify.com/products/invictus-paco-rabanne", "foto": "fotos/07-invictus-paco-rabanne.jpg"}, {"n": 8, "cat": "Caballero", "name": "Paco Rabanne 1 Million 100 ml", "price": "5990", "sku": "PER-134", "desc": "El lingote de oro más famoso: especiado, dulce y seductor, con cuero y canela.\nFamilia olfativa: Amaderado especiado\nNotas de salida: pomelo, menta, mandarina\nNotas de corazón: canela, rosa, especias\nNotas de fondo: cuero, ámbar, maderas, pachulí\nIdeal para: otoño e invierno, de noche.\n\nPerfume de 100 ml. Envío a todo Uruguay en 48 a 72 horas.", "link": "https://novaparfumuy.myshopify.com/products/paco-rabanne-1-million", "foto": "fotos/08-paco-rabanne-1-million.jpg"}, {"n": 9, "cat": "Caballero", "name": "Armani Acqua di Giò 100 ml", "price": "6990", "sku": "PER-033", "desc": "El clásico acuático masculino: fresco, limpio y muy fácil de llevar.\nFamilia olfativa: Acuático aromático\nNotas principales: limón, bergamota, mandarina, jazmín, notas marinas, romero, pachulí y almizcle\nIdeal para: primavera y verano, de día.\n\nPerfume de 100 ml. Envío a todo Uruguay en 48 a 72 horas.", "link": "https://novaparfumuy.myshopify.com/products/acqua-di-gio-armani", "foto": "fotos/09-acqua-di-gio-armani.jpg"}, {"n": 10, "cat": "Caballero", "name": "Versace Eros EDP 100 ml", "price": "7490", "sku": "", "desc": "Perfume de 100 ml. Envío a todo Uruguay en 48 a 72 horas.", "link": "https://novaparfumuy.myshopify.com/products/versace-eros-edp", "foto": "fotos/10-versace-eros-edp.jpg"}, {"n": 11, "cat": "Caballero", "name": "Armani Stronger With You Intensely 100 ml", "price": "7500", "sku": "PER-139", "desc": "Castaña confitada, vainilla y canela: dulce, cálido y muy seductor.\nFamilia olfativa: Ámbar fougère\nNotas de salida: pimienta rosa, enebro, mandarina\nNotas de corazón: toffee, canela, lavanda, salvia\nNotas de fondo: vainilla, tonka, ámbar, gamuza\nIdeal para: otoño e invierno, de noche.\n\nPerfume de 100 ml. Envío a todo Uruguay en 48 a 72 horas.", "link": "https://novaparfumuy.myshopify.com/products/emporio-armani-stronger-with-you-intensely", "foto": "fotos/11-emporio-armani-stronger-with-you-intensely.jpg"}, {"n": 12, "cat": "Caballero", "name": "Dior Sauvage EDP 100 ml", "price": "10250", "sku": "PER-037", "desc": "Fragancia masculina potente y magnética, en concentración Eau de Parfum.\nFamilia olfativa: Aromático especiado (ámbar vainilla)\nNotas principales: bergamota, pimienta, lavanda, anís estrellado, nuez moscada, ambroxan y vainilla\nIdeal para: todo el año, con más presencia en otoño e invierno.\n\nPerfume de 100 ml. Envío a todo Uruguay en 48 a 72 horas.", "link": "https://novaparfumuy.myshopify.com/products/sauvage-dior-100ml-edp", "foto": "fotos/12-sauvage-dior-100ml-edp.jpg"}, {"n": 13, "cat": "Caballero", "name": "Bleu de Chanel 100 ml", "price": "10200", "sku": "PER-016", "desc": "Elegante y versátil, una de las fragancias masculinas más elegidas del mundo.\nFamilia olfativa: Amaderado aromático\nNotas principales: pomelo, limón, menta, jengibre, incienso, cedro, sándalo y pachulí\nIdeal para: primavera, verano y otoño, de día o de noche.\n\nPerfume de 100 ml. Envío a todo Uruguay en 48 a 72 horas.", "link": "https://novaparfumuy.myshopify.com/products/bleu-de-chanel", "foto": "fotos/13-bleu-de-chanel.jpg"}, {"n": 14, "cat": "Caballero", "name": "Carolina Herrera 212 VIP Men 100 ml", "price": "5200", "sku": "PER-061", "desc": "Fragancia masculina festiva, fresca y con un toque de licor.\nFamilia olfativa: Amaderado especiado\nNotas principales: lima, jengibre, menta, ron, vodka, haba tonka, ámbar, cuero y madera\nIdeal para: primavera, verano y otoño, de noche.\n\nPerfume de 100 ml. Envío a todo Uruguay en 48 a 72 horas.", "link": "https://novaparfumuy.myshopify.com/products/carolina-herrera-212-vip-men-1", "foto": "fotos/14-carolina-herrera-212-vip-men-1.jpg"}, {"n": 15, "cat": "Caballero", "name": "Carolina Herrera Bad Boy 100 ml", "price": "8250", "sku": "PER-006", "desc": "Fragancia masculina de carácter atrevido, con un toque dulce y especiado de cacao.\nFamilia olfativa: Amaderado especiado\nNotas principales: pimienta blanca, bergamota, salvia, cacao, haba tonka y cedro\nIdeal para: otoño, invierno y primavera, sobre todo de noche.\n\nPerfume de 100 ml. Envío a todo Uruguay en 48 a 72 horas.", "link": "https://novaparfumuy.myshopify.com/products/bad-boy-ch", "foto": "fotos/15-bad-boy-ch.jpg"}, {"n": 16, "cat": "Caballero", "name": "Jean Paul Gaultier Scandal pour Homme 100 ml", "price": "6000", "sku": "PER-067", "desc": "Fragancia masculina golosa, cálida y seductora. Viene en set con miniatura.\nFamilia olfativa: Oriental amaderado (gourmand aromático)\nNotas principales: mandarina, salvia esclarea, cacao, caramelo y haba tonka\nIdeal para: otoño e invierno, de noche.\n\nPerfume de 100 ml. Envío a todo Uruguay en 48 a 72 horas.", "link": "https://novaparfumuy.myshopify.com/products/jean-paul-gaultier-scandal-pour-homme", "foto": "fotos/16-jean-paul-gaultier-scandal-pour-homme.jpg"}, {"n": 17, "cat": "Caballero", "name": "Valentino Uomo Born in Roma 100 ml", "price": "6900", "sku": "PER-074", "desc": "Fragancia masculina moderna, mineral y elegante, inspirada en Roma.\nFamilia olfativa: Amaderado especiado\nNotas principales: notas minerales, hoja de violeta, sal, salvia, jengibre y vetiver\nIdeal para: todo el año, de día o de noche.\n\nPerfume de 100 ml. Envío a todo Uruguay en 48 a 72 horas.", "link": "https://novaparfumuy.myshopify.com/products/valentino-uomo-born-in-roma", "foto": "fotos/17-valentino-uomo-born-in-roma.jpg"}, {"n": 18, "cat": "Dama", "name": "Lancôme La Vie Est Belle 100 ml", "price": "9100", "sku": "PER-029", "desc": "Fragancia femenina dulce y luminosa, una de las más queridas del mundo.\nFamilia olfativa: Floral frutal gourmand\nNotas principales: grosella negra, pera, iris, jazmín, flor de naranjo, pachulí, praliné y vainilla\nIdeal para: otoño, invierno y primavera, de día o de noche.\n\nPerfume de 100 ml. Envío a todo Uruguay en 48 a 72 horas.", "link": "https://novaparfumuy.myshopify.com/products/la-vida-es-bella-lancome", "foto": "fotos/18-la-vida-es-bella-lancome.jpg"}, {"n": 19, "cat": "Dama", "name": "Lancôme Idôle 100 ml", "price": "7000", "sku": "PER-036", "desc": "Fragancia femenina moderna, floral y almizclada, pensada para el uso diario.\nFamilia olfativa: Floral almizclado\nNotas principales: pera, pimienta rosa, bergamota, rosa, jazmín, almizcle blanco, vainilla y pachulí\nIdeal para: primavera y otoño, de día o de noche.\n\nPerfume de 100 ml. Envío a todo Uruguay en 48 a 72 horas.", "link": "https://novaparfumuy.myshopify.com/products/idole-lancome-100ml", "foto": "fotos/19-idole-lancome-100ml.jpg"}, {"n": 20, "cat": "Dama", "name": "Dior J'adore 100 ml", "price": "9500", "sku": "PER-014", "desc": "Un ícono femenino: elegante, luminoso y sofisticado, como un ramo dorado de flores.\nFamilia olfativa: Floral frutal\nNotas principales: pera, melón, bergamota, jazmín, rosa, orquídea, ciruela, almizcle, vainilla y sándalo\nIdeal para: primavera, verano y otoño, de día o de noche.\n\nPerfume de 100 ml. Envío a todo Uruguay en 48 a 72 horas.", "link": "https://novaparfumuy.myshopify.com/products/jadore-dior", "foto": "fotos/20-jadore-dior.jpg"}, {"n": 21, "cat": "Dama", "name": "Chanel Coco Mademoiselle 100 ml", "price": "10500", "sku": "PER-155", "desc": "Chipre moderno, fresco y sensual: naranja, rosa y pachulí para una mujer libre y elegante.\nFamilia olfativa: Chipre floral\nNotas de salida: naranja, mandarina, bergamota\nNotas de corazón: rosa turca, jazmín, lichi\nNotas de fondo: pachulí, vetiver, vainilla, almizcle blanco\nIdeal para: todo el año, de día y noche.\n\nPerfume de 100 ml. Envío a todo Uruguay en 48 a 72 horas.", "link": "https://novaparfumuy.myshopify.com/products/chanel-coco-mademoiselle", "foto": "fotos/21-chanel-coco-mademoiselle.jpg"}, {"n": 22, "cat": "Dama", "name": "Valentino Donna Born in Roma 100 ml", "price": "9650", "sku": "PER-013", "desc": "Fragancia femenina elegante y moderna, inspirada en el espíritu de Roma.\nFamilia olfativa: Oriental floral\nNotas principales: grosella negra, pimienta rosa, bergamota, jazmín, vainilla bourbon, cashmeran y madera de guayaco\nIdeal para: otoño, invierno y primavera, de día o de noche.\n\nPerfume de 100 ml. Envío a todo Uruguay en 48 a 72 horas.", "link": "https://novaparfumuy.myshopify.com/products/valentino-varios", "foto": "fotos/22-valentino-varios.jpg"}, {"n": 23, "cat": "Dama", "name": "Calvin Klein Euphoria 100 ml", "price": "5950", "sku": "PER-019", "desc": "Fragancia femenina sensual y misteriosa, de perfil oriental floral.\nFamilia olfativa: Oriental floral\nNotas principales: granada, caqui, orquídea negra, loto, ámbar, almizcle, caoba y vainilla\nIdeal para: otoño e invierno, de noche.\n\nPerfume de 100 ml. Envío a todo Uruguay en 48 a 72 horas.", "link": "https://novaparfumuy.myshopify.com/products/euphoria-calvin-klein", "foto": "fotos/23-euphoria-calvin-klein.jpg"}, {"n": 24, "cat": "Dama", "name": "Dolce & Gabbana Light Blue 100 ml", "price": "6650", "sku": "PER-031", "desc": "Fragancia fresca y veraniega, con el aire cítrico de una brisa mediterránea.\nFamilia olfativa: Cítrico frutal amaderado\nNotas principales: limón siciliano, manzana, campanilla, bambú, jazmín, cedro, almizcle y ámbar\nIdeal para: primavera y verano, de día.\n\nPerfume de 100 ml. Envío a todo Uruguay en 48 a 72 horas.", "link": "https://novaparfumuy.myshopify.com/products/light-blue-dolce-gabbana", "foto": "fotos/24-light-blue-dolce-gabbana.jpg"}, {"n": 25, "cat": "Dama", "name": "Ariana Grande Cloud 100 ml", "price": "4500", "sku": "PER-177", "desc": "Una nube dulce y cremosa: lavanda, coco batido y praliné.\nFamilia olfativa: Oriental vainilla gourmand\nNotas de salida: lavanda, pera, bergamota\nNotas de corazón: coco batido, praliné, orquídea\nNotas de fondo: almizcle, vainilla, maderas\nIdeal para: todo el año, uso diario.\n\nPerfume de 100 ml. Envío a todo Uruguay en 48 a 72 horas.", "link": "https://novaparfumuy.myshopify.com/products/ariana-grande-cloud", "foto": "fotos/25-ariana-grande-cloud.jpg"}, {"n": 26, "cat": "Unisex y nicho", "name": "Tom Ford Ombré Leather 100 ml", "price": "10500", "sku": "PER-153", "desc": "Cuero suave, jazmín y cardamomo: el espíritu del desierto del oeste americano.\nFamilia olfativa: Cuero\nNotas de salida: cardamomo\nNotas de corazón: cuero, jazmín sambac\nNotas de fondo: ámbar, musgo, pachulí\nIdeal para: otoño e invierno.\n\nPerfume de 100 ml. Envío a todo Uruguay en 48 a 72 horas.", "link": "https://novaparfumuy.myshopify.com/products/tom-ford-ombre-leather", "foto": "fotos/26-tom-ford-ombre-leather.jpg"}, {"n": 27, "cat": "Unisex y nicho", "name": "Creed Aventus 100 ml", "price": "18900", "sku": "PER-080", "desc": "El ícono absoluto del nicho masculino: frutal, ahumado y de presencia magnética. Sinónimo de éxito y poder.\nFamilia olfativa: Chipre frutal\nNotas de salida: piña, grosella negra, bergamota, manzana\nNotas de corazón: abedul, pachulí, jazmín, rosa\nNotas de fondo: almizcle, musgo de roble, ámbar gris, vainilla\nIdeal para: todo el año, de día y de noche; ocasiones importantes.\n\nPerfume de 100 ml. Envío a todo Uruguay en 48 a 72 horas.", "link": "https://novaparfumuy.myshopify.com/products/creed-aventus", "foto": "fotos/27-creed-aventus.jpg"}];
+const KEY = 'np-wa-cargados';
+const CATS = ['Todos','Árabes','Caballero','Dama','Unisex y nicho'];
+let done = new Set();
+try { done = new Set(JSON.parse(localStorage.getItem(KEY) || '[]')); } catch (e) {}
+let filter = 'Todos';
+const fmt = p => '$ ' + Number(p).toLocaleString('es-UY');
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function save(){ try { localStorage.setItem(KEY, JSON.stringify([...done])); } catch (e) {} }
+function progress(){
+  const n = ITEMS.filter(i => done.has(i.n)).length;
+  document.getElementById('count').textContent = n + ' de ' + ITEMS.length + ' cargados';
+  document.getElementById('meter').style.width = (n / ITEMS.length * 100) + '%';
+}
+function field(label, value, cls, copyValue){
+  return '<div class="field"><div style="min-width:0"><label>' + label + '</label><div class="v ' + (cls||'') + '">' + esc(value) + '</div></div>' +
+    '<button type="button" class="copy" data-copy="' + esc(copyValue ?? value) + '" aria-label="Copiar ' + label.toLowerCase() + '">Copiar</button></div>';
+}
+function render(){
+  const list = document.getElementById('list');
+  let html = '', last = '';
+  ITEMS.filter(i => filter === 'Todos' || i.cat === filter).forEach(i => {
+    if (filter === 'Todos' && i.cat !== last) { html += '<h2 class="group">' + esc(i.cat) + '</h2>'; last = i.cat; }
+    const d = done.has(i.n);
+    html += '<article class="card' + (d ? ' done' : '') + '" data-n="' + i.n + '">' +
+      '<div class="top"><img class="photo" src="' + i.foto + '" alt="Foto de ' + esc(i.name) + '" loading="lazy" width="112" height="112">' +
+      '<div class="head"><span class="num">N.º ' + String(i.n).padStart(2,'0') + ' · ' + esc(i.cat) + '</span><h3 class="name">' + esc(i.name) + '</h3>' +
+      '<span class="price">' + fmt(i.price) + '</span>' +
+      '<label class="check"><input type="checkbox" id="c' + i.n + '" ' + (d ? 'checked' : '') + '> Ya lo cargué</label></div></div>' +
+      '<div class="fields">' + field('Nombre', i.name) + field('Precio', i.price) + field('Descripción', i.desc) + field('Enlace', i.link, 'link') +
+      (i.sku ? field('Código del artículo', i.sku) : '') + '</div></article>';
+  });
+  list.innerHTML = html;
+  progress();
+}
+function chips(){
+  document.getElementById('chips').innerHTML = CATS.map(c => {
+    const n = c === 'Todos' ? ITEMS.length : ITEMS.filter(i => i.cat === c).length;
+    return '<button type="button" class="chip" aria-pressed="' + (c === filter) + '" data-cat="' + esc(c) + '">' + esc(c) + ' · ' + n + '</button>';
+  }).join('');
+}
+let tt;
+function toast(msg){ const t = document.getElementById('toast'); t.textContent = msg; t.hidden = false; clearTimeout(tt); tt = setTimeout(() => t.hidden = true, 1800); }
+function fallbackCopy(text){
+  const ta = document.createElement('textarea'); ta.value = text; ta.setAttribute('readonly',''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, text.length);
+  let ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
+  ta.remove(); return ok;
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('.copy');
+  if (b) {
+    const text = b.dataset.copy;
+    const mark = () => { b.classList.add('ok'); b.textContent = 'Copiado'; setTimeout(() => { b.classList.remove('ok'); b.textContent = 'Copiar'; }, 1500); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(mark).catch(() => { fallbackCopy(text) ? mark() : toast('No se pudo copiar: mantené apretado el texto para copiarlo'); });
+    } else { fallbackCopy(text) ? mark() : toast('No se pudo copiar: mantené apretado el texto para copiarlo'); }
+    return;
+  }
+  const c = e.target.closest('.chip');
+  if (c) { filter = c.dataset.cat; chips(); render(); }
+});
+document.addEventListener('change', e => {
+  const cb = e.target.closest('.check input'); if (!cb) return;
+  const n = Number(cb.closest('.card').dataset.n);
+  cb.checked ? done.add(n) : done.delete(n);
+  cb.closest('.card').classList.toggle('done', cb.checked);
+  save(); progress();
+  if (cb.checked) toast('Listo: ' + done.size + ' de ' + ITEMS.length);
+});
+chips(); render();
+</script>

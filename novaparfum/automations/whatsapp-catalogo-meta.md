@@ -30,6 +30,10 @@ la API de WhatsApp (de pago). Por eso el catálogo se arma en Meta y después se
 - **Pendiente:** "Alpha for Him" tiene la marca "A confirmar". Hay que corregir la marca o sacarlo del canal
   (Productos → Alpha for Him → Canales de ventas).
 
+## Estado al 9/10/2026
+- La conexión sigue dando el mismo error, después de revisar permisos, página, cuenta de WhatsApp y Administrador de WhatsApp.
+- Plan B en marcha: carga manual de 27 perfumes. Ver `whatsapp-catalogo-manual/`.
+
 ## Pasos que siguen (los hace la dueña o el dueño de la cuenta)
 1. **Revisar el catálogo:** business.facebook.com → Commerce Manager → Catálogo → Artículos. Tienen que aparecer
    unos 259. La primera sincronización puede tardar.
