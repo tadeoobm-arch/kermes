@@ -29,6 +29,6 @@ En iPhone 13 y Pixel 7, en la portada, la colección y la ficha de producto, arr
 
 Ver `capturas/despues-menu-completo.png`.
 
-## Publicar
-Tienda online → Temas → "NovaParfum (menú celular arreglado)" → Publicar.
-El tema anterior queda guardado y no se borra nada.
+## Publicado
+**Publicado el 9 de octubre de 2026** y verificado en la web en vivo, sin vista previa, con las mismas pruebas.
+El tema anterior, "NovaParfum (intro de marca)", queda guardado sin publicar.
