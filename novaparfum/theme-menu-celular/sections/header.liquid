@@ -1,0 +1,84 @@
+{%- assign menu = linklists[section.settings.menu] -%}
+<header class="header" data-header>
+  <div class="container header__inner">
+    <details class="drawer header__drawer">
+      <summary class="icon-btn" aria-label="Abrir menú">{% render 'icon', name: 'menu' %}</summary>
+      <div class="drawer__panel" role="dialog" aria-label="Menú">
+        <div class="drawer__head">
+          {% render 'logo' %}
+          <button type="button" class="icon-btn" data-close-details aria-label="Cerrar menú">{% render 'icon', name: 'close' %}</button>
+        </div>
+        <nav aria-label="Menú principal">
+          <ul class="drawer__menu">
+            {%- for link in menu.links -%}
+              <li><a href="{{ link.url }}"{% if link.active %} aria-current="page"{% endif %}>{{ link.title }}</a></li>
+            {%- endfor -%}
+            <li><a href="/pages/segui-tu-pedido">Seguí tu pedido</a></li>
+          </ul>
+        </nav>
+      </div>
+    </details>
+
+    <a href="{{ routes.root_url }}" class="header__logo" aria-label="{{ shop.name }} — Inicio">
+      {% render 'logo' %}
+    </a>
+
+    <nav class="header__nav" aria-label="Menú principal">
+      <ul>
+        {%- for link in menu.links -%}
+          <li><a href="{{ link.url }}" class="header__link{% if link.active %} is-active{% endif %}"{% if link.active %} aria-current="page"{% endif %}>{{ link.title }}</a></li>
+        {%- endfor -%}
+      </ul>
+    </nav>
+
+    <div class="header__icons">
+      <details class="search-pop">
+        <summary class="icon-btn" aria-label="Buscar">{% render 'icon', name: 'search' %}</summary>
+        <form action="{{ routes.search_url }}" method="get" role="search" class="search-pop__form">
+          <input type="hidden" name="type" value="product">
+          <input type="hidden" name="options[prefix]" value="last">
+          <label for="HeaderSearch" class="visually-hidden">Buscar perfumes</label>
+          <input id="HeaderSearch" type="search" name="q" placeholder="Buscá por perfume, marca o nota…" autocomplete="off" enterkeyhint="search">
+          <button type="submit" class="btn btn--primary">Buscar</button>
+        </form>
+      </details>
+      {%- if shop.customer_accounts_enabled -%}
+        <a href="{{ routes.account_url }}" class="icon-btn hide-mobile" aria-label="Mi cuenta">{% render 'icon', name: 'account' %}</a>
+      {%- endif -%}
+      <a href="{{ routes.cart_url }}" class="icon-btn cart-link" aria-label="Carrito">
+        {% render 'icon', name: 'cart' %}
+        <span class="cart-count" data-cart-count{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+{%- comment -%}
+  Menú del celular: el encabezado tiene efecto vidrio (backdrop-filter) y se esconde con transform al bajar.
+  Las dos cosas hacen que el panel del menú (position: fixed) quede recortado al alto del encabezado y no se vea.
+  Mientras el menú está abierto se sacan, y la página de atrás no se desplaza.
+{%- endcomment -%}
+<style>
+  .np-menu-open .section-header, .np-menu-open .section-header .header {
+    -webkit-backdrop-filter: none !important; backdrop-filter: none !important; transform: none !important; filter: none !important;
+  }
+  .section-header:has(.header__drawer[open]), .section-header:has(.header__drawer[open]) .header {
+    -webkit-backdrop-filter: none !important; backdrop-filter: none !important; transform: none !important; filter: none !important;
+  }
+  html.np-menu-open { overflow: hidden; }
+</style>
+<script>
+  document.querySelectorAll('details.header__drawer').forEach(function (d) {
+    d.addEventListener('toggle', function () { document.documentElement.classList.toggle('np-menu-open', d.open); });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Encabezado",
+  "class": "section-header",
+  "settings": [
+    { "type": "link_list", "id": "menu", "label": "Menú", "default": "main-menu", "info": "Ítems: Inicio, Perfumes, Hombre, Mujer, Unisex, Ofertas, Nuevos, Contacto (ver docs/SETUP.md)." }
+  ]
+}
+{% endschema %}
