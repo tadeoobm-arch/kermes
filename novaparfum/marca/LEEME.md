@@ -35,3 +35,8 @@ Versión liviana para WhatsApp: `novaparfum-compartir-wpp.jpg` (33 KB). El PNG q
 Verificado el 8/10/2026: la web ya publica título, descripción y og:image nuevos.
 WhatsApp arma la vista previa en el teléfono de quien manda el link y la guarda un tiempo: para probar, usar un link
 nuevo (por ejemplo `https://novaparfumuy.myshopify.com/?wpp=2`).
+
+## Foto de perfil (Mercado Pago y otras cuentas)
+`novaparfum-perfil.png` (800 × 800) y `novaparfum-perfil.svg`: el destello rosa con el puntito lila sobre fondo tinta.
+Queda bien recortada en círculo. Sirve para la cuenta de Mercado Pago, que en la pantalla de pago mostraba
+el nombre "Radeon" con una foto personal en lugar de Nova Parfum.
