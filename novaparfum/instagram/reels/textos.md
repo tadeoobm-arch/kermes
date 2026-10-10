@@ -80,6 +80,33 @@ Guardalo para tu próximo regalo 🎁
 #perfumes #perfumesuruguay #perfumesmontevideo #fragancias
 ```
 
+## 6. reel-6-cual-elegis-2.mp4 (dinámico, 8,8 s, `generar-dinamico.mjs reel-6-cual-elegis-2`)
+Mismo formato que el 5, con 8 perfumes que no aparecían en publicaciones anteriores.
+
+Fotos de 100 ml:
+
+| Perfume | Cómo se verificó |
+|---|---|
+| Silver Mountain Water | archivo `_100ml` |
+| Interlude Man | archivo `_100_ML` |
+| Another 13 | la etiqueta dice 100 ml |
+| Stronger With You Intensely | archivo `_33` (3.3 oz) |
+| Acqua di Gioia | archivo `3.4` |
+| Asad Bourbon | archivo `_34` |
+| Hawas Kobra | archivo `_34` y la caja dice 100 ml |
+| Yara Candy | Lattafa la hace solo en 100 ml |
+
+```
+¿Cuál elegís? Comentá el número 👇
+
+1 Creed Silver Mountain Water · 2 Lattafa Yara Candy · 3 Armani Stronger With You Intensely · 4 Amouage Interlude Man · 5 Armani Acqua di Gioia · 6 Lattafa Asad Bourbon · 7 Le Labo Another 13 · 8 Rasasi Hawas Kobra
+
+Todos en 100 ml, con envío a todo Uruguay. Link en el perfil.
+Mandáselo a quien siempre te pregunta qué perfume usás 💜
+
+#perfumes #perfumesuruguay #perfumesmontevideo #fragancias
+```
+
 ## Programación en Metricool (marca "Novaparfum", Instagram novaparfum.uy)
 Programados el 10/10/2026 como Reel de Instagram, con publicación automática, "mostrar en el feed" activado y portada `*-portada.jpg`.
 Los videos se sirven desde Archivos de Shopify en su calidad original de 1080 × 1920.

@@ -1,15 +1,16 @@
 // Reel dinámico "¿Cuál elegís?" (1080 × 1920, 30 fps, ~9 s, sin audio).
 // Cortes rápidos con cambio de color, gancho para comentar y grilla final; el final empalma con el principio.
-// Uso: node generar-dinamico.mjs <carpeta-recortes> <carpeta-salida>
+// Uso: node generar-dinamico.mjs <carpeta-recortes> <carpeta-salida> [reel-5-cual-elegis | reel-6-cual-elegis-2]
 // Frascos: fotos verificadas de 100 ml (ver textos.md y ../historia-nicho/LEEME.md), cada uno con "100 ml" al lado.
 import { chromium } from 'playwright';
 import { readFileSync, mkdirSync, rmSync } from 'fs';
 import { execFileSync } from 'child_process';
-const CUT = process.argv[2], OUT = process.argv[3], ID = 'reel-5-cual-elegis', FPS = 30;
+const CUT = process.argv[2], OUT = process.argv[3], FPS = 30;
 const STAR = 'M20 4c1 8.4 4.2 11.8 12.6 12.8C24.2 17.8 21 21.2 20 29.6 19 21.2 15.8 17.8 7.4 16.8 15.8 15.8 19 12.4 20 4Z';
 const img = n => 'data:image/png;base64,' + readFileSync(`${CUT}/${n}.png`).toString('base64');
 const C = { ink: '#2F2A4A', deep: '#1E1A33', cream: '#F7F4F0', powder: '#E9C9CF', lilac: '#B3A6E4', iris: '#7A68B8' };
-const ITEMS = [
+const SETS = {
+ 'reel-5-cual-elegis': [
   { img: 'aventus', brand: 'Creed', name: 'Aventus', bg: C.ink, fg: C.cream, acc: C.powder },
   { img: 'yara', brand: 'Lattafa', name: 'Yara', bg: C.powder, fg: C.ink, acc: C.iris },
   { img: 'coco', brand: 'Chanel', name: 'Coco Mademoiselle', bg: C.cream, fg: C.ink, acc: C.iris },
@@ -18,7 +19,21 @@ const ITEMS = [
   { img: 'naxos', brand: 'Xerjoff', name: 'Naxos', bg: C.lilac, fg: C.ink, acc: C.cream },
   { img: 'lavie', brand: 'Lancôme', name: 'La Vie Est Belle', bg: C.powder, fg: C.ink, acc: C.iris },
   { img: 'bleu', brand: 'Chanel', name: 'Bleu de Chanel', bg: C.ink, fg: C.cream, acc: C.powder },
-];
+],
+ // segunda tanda: perfumes que no aparecieron en publicaciones anteriores
+ 'reel-6-cual-elegis-2': [
+  { img: 'smw', brand: 'Creed', name: 'Silver Mountain Water', bg: C.ink, fg: C.cream, acc: C.powder },
+  { img: 'yaracandy', brand: 'Lattafa', name: 'Yara Candy', bg: C.cream, fg: C.ink, acc: C.iris },
+  { img: 'swyint', brand: 'Armani', name: 'Stronger With You Intensely', bg: C.lilac, fg: C.ink, acc: C.cream },
+  { img: 'interlude', brand: 'Amouage', name: 'Interlude Man', bg: C.powder, fg: C.ink, acc: C.iris },
+  { img: 'gioia', brand: 'Armani', name: 'Acqua di Gioia', bg: C.iris, fg: C.cream, acc: C.powder },
+  { img: 'bourbon', brand: 'Lattafa', name: 'Asad Bourbon', bg: C.cream, fg: C.ink, acc: C.iris },
+  { img: 'another13', brand: 'Le Labo', name: 'Another 13', bg: C.lilac, fg: C.ink, acc: C.cream },
+  { img: 'kobra', brand: 'Rasasi', name: 'Hawas Kobra', bg: C.powder, fg: C.ink, acc: C.iris },
+ ],
+};
+const ID = process.argv[4] || 'reel-5-cual-elegis';
+const ITEMS = SETS[ID];
 const HOOK = 1.2, SHOT = 0.6, GRID = 2.8;
 const css = `
 html,body{margin:0}
