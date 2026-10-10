@@ -108,7 +108,7 @@ Mandáselo a quien siempre te pregunta qué perfume usás 💜
 ```
 
 ## Programación en Metricool (marca "Novaparfum", Instagram novaparfum.uy)
-Programados el 10/10/2026 como Reel de Instagram, con publicación automática, "mostrar en el feed" activado y portada `*-portada.jpg`.
+Programados el 10/10/2026 como Reel de Instagram (no como Reel de prueba), con publicación automática, "mostrar en el feed" activado y portada `*-portada.jpg`.
 Los videos se sirven desde Archivos de Shopify en su calidad original de 1080 × 1920.
 
 | Reel | Fecha y hora (Montevideo) | Shopify |
@@ -116,6 +116,9 @@ Los videos se sirven desde Archivos de Shopify en su calidad original de 1080 ×
 | 1 · árabes | sábado 10/10/2026, 20:30 | gid://shopify/Video/46415046869246 |
 | 2 · para él | lunes 12/10/2026, 20:30 | gid://shopify/Video/46415046902014 |
 | 3 · para ella | miércoles 14/10/2026, 20:30 | gid://shopify/Video/46415046934782 |
+| 5 · ¿Cuál elegís? | viernes 16/10/2026, 20:30 | gid://shopify/Video/46418607997182 |
+| 4 · nicho | domingo 18/10/2026, 20:30 | gid://shopify/Video/46418607964414 |
+| 6 · ¿Cuál elegís? 2 | martes 20/10/2026, 20:30 | gid://shopify/Video/46418608029950 |
 
 Metricool todavía no tenía datos para recomendar un horario, porque la cuenta es nueva. Se eligieron las 20:30.
 Van sin música: si se le agrega, tiene que ser antes de que se publique.
