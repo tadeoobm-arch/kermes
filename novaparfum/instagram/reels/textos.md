@@ -47,6 +47,21 @@ Pagás con Mercado Pago y te llega en 48 a 72 horas a todo Uruguay. Link en el p
 #perfumesmujer #perfumesuruguay #perfumesmontevideo #fragancias
 ```
 
+## 4. reel-4-nicho.mp4 (sin precios, 15,9 s)
+Creed Aventus, Xerjoff Naxos, Le Labo Santal 33, Amouage Guidance y Kilian Angels' Share.
+
+Las fotos de 100 ml están verificadas en `../historia-nicho/LEEME.md`. Las familias olfativas salen de la descripción de Shopify.
+```
+Perfumes de nicho, en Uruguay. Todos en 100 ml.
+
+Creed Aventus · Xerjoff Naxos · Le Labo Santal 33 · Amouage Guidance · Kilian Angels' Share.
+¿Cuál te llevás? Precios en la web, link en el perfil.
+
+Pagás con Mercado Pago y te llega en 48 a 72 horas a todo Uruguay.
+
+#perfumesdenicho #perfumesuruguay #perfumesmontevideo #fragancias
+```
+
 ## Programación en Metricool (marca "Novaparfum", Instagram novaparfum.uy)
 Programados el 10/10/2026 como Reel de Instagram, con publicación automática, "mostrar en el feed" activado y portada `*-portada.jpg`.
 Los videos se sirven desde Archivos de Shopify en su calidad original de 1080 × 1920.

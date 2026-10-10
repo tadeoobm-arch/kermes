@@ -1,5 +1,5 @@
 // Reels de productos (1080 × 1920, 30 fps, ~13 s, sin audio: la música se elige en Instagram).
-// Uso: node generar.mjs <carpeta-recortes> <carpeta-salida>
+// Uso: node generar.mjs <carpeta-recortes> <carpeta-salida> [id-de-un-reel]
 // Dibuja cada cuadro con Playwright y lo arma con ffmpeg. Fotos: recortes PNG de frascos de 100 ml.
 import { chromium } from 'playwright';
 import { readFileSync, mkdirSync, rmSync } from 'fs';
@@ -29,7 +29,15 @@ const REELS = [
       { img: 'lavie', name: 'Lancôme La Vie Est Belle', price: '$ 9.100', chip: 'PARA ELLA', fam: 'Floral frutal gourmand' },
       { img: 'donna', name: 'Valentino Donna Born in Roma', price: '$ 9.650', chip: 'PARA ELLA', fam: 'Oriental floral' },
       { img: 'coco', name: 'Chanel Coco Mademoiselle', price: '$ 10.500', chip: 'PARA ELLA', fam: 'Chipre floral' } ] },
+  { id: 'reel-4-nicho', hook: ['Perfumes', 'de nicho,', 'en Uruguay'], sub: 'Creed · Xerjoff · Le Labo · Amouage · Kilian', subSize: 36, end: 'Perfumes de nicho',
+    items: [
+      { img: 'aventus', brand: 'Creed', name: 'Aventus', chip: 'NICHO', fam: 'Chipre frutal' },
+      { img: 'naxos', brand: 'Xerjoff', name: 'Naxos', chip: 'NICHO', fam: 'Ámbar aromático' },
+      { img: 'santal', brand: 'Le Labo', name: 'Santal 33', chip: 'NICHO', fam: 'Amaderado aromático' },
+      { img: 'guidance', brand: 'Amouage', name: 'Guidance', chip: 'NICHO', fam: 'Ámbar floral' },
+      { img: 'angels-frasco', brand: 'Kilian', name: "Angels' Share", chip: 'NICHO', fam: 'Oriental vainilla' } ] },
 ];
+const ONLY = process.argv[4];
 
 const HOOK = 1.9, ITEM = 2.35, OVER = 0.3, END = 2.6;
 const css = `
@@ -51,6 +59,7 @@ html,body{margin:0;background:#221D38}
 .ml{position:absolute;top:30px;right:30px;width:160px;height:160px;border-radius:50%;background:#7A68B8;color:#F7F4F0;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 12px 28px rgba(47,42,74,.3)}
 .ml b{font:400 66px/1 Fraunces,serif}.ml i{font:600 26px Manrope,sans-serif;font-style:normal;letter-spacing:.16em;margin-top:2px}
 .name{width:1080px;top:1300px;text-align:center;font:400 76px/1.05 Fraunces,serif;letter-spacing:-.012em;padding:0 70px;box-sizing:border-box;white-space:nowrap}
+.brand{width:1080px;top:1292px;text-align:center;font:600 30px Manrope,sans-serif;letter-spacing:.26em;color:#B3A6E4}
 .fam{width:1080px;top:1395px;text-align:center;font:500 34px Manrope,sans-serif;color:#B3A6E4;letter-spacing:.06em}
 .price{width:1080px;top:1450px;text-align:center;font:600 78px Manrope,sans-serif;color:#E9C9CF}
 .price small{font-size:38px;color:rgba(247,244,240,.7);font-weight:500;margin-left:14px}
@@ -66,12 +75,13 @@ html,body{margin:0;background:#221D38}
 function sceneHTML(r) {
   const sparks = [[90,300,30],[960,520,22],[120,1380,18],[930,1500,26],[540,1720,16],[200,820,14],[880,980,12]]
     .map(([x,y,s],k) => `<svg class="sp" data-k="${k}" style="left:${x}px;top:${y}px;width:${s}px;height:${s}px" viewBox="0 0 40 40"><path d="${STAR}"/></svg>`).join('');
-  const hook = `<div class="l hook" id="hook">${r.hook.map((w,i) => `<span class="w" data-i="${i}">${w}</span>`).join('')}<span class="sub">${r.sub}</span></div>`;
+  const hook = `<div class="l hook" id="hook">${r.hook.map((w,i) => `<span class="w" data-i="${i}">${w}</span>`).join('')}<span class="sub"${r.subSize ? ` style="font-size:${r.subSize}px"` : ''}>${r.sub}</span></div>`;
   const items = r.items.map((it,i) => `
     <div class="l card" id="card${i}"><img class="bottle" id="b${i}" src="${img(it.img)}"><div class="chip">${it.chip}</div><div class="ml" id="ml${i}"><b>100</b><i>ML</i></div></div>
-    <div class="l name" id="name${i}">${it.name}</div>
-    ${it.fam ? `<div class="l fam" id="fam${i}">${it.fam}</div>` : ''}
-    <div class="l price" id="price${i}">${it.price}<small>100 ml</small></div>`).join('');
+    ${it.brand ? `<div class="l brand" id="brand${i}">${it.brand.toUpperCase()}</div>` : ''}
+    <div class="l name" id="name${i}"${it.brand ? ' style="top:1340px"' : ''}>${it.name}</div>
+    ${it.fam ? `<div class="l fam" id="fam${i}"${it.brand ? ' style="top:1442px"' : ''}>${it.fam}</div>` : ''}
+    ${it.price ? `<div class="l price" id="price${i}">${it.price}<small>100 ml</small></div>` : ''}`).join('');
   const dots = `<div class="l dots" id="dots">${r.items.map((_,i) => `<i data-d="${i}"></i>`).join('')}</div>`;
   const end = `<svg class="l endstar" id="endstar" viewBox="0 0 40 40"><path d="${STAR}" fill="#E9C9CF"/><circle cx="30.5" cy="29.5" r="2.6" fill="#B3A6E4"/></svg>
     <div class="l end1" id="end1">${r.end}</div><div class="l end2" id="end2">Pedilo en la web</div>
@@ -105,6 +115,7 @@ function frameFn(t, n, HOOK, ITEM, OVER, END) {
     const b = $('b' + i);
     if (b && b.dataset.w) { const zoom = 1 + 0.05 * p(s, e); b.style.transform = `translateX(-50%) scale(${(0.82 + 0.18 * bin) * zoom})`; }
     const ml = $('ml' + i); const me = back(p(s + 0.45, s + 0.85)); if (ml) { ml.style.transform = `scale(${me})`; ml.style.opacity = cl(me); }
+    const be = out(p(s + 0.15, s + 0.6)); set($('brand' + i), vis ? be * (1 - eo) : 0, `translateY(${(1 - be) * 30}px)`);
     const ne = out(p(s + 0.2, s + 0.65)); set($('name' + i), vis ? ne * (1 - eo) : 0, `translateY(${(1 - ne) * 40}px)`);
     const fe = out(p(s + 0.3, s + 0.75)); set($('fam' + i), vis ? fe * (1 - eo) : 0, `translateY(${(1 - fe) * 30}px)`);
     const pe = out(p(s + 0.38, s + 0.85)); set($('price' + i), vis ? pe * (1 - eo) : 0, `translateY(${(1 - pe) * 30}px) scale(${0.96 + 0.04 * pe})`);
@@ -123,7 +134,7 @@ function frameFn(t, n, HOOK, ITEM, OVER, END) {
 
 const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
 const page = await (await b.newContext({ viewport: { width: 1080, height: 1920 } })).newPage();
-for (const r of REELS) {
+for (const r of REELS.filter(x => !ONLY || x.id === ONLY)) {
   const n = r.items.length, total = HOOK + n * ITEM - OVER + END;
   await page.setContent(`<!doctype html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400&family=Manrope:wght@500;600;700&display=swap" rel="stylesheet"><style>${css}</style></head><body>${sceneHTML(r)}</body></html>`, { waitUntil: 'networkidle' });
   await page.evaluate(() => document.fonts.ready);
