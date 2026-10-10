@@ -62,6 +62,24 @@ Pagás con Mercado Pago y te llega en 48 a 72 horas a todo Uruguay.
 #perfumesdenicho #perfumesuruguay #perfumesmontevideo #fragancias
 ```
 
+## 5. reel-5-cual-elegis.mp4 (dinámico, 8,8 s, `generar-dinamico.mjs`)
+- Gancho "¿Cuál elegís? Comentá el número 👇".
+- 8 perfumes numerados, medio segundo cada uno, con el fondo cambiando de color en cada corte.
+- Grilla final con los 8 para que la gente pause y comente. El final se funde con el principio para que el loop empalme.
+
+Todos son fotos verificadas de 100 ml y llevan el sello "100 ml". A Eros EDP se le recortó el reflejo blanco de la base.
+
+```
+¿Cuál elegís? Comentá el número 👇
+
+1 Creed Aventus · 2 Lattafa Yara · 3 Chanel Coco Mademoiselle · 4 Kilian Angels' Share · 5 Versace Eros EDP · 6 Xerjoff Naxos · 7 Lancôme La Vie Est Belle · 8 Bleu de Chanel
+
+Todos en 100 ml, con envío a todo Uruguay. Link en el perfil.
+Guardalo para tu próximo regalo 🎁
+
+#perfumes #perfumesuruguay #perfumesmontevideo #fragancias
+```
+
 ## Programación en Metricool (marca "Novaparfum", Instagram novaparfum.uy)
 Programados el 10/10/2026 como Reel de Instagram, con publicación automática, "mostrar en el feed" activado y portada `*-portada.jpg`.
 Los videos se sirven desde Archivos de Shopify en su calidad original de 1080 × 1920.
