@@ -23,4 +23,6 @@ Cada frasco lleva "100 ml" al lado del nombre.
 - Nishane y Xerjoff 40 Knots (la foto es de 50 ml)
 - Tom Ford Private Blend (no se pudo verificar)
 
-La dirección de la web y @novaparfum.uy van escritas en la imagen para que sirva aunque se reenvíe por WhatsApp.
+Hay dos versiones:
+- `historia-nicho-con-espacio-para-link.png` deja un lugar libre debajo de "Tocá el link para verlos 👇" para el sticker de enlace de Instagram. Es para subirla desde la cuenta propia.
+- `historia-nicho.png` tiene la dirección de la web escrita, para que sirva aunque se reenvíe por WhatsApp, donde no viaja el sticker.

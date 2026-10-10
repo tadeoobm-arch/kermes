@@ -72,4 +72,11 @@ const chk = await p.evaluate(() => { const h = document.querySelector('h1').getB
   return { h1bottom: Math.round(h.bottom), brandsTop: Math.round(br.top), labelsOverlap: ov, row1LabelsBottom: Math.round(l1), row2Top: Math.round(r2), lastLabelBottom: Math.round(Math.max(...labs.map(l => l.bottom))) }; });
 console.log(chk);
 await p.locator('.c').screenshot({ path: `${OUT}/historia-nicho.png` });
+// Variante con lugar libre para el sticker de enlace de Instagram (para subir desde la cuenta propia)
+await p.evaluate(() => {
+  document.querySelector('.url').remove();
+  const cta = document.querySelector('.cta'); cta.textContent = 'Tocá el link para verlos 👇'; cta.style.top = '1532px';
+  document.querySelector('.foot').style.top = '1742px';
+});
+await p.locator('.c').screenshot({ path: `${OUT}/historia-nicho-con-espacio-para-link.png` });
 await b.close();
