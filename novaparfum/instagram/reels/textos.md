@@ -46,3 +46,16 @@ Pagás con Mercado Pago y te llega en 48 a 72 horas a todo Uruguay. Link en el p
 
 #perfumesmujer #perfumesuruguay #perfumesmontevideo #fragancias
 ```
+
+## Programación en Metricool (marca "Novaparfum", Instagram novaparfum.uy)
+Programados el 10/10/2026 como Reel de Instagram, con publicación automática, "mostrar en el feed" activado y portada `*-portada.jpg`.
+Los videos se sirven desde Archivos de Shopify en su calidad original de 1080 × 1920.
+
+| Reel | Fecha y hora (Montevideo) | Shopify |
+|---|---|---|
+| 1 · árabes | sábado 10/10/2026, 20:30 | gid://shopify/Video/46415046869246 |
+| 2 · para él | lunes 12/10/2026, 20:30 | gid://shopify/Video/46415046902014 |
+| 3 · para ella | miércoles 14/10/2026, 20:30 | gid://shopify/Video/46415046934782 |
+
+Metricool todavía no tenía datos para recomendar un horario, porque la cuenta es nueva. Se eligieron las 20:30.
+Van sin música: si se le agrega, tiene que ser antes de que se publique.
