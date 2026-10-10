@@ -1,0 +1,38 @@
+<section class="section">
+  <div class="container">
+    <div class="section__head">
+      <div>
+        <p class="eyebrow">{% render 'icon', icon: 'truck' %} Envíos</p>
+        <h2 style="margin:0">{{ section.settings.heading }}</h2>
+      </div>
+      <a class="link-arrow" href="{{ settings.tracking_page_url | default: '/pages/segui-tu-pedido' }}">Seguí tu pedido →</a>
+    </div>
+    <div class="shipping">
+      {%- for block in section.blocks -%}
+        <div class="shipping__card" {{ block.shopify_attributes }}>
+          <h3>{{ block.settings.title }}</h3>
+          <div class="rte muted">{{ block.settings.text }}</div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Información de envíos",
+  "settings": [{ "type": "text", "id": "heading", "label": "Título", "default": "Llegamos a todo Uruguay" }],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Tarjeta",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Título", "default": "Montevideo" },
+        { "type": "richtext", "id": "text", "label": "Texto", "default": "<p>Completá los plazos y costos reales de tu operación.</p>" }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [{ "name": "Información de envíos", "blocks": [{ "type": "card" }, { "type": "card" }, { "type": "card" }] }]
+}
+{% endschema %}

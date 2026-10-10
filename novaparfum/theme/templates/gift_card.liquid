@@ -1,0 +1,15 @@
+{% layout none %}
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Tarjeta de regalo — {{ shop.name }}</title>{{ 'base.css' | asset_url | stylesheet_tag }}{{ content_for_header }}</head>
+<body>
+  <div class="container section" style="max-width:520px;text-align:center">
+    {% render 'logo' %}
+    <h1 style="margin-top:24px">Tarjeta de regalo</h1>
+    <p class="price--large">{{ gift_card.balance | money }}</p>
+    <p>Código: <strong>{{ gift_card.code | format_code }}</strong></p>
+    {%- if gift_card.expired -%}<p class="notice notice--error">Venció el {{ gift_card.expires_on | date: '%d/%m/%Y' }}</p>{%- endif -%}
+    <a class="btn btn--primary" href="{{ shop.url }}">Ir a la tienda</a>
+  </div>
+</body>
+</html>

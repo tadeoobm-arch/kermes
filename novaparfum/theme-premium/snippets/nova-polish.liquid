@@ -1,0 +1,128 @@
+{%- comment -%}
+  Pulido "premium" (complementa nova-motion, sin librerías):
+  - Textura de grano casi invisible sobre toda la página (capa fija, no recibe clics).
+  - Menú superior: al bajar se convierte en una "isla" flotante con vidrio esmerilado.
+  - Etiqueta "Nuevo" en lila (un solo color de acento) y sombras teñidas de lila en las tarjetas.
+  - Pestañas Hombre/Mujer/Unisex: la pastilla lila se desliza hasta la pestaña elegida.
+  - Al agregar al carrito desde la ficha, una miniatura del perfume "vuela" hasta el carrito.
+  - Ficha del perfume: zoom que sigue al mouse sobre la foto (solo computadora).
+  Con "reducir movimiento" se quitan los desplazamientos.
+{%- endcomment -%}
+<style>
+  :root { --np-ease: cubic-bezier(.32, .72, 0, 1); }
+  body::after { content: ''; position: fixed; inset: 0; z-index: 70; pointer-events: none; opacity: .035; mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+  @media (min-width: 750px) {
+    .section-header .header__inner { transition: max-width .6s var(--np-ease), margin .6s var(--np-ease), border-radius .6s var(--np-ease),
+      background-color .4s ease, box-shadow .4s ease, padding .6s var(--np-ease); border-radius: 0; }
+    .section-header.nm-scrolled .header { background: transparent !important; box-shadow: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+    .section-header.nm-scrolled .header__inner { max-width: min(1280px, calc(100% - 32px)); margin-top: 10px; border-radius: 999px; padding-inline: 22px;
+      background: rgba(255, 255, 255, .72); -webkit-backdrop-filter: saturate(170%) blur(16px); backdrop-filter: saturate(170%) blur(16px);
+      box-shadow: inset 0 0 0 1px rgba(122, 104, 184, .14), 0 18px 40px -22px rgba(74, 56, 140, .45); }
+    .section-header .header__nav a { white-space: nowrap; }
+  }
+
+  .badge--new { background: rgba(122, 104, 184, .14) !important; color: #5B4A9E !important; letter-spacing: .08em; }
+
+  .card__media { transition: box-shadow .6s var(--np-ease), transform .6s var(--np-ease); }
+  .card__media img { transition: transform .9s var(--np-ease); }
+  @media (hover: hover) and (pointer: fine) {
+    .card:hover .card__media { box-shadow: 0 26px 44px -28px rgba(74, 56, 140, .55); transform: translateY(-4px); }
+    .card:hover .card__media img { transform: scale(1.045); }
+  }
+
+  .gt__tabs.np-ind { position: relative; }
+  .gt__tabs.np-ind .gt__tab { z-index: 1; background: transparent; }
+  .gt__tabs.np-ind .gt__tab::before { opacity: 0 !important; }
+  .np-tab-ind { position: absolute; z-index: 0; top: 0; left: 0; border-radius: 999px; pointer-events: none;
+    background: linear-gradient(165deg, #CDBEF4 0%, #A893E2 55%, #8E78D3 100%); box-shadow: 0 8px 20px rgba(122, 104, 184, .35);
+    transition: transform .55s var(--np-ease), width .55s var(--np-ease), height .55s var(--np-ease); }
+  .gt__tabs.np-ind .gt__tab[aria-selected="true"] { box-shadow: none; }
+
+  .np-fly { position: fixed; z-index: 80; top: 0; left: 0; width: 72px; height: 72px; border-radius: 18px; background: #fff; pointer-events: none;
+    box-shadow: 0 16px 34px -12px rgba(74, 56, 140, .55); display: grid; place-items: center; }
+  .np-fly img { width: 84%; height: 84%; object-fit: contain; mix-blend-mode: multiply; }
+
+  @media (hover: hover) and (pointer: fine) {
+    .product__gallery .gallery__item { overflow: hidden; cursor: zoom-in; }
+    .product__gallery .gallery__item img { transition: transform .5s var(--np-ease); transform-origin: var(--zx, 50%) var(--zy, 50%); }
+    .product__gallery .gallery__item.np-zoom img { transform: scale(1.75); }
+  }
+
+  main .section { padding-block: clamp(64px, 8vw, 104px) clamp(72px, 9vw, 112px); }
+  main .section__title { letter-spacing: -.015em; text-wrap: balance; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card__media, .card__media img, .np-tab-ind, .section-header .header__inner { transition: none; }
+    .card:hover .card__media, .card:hover .card__media img { transform: none; }
+  }
+</style>
+<script>
+  (function () {
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function ready(fn) { document.readyState !== 'loading' ? fn() : document.addEventListener('DOMContentLoaded', fn); }
+    ready(function () {
+      document.querySelectorAll('.gt__tabs').forEach(function (tabs) {
+        var ind = document.createElement('span');
+        ind.className = 'np-tab-ind';
+        ind.setAttribute('aria-hidden', 'true');
+        tabs.prepend(ind);
+        tabs.classList.add('np-ind');
+        function place(instant) {
+          var a = tabs.querySelector('.gt__tab[aria-selected="true"]');
+          if (!a) { ind.style.opacity = '0'; return; }
+          ind.style.opacity = '1';
+          if (instant) ind.style.transition = 'none';
+          ind.style.width = a.offsetWidth + 'px';
+          ind.style.height = a.offsetHeight + 'px';
+          ind.style.transform = 'translate(' + a.offsetLeft + 'px,' + a.offsetTop + 'px)';
+          if (instant) { void ind.offsetWidth; ind.style.transition = ''; }
+        }
+        place(true);
+        new MutationObserver(function () { place(reduce); }).observe(tabs, { subtree: true, attributes: true, attributeFilter: ['aria-selected'] });
+        window.addEventListener('resize', function () { place(true); });
+      });
+
+      var form = document.querySelector('[data-product-form]');
+      var cart = document.querySelector('.cart-link');
+      if (form && cart && !reduce && Element.prototype.animate) {
+        form.addEventListener('submit', function (e) {
+          var sub = e.submitter;
+          if (!sub || !sub.matches('[data-add]')) return;
+          var src = document.querySelector('.product__gallery .gallery__item img');
+          if (!src) return;
+          var a = src.getBoundingClientRect(), b = cart.getBoundingClientRect();
+          var fly = document.createElement('div');
+          fly.className = 'np-fly';
+          fly.innerHTML = '<img alt="" src="' + (src.currentSrc || src.src) + '">';
+          document.body.appendChild(fly);
+          var x0 = a.left + a.width / 2 - 36, y0 = a.top + a.height / 2 - 36;
+          var x1 = b.left + b.width / 2 - 36, y1 = b.top + b.height / 2 - 36;
+          var anim = fly.animate([
+            { transform: 'translate(' + x0 + 'px,' + y0 + 'px) scale(1.6)', opacity: 0 },
+            { transform: 'translate(' + x0 + 'px,' + (y0 - 30) + 'px) scale(1.2)', opacity: 1, offset: .2 },
+            { transform: 'translate(' + x1 + 'px,' + y1 + 'px) scale(.3)', opacity: .9 }
+          ], { duration: 800, easing: 'cubic-bezier(.32,.72,0,1)' });
+          anim.onfinish = function () {
+            fly.remove();
+            cart.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.18)' }, { transform: 'scale(1)' }], { duration: 380, easing: 'cubic-bezier(.34,1.56,.64,1)' });
+          };
+        });
+      }
+
+      if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+        document.querySelectorAll('.product__gallery .gallery__item').forEach(function (it) {
+          if (!it.querySelector('img')) return;
+          it.addEventListener('mousemove', function (e) {
+            var r = it.getBoundingClientRect();
+            it.style.setProperty('--zx', ((e.clientX - r.left) / r.width * 100) + '%');
+            it.style.setProperty('--zy', ((e.clientY - r.top) / r.height * 100) + '%');
+          });
+          it.addEventListener('mouseenter', function () { it.classList.add('np-zoom'); });
+          it.addEventListener('mouseleave', function () { it.classList.remove('np-zoom'); });
+        });
+      }
+    });
+  })();
+</script>

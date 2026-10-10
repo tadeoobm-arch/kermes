@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="Nova Parfum">
+  <defs><radialGradient id="g" cx="50%" cy="45%" r="70%"><stop offset="0" stop-color="#463E6E"/><stop offset=".6" stop-color="#2F2A4A"/><stop offset="1" stop-color="#221D38"/></radialGradient></defs>
+  <rect width="800" height="800" fill="url(#g)"/>
+  <g transform="translate(400 400) scale(13) translate(-20 -17.5)">
+    <path d="M20 4c1 8.4 4.2 11.8 12.6 12.8C24.2 17.8 21 21.2 20 29.6 19 21.2 15.8 17.8 7.4 16.8 15.8 15.8 19 12.4 20 4Z" fill="#E9C9CF"/>
+    <circle cx="30.5" cy="29.5" r="2.6" fill="#B3A6E4"/>
+  </g>
+</svg>

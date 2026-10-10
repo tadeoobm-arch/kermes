@@ -1,0 +1,46 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "NovaParfum",
+    "theme_version": "1.0.0",
+    "theme_author": "NovaParfum",
+    "theme_documentation_url": "https://github.com/tadeoobm-arch/kermes/tree/main/novaparfum",
+    "theme_support_url": "https://github.com/tadeoobm-arch/kermes/tree/main/novaparfum"
+  },
+  {
+    "name": "Marca",
+    "settings": [
+      { "type": "image_picker", "id": "logo", "label": "Logo (opcional)", "info": "Si lo dejás vacío se usa el logo vectorial NovaParfum." },
+      { "type": "image_picker", "id": "favicon", "label": "Favicon (opcional, 64×64)" },
+      { "type": "image_picker", "id": "share_image", "label": "Imagen para redes (Open Graph, 1200×630)" },
+      { "type": "text", "id": "brand_tagline", "label": "Eslogan", "default": "Tu esencia, en nueva luz." }
+    ]
+  },
+  {
+    "name": "Pago y compra",
+    "settings": [
+      { "type": "text", "id": "mp_message", "label": "Mensaje Mercado Pago", "default": "Pagá seguro con Mercado Pago" },
+      { "type": "text", "id": "mp_installments_text", "label": "Texto de cuotas (opcional)", "info": "Completalo solo con condiciones reales vigentes de tu cuenta de Mercado Pago." },
+      { "type": "textarea", "id": "payment_text", "label": "Texto 'Pago seguro'", "default": "El pago se procesa en el checkout seguro de Shopify con Mercado Pago. NovaParfum nunca ve ni guarda los datos de tu tarjeta." },
+      { "type": "number", "id": "low_stock_threshold", "label": "Mostrar 'Últimas unidades' con stock menor o igual a", "default": 3 }
+    ]
+  },
+  {
+    "name": "Envíos y seguimiento",
+    "settings": [
+      { "type": "textarea", "id": "shipping_text", "label": "Texto de envío en producto", "default": "Envíos a todo Uruguay. Te enviamos el número de seguimiento por email apenas sale tu pedido." },
+      { "type": "textarea", "id": "returns_text", "label": "Texto de cambios y devoluciones", "default": "[Completar con tu política de cambios y devoluciones.]" },
+      { "type": "url", "id": "tracking_page_url", "label": "Página 'Seguí tu pedido'" },
+      { "type": "text", "id": "tracking_proxy_path", "label": "Ruta del App Proxy de seguimiento", "default": "/apps/novaparfum/track" }
+    ]
+  },
+  {
+    "name": "Redes y contacto",
+    "settings": [
+      { "type": "text", "id": "social_instagram", "label": "Instagram (URL)", "default": "https://www.instagram.com/novaparfum.uy" },
+      { "type": "text", "id": "social_tiktok", "label": "TikTok (URL)" },
+      { "type": "text", "id": "whatsapp_number", "label": "WhatsApp (con código de país, ej. 59899123456)" },
+      { "type": "text", "id": "whatsapp_message", "label": "Mensaje inicial de WhatsApp", "default": "¡Hola NovaParfum! Quiero hacer una consulta." }
+    ]
+  }
+]

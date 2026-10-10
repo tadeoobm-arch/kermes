@@ -1,0 +1,43 @@
+{%- comment -%} NovaParfum — Confirmación de envío (PEDIDO ENVIADO). {%- endcomment -%}
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>¡Tu pedido ya fue enviado!</title></head>
+<body style="margin:0;background:#FBF9F6;font-family:Manrope,Helvetica,Arial,sans-serif;color:#26224A">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FBF9F6"><tr><td align="center" style="padding:24px 12px">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#FFFFFF;border-radius:20px;overflow:hidden">
+  <tr><td style="background:#F2EFFA;padding:22px 28px;text-align:center">
+    <a href="{{ shop.url }}" style="text-decoration:none;color:#26224A;font-family:Georgia,serif;font-size:26px"><span style="color:#4B3FA8">&#10022;</span> Nova<span style="color:#4B3FA8">Parfum</span></a>
+  </td></tr>
+  <tr><td style="padding:28px">
+    <h1 style="font-family:Georgia,serif;font-weight:500;font-size:24px;margin:0 0 8px">¡Tu pedido de NovaParfum ya fue enviado! 📦</h1>
+    <p style="margin:0 0 16px">Pedido <strong>{{ order_name }}</strong></p>
+
+    {%- if fulfillment.tracking_numbers.size > 0 -%}
+      <div style="background:#F2EFFA;border-radius:14px;padding:16px;margin:0 0 16px">
+        {%- if fulfillment.tracking_company != blank -%}<p style="margin:0 0 4px">Empresa de envío: <strong>{{ fulfillment.tracking_company }}</strong></p>{%- endif -%}
+        <p style="margin:0">Número de seguimiento:<br>
+          {%- for number in fulfillment.tracking_numbers -%}
+            <strong style="font-size:18px">{{ number }}</strong>{% unless forloop.last %}, {% endunless %}
+          {%- endfor -%}
+        </p>
+      </div>
+      {%- if fulfillment.tracking_urls.size > 0 -%}
+        <p style="margin:0 0 8px"><a href="{{ fulfillment.tracking_urls.first }}" style="display:inline-block;background:#4B3FA8;color:#FFFFFF;padding:14px 24px;border-radius:999px;text-decoration:none;font-weight:600">Seguir en la empresa de envío</a></p>
+      {%- endif -%}
+    {%- endif -%}
+
+    <p style="margin:16px 0 6px">Podés seguir tu pedido desde:</p>
+    <p style="margin:0 0 20px"><a href="{{ order_status_url }}" style="color:#4B3FA8;font-weight:600">{{ order_status_url | split: '?' | first }}</a></p>
+
+    <h2 style="font-size:15px;margin:20px 0 6px">En este envío</h2>
+    <ul style="padding-left:18px;margin:0;color:#5E5A70">
+      {%- for line in fulfillment.fulfillment_line_items -%}
+        <li>{{ line.line_item.title }} × {{ line.quantity }}</li>
+      {%- endfor -%}
+    </ul>
+  </td></tr>
+  <tr><td style="padding:18px 28px 26px;font-size:12px;color:#5E5A70;border-top:1px solid #F2EFFA">NovaParfum · Si tu pedido tiene productos de más de un proveedor, puede llegar en paquetes separados.</td></tr>
+</table>
+</td></tr></table>
+</body>
+</html>

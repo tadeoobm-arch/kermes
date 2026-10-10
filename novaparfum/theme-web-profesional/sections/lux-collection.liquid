@@ -1,0 +1,95 @@
+{%- comment -%}
+  Colección insignia (oscura): tarjetas con el perfume sobre una placa crema, marca en dorado, nombre en serif y precio.
+  Entran escalonadas al aparecer; al pasar el mouse la placa se eleva, la foto se acerca y aparece "Ver perfume".
+  En celular se desliza en horizontal.
+{%- endcomment -%}
+{%- assign col = collections[section.settings.handle] -%}
+<style>
+  .lc { --lc-gold: #C9A46A; --lc-ink: #F3ECE2; --lc-soft: #A89D91; --lc-out: cubic-bezier(.23, 1, .32, 1);
+    background: linear-gradient(#0A0807, #15110E); color: var(--lc-ink); padding-block: clamp(72px, 9vw, 120px); }
+  .lc__head { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 40px; }
+  .lc__eyebrow { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; font-size: 11px; font-weight: 700; letter-spacing: .3em; text-transform: uppercase; color: var(--lc-gold); }
+  .lc__eyebrow::before { content: ''; width: 36px; height: 1px; background: currentColor; }
+  .lc__title { margin: 0; font: 400 clamp(36px, 4.6vw, 64px)/1 var(--f-display, 'Fraunces', serif); letter-spacing: -.03em; }
+  .lc__title em { font-style: italic; color: #E8CF9C; }
+  .lc__all { color: var(--lc-ink); text-decoration: none; font-size: 13px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; border-bottom: 1px solid var(--lc-gold); padding-bottom: 4px; white-space: nowrap; }
+  .lc__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin: 0; padding: 0; list-style: none; }
+  .lc__card { position: relative; display: block; height: 100%; padding: 12px 12px 20px; border-radius: 6px; text-decoration: none; color: inherit;
+    background: #1B1714; box-shadow: inset 0 0 0 1px rgba(201,164,106,.14); transition: box-shadow .5s ease, transform .6s var(--lc-out); }
+  .lc__plate { position: relative; aspect-ratio: 1 / 1.08; border-radius: 3px; overflow: hidden; display: grid; place-items: center;
+    background: radial-gradient(70% 60% at 50% 40%, #FBF7F0, #EFE6D8); }
+  .lc__plate img { width: 84%; height: 84%; object-fit: contain; mix-blend-mode: multiply; transition: transform .9s var(--lc-out); }
+  .lc__more { position: absolute; left: 10px; right: 10px; bottom: 10px; display: flex; justify-content: center; align-items: center; gap: 8px; height: 42px; border-radius: 2px;
+    background: #16110D; color: var(--lc-ink); font-size: 12px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; opacity: 0; transform: translateY(12px);
+    transition: opacity .35s ease, transform .5s var(--lc-out); }
+  .lc__brand { margin: 16px 0 6px; font-size: 10.5px; font-weight: 700; letter-spacing: .24em; text-transform: uppercase; color: var(--lc-gold); }
+  .lc__name { margin: 0 0 10px; font: 400 19px/1.25 var(--f-display, 'Fraunces', serif); }
+  .lc__price { font-size: 14px; color: var(--lc-soft); font-variant-numeric: tabular-nums; }
+  @media (hover: hover) and (pointer: fine) {
+    .lc__card:hover { transform: translateY(-6px); box-shadow: inset 0 0 0 1px rgba(201,164,106,.45), 0 30px 50px -30px rgba(0,0,0,.9); }
+    .lc__card:hover .lc__plate img { transform: scale(1.06); }
+    .lc__card:hover .lc__more { opacity: 1; transform: none; }
+  }
+  .lc__card:active { transform: scale(.99); }
+  @media (max-width: 989px) {
+    .lc__grid { grid-auto-flow: column; grid-template-columns: none; grid-auto-columns: 68%; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 8px; scrollbar-width: none; }
+    .lc__grid::-webkit-scrollbar { display: none; }
+    .lc__grid li { scroll-snap-align: start; }
+    .lc__head { align-items: start; flex-direction: column; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .js .lc__grid li { opacity: 0; transform: translateY(30px); transition: opacity .8s var(--lc-out), transform .9s var(--lc-out); transition-delay: calc(var(--i) * 70ms); }
+    .js .lc.is-in .lc__grid li { opacity: 1; transform: none; }
+  }
+</style>
+<section class="lc" id="lc-{{ section.id }}">
+  <div class="container">
+    <div class="lc__head">
+      <div>
+        <p class="lc__eyebrow">{{ section.settings.eyebrow }}</p>
+        <h2 class="lc__title">{{ section.settings.title }}</h2>
+      </div>
+      {%- if col != blank -%}<a class="lc__all" href="{{ col.url }}">{{ section.settings.link_label }}</a>{%- endif -%}
+    </div>
+    <ul class="lc__grid">
+      {%- if col != blank -%}
+        {%- for p in col.products limit: section.settings.limit -%}
+          <li style="--i: {{ forloop.index0 }};">
+            <a class="lc__card" href="{{ p.url }}">
+              <div class="lc__plate">
+                {%- if p.featured_image -%}{{ p.featured_image | image_url: width: 600 | image_tag: loading: 'lazy', widths: '300, 450, 600', sizes: '(min-width: 990px) 22vw, 68vw', alt: p.title }}{%- endif -%}
+                <span class="lc__more">Ver perfume ✦</span>
+              </div>
+              <p class="lc__brand">{{ p.vendor }}</p>
+              <h3 class="lc__name">{{ p.title }}</h3>
+              <p class="lc__price">{% if p.price_varies %}Desde {% endif %}{{ p.price_min | money }}</p>
+            </a>
+          </li>
+        {%- endfor -%}
+      {%- endif -%}
+    </ul>
+  </div>
+</section>
+<script>
+  (() => {
+    const root = document.getElementById('lc-{{ section.id }}');
+    if (!root) return;
+    if (!('IntersectionObserver' in window)) return root.classList.add('is-in');
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { root.classList.add('is-in'); io.disconnect(); } }, { threshold: .15 });
+    io.observe(root);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Colección insignia",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Etiqueta", "default": "Nuestra selección" },
+    { "type": "text", "id": "title", "label": "Título", "default": "Colección <em>insignia</em>" },
+    { "type": "text", "id": "handle", "label": "Colección (identificador)", "default": "destacados" },
+    { "type": "range", "id": "limit", "label": "Cantidad", "min": 4, "max": 12, "step": 4, "default": 8 },
+    { "type": "text", "id": "link_label", "label": "Texto del enlace", "default": "Ver toda la colección" }
+  ],
+  "presets": [{ "name": "Colección insignia" }]
+}
+{% endschema %}

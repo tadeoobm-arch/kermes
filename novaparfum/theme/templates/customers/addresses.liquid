@@ -1,0 +1,25 @@
+<div class="container section" style="max-width:640px">
+  <p><a href="{{ routes.account_url }}">← Mi cuenta</a></p>
+  <h1>Mis direcciones</h1>
+  {%- for address in customer.addresses -%}
+    <div class="cart-summary" style="margin-bottom:12px">
+      <p>{{ address | format_address }}</p>
+      {%- form 'customer_address', address -%}<input type="hidden" name="_method" value="delete"><button class="btn btn--ghost">Eliminar</button>{%- endform -%}
+    </div>
+  {%- endfor -%}
+  <h2 class="h3">Agregar dirección</h2>
+  {%- form 'customer_address', customer.new_address -%}
+    <div style="display:grid;gap:12px">
+      <div class="field"><label>Nombre<input name="address[first_name]" autocomplete="given-name"></label></div>
+      <div class="field"><label>Apellido<input name="address[last_name]" autocomplete="family-name"></label></div>
+      <div class="field"><label>Calle y número de puerta<input name="address[address1]" autocomplete="address-line1"></label></div>
+      <div class="field"><label>Apartamento<input name="address[address2]" autocomplete="address-line2"></label></div>
+      <div class="field"><label>Ciudad / Localidad<input name="address[city]" autocomplete="address-level2"></label></div>
+      <div class="field"><label>Departamento<input name="address[province]" autocomplete="address-level1"></label></div>
+      <div class="field"><label>Código postal<input name="address[zip]" autocomplete="postal-code"></label></div>
+      <div class="field"><label>Teléfono<input name="address[phone]" type="tel" autocomplete="tel"></label></div>
+      <input type="hidden" name="address[country]" value="Uruguay">
+      <button class="btn btn--primary btn--block">Guardar</button>
+    </div>
+  {%- endform -%}
+</div>

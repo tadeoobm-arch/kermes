@@ -1,0 +1,205 @@
+{%- comment -%}
+  Intro de marca NovaParfum (sin fotos). Usa la identidad del logo: el destello de 4 puntas, el puntito lila
+  y el texto "nova" + "parfum", con los colores del ícono de la marca (fondo tinta, destello rosa empolvado, lila).
+  Una "nova" es una estrella que de golpe se enciende, así que la intro cuenta eso:
+    1. aparece un punto de luz y se enciende el destello (con un rayo de luz y una onda que se expande),
+    2. el puntito lila llega en un arco y se ubica como en el logo,
+    3. el destello baja a su tamaño y se corre a la izquierda mientras "novaparfum" aparece letra por letra,
+    4. entran la frase, el texto y los botones.
+  Después: el destello titila cada tanto, el cielo de destellitos parpadea y se mueve apenas con el mouse.
+  Tocar o pasar por el destello lo vuelve a encender. Con "reducir movimiento" se ve el logo armado, quieto.
+{%- endcomment -%}
+{%- liquid
+  assign u = section.id
+  assign c1 = section.settings.word_1 | split: ''
+  assign c2 = section.settings.word_2 | split: ''
+  assign n1 = c1.size
+  assign star = 'M20 4c1 8.4 4.2 11.8 12.6 12.8C24.2 17.8 21 21.2 20 29.6 19 21.2 15.8 17.8 7.4 16.8 15.8 15.8 19 12.4 20 4Z'
+-%}
+<style>
+  .ni { --ni-bg: var(--c-ink, #2F2A4A); --ni-cream: #F7F4F0; --ni-powder: #E9C9CF; --ni-lilac: #B3A6E4;
+    --ni-out: cubic-bezier(.23, 1, .32, 1); --ni-io: cubic-bezier(.77, 0, .175, 1); --ni-spring: cubic-bezier(.34, 1.56, .64, 1);
+    position: relative; overflow: hidden; isolation: isolate; display: grid; place-items: center; text-align: center; color: var(--ni-cream);
+    min-height: max(560px, calc(100svh - 112px)); padding: 56px 20px 96px;
+    background: radial-gradient(120% 90% at 50% 42%, #3C3562 0%, var(--ni-bg) 46%, #211D35 100%); }
+  .ni__sky { position: absolute; inset: -4%; z-index: -1; pointer-events: none; }
+  .ni__s { position: absolute; left: var(--x); top: var(--y); width: var(--s); height: var(--s); color: var(--c); opacity: .35; }
+  .ni__s svg { display: block; width: 100%; height: 100%; }
+
+  .ni__center { position: relative; display: grid; justify-items: center; }
+  .ni__lock { margin: 0; display: inline-flex; align-items: center; font: 400 clamp(56px, 9vw, 136px)/1 var(--f-display, 'Fraunces', serif); letter-spacing: -.01em; white-space: nowrap; }
+  .ni__mark { all: unset; position: relative; flex: none; width: 1.17em; height: 1.17em; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .ni__mark:focus-visible { outline: 2px solid var(--ni-powder); outline-offset: 6px; border-radius: 50%; }
+  .ni__markin { position: absolute; inset: 0; }
+  .ni__markin svg { display: block; width: 100%; height: 100%; overflow: visible; }
+  .ni__star { fill: var(--ni-powder); transform-box: fill-box; transform-origin: 50% 50%; }
+  .ni__dot { fill: var(--ni-lilac); transform-box: fill-box; transform-origin: 50% 50%; }
+  .ni__halo, .ni__ring, .ni__flare { position: absolute; left: 50%; top: 42%; translate: -50% -50%; pointer-events: none; }
+  .ni__halo { width: 3.2em; height: 3.2em; border-radius: 50%; background: radial-gradient(closest-side, rgba(233,201,207,.28), rgba(179,166,228,.12) 45%, rgba(179,166,228,0)); }
+  .ni__ring { width: 1.2em; height: 1.2em; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(233,201,207,.7); opacity: 0; }
+  .ni__flare { width: 5em; height: 5em; opacity: 0; }
+  .ni__flare::before, .ni__flare::after { content: ''; position: absolute; left: 50%; top: 50%; translate: -50% -50%; border-radius: 2px; }
+  .ni__flare::before { width: 100%; height: 2px; background: linear-gradient(90deg, rgba(233,201,207,0), rgba(255,240,244,.95), rgba(233,201,207,0)); }
+  .ni__flare::after { width: 2px; height: 100%; background: linear-gradient(180deg, rgba(233,201,207,0), rgba(255,240,244,.95), rgba(233,201,207,0)); }
+  .ni__word { margin-left: .3em; }
+  .ni__c { display: inline-block; }
+  .ni__acc { color: var(--ni-lilac); }
+
+  .ni__tag { display: flex; align-items: center; gap: 14px; margin: clamp(18px, 3vh, 30px) 0 0; font-size: 11px; font-weight: 700; letter-spacing: .36em; text-transform: uppercase; color: rgba(233,201,207,.8); }
+  .ni__tag i { width: 40px; height: 1px; background: currentColor; }
+  .ni__sub { margin: 16px auto 0; max-width: 46ch; color: rgba(247,244,240,.72); font-size: 16px; line-height: 1.7; }
+  .ni__cta { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px 26px; margin-top: 28px; }
+  .ni-btn { display: inline-flex; align-items: center; gap: 12px; min-height: 54px; padding: 8px 8px 8px 26px; border-radius: 999px; text-decoration: none; font-weight: 700;
+    background: var(--ni-powder); color: var(--ni-bg); box-shadow: 0 18px 40px -20px rgba(233,201,207,.55); transition: transform .45s var(--ni-out), box-shadow .45s var(--ni-out); }
+  .ni-btn span { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: rgba(47,42,74,.12); transition: transform .45s var(--ni-out); }
+  .ni-btn svg { width: 16px; height: 16px; }
+  .ni-link { position: relative; padding: 6px 0; font-weight: 700; color: var(--ni-cream); text-decoration: none; }
+  .ni-link::after { content: ''; position: absolute; left: 0; right: 0; bottom: 2px; height: 1px; background: currentColor; transform-origin: right; transition: transform .5s var(--ni-out); }
+  @media (hover: hover) and (pointer: fine) {
+    .ni-btn:hover { transform: translateY(-2px); box-shadow: 0 24px 46px -18px rgba(233,201,207,.6); }
+    .ni-btn:hover span { transform: translate(3px, -2px); }
+    .ni-link:hover::after { transform: scaleX(0); }
+  }
+  .ni-btn:active { transform: scale(.98); }
+  .ni__scroll { position: absolute; left: 50%; bottom: 24px; translate: -50% 0; width: 1px; height: 44px; background: rgba(233,201,207,.2); overflow: hidden; }
+  .ni__scroll::after { content: ''; position: absolute; left: 0; top: 0; width: 1px; height: 14px; background: var(--ni-powder); }
+
+  @media (max-width: 749px) {
+    .ni { padding: 40px 16px 80px; }
+    .ni__lock { font-size: clamp(42px, 12.4vw, 64px); }
+    .ni__tag { letter-spacing: .26em; } .ni__tag i { width: 24px; }
+    .ni__sub { font-size: 15px; }
+  }
+
+  /* Antes de arrancar (solo con JS): esperar la fuente para medir y que no salte */
+  .js .ni:not(.is-go) .ni__center, .js .ni:not(.is-go) .ni__sky, .js .ni:not(.is-go) .ni__scroll { visibility: hidden; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .ni.is-go .ni__markin { animation: niBurst 1.1s var(--ni-out) .1s both, niSettle .95s var(--ni-io) 1.45s forwards; }
+    .ni.is-go .ni__mark { animation: niSlide .85s var(--ni-io) 1.45s backwards; }
+    .ni.is-go .ni__halo { animation: niHalo 1.5s var(--ni-out) .2s both, niBreath 6s ease-in-out 2.6s infinite; }
+    .ni.is-go .ni__ring { animation: niRing 1.4s var(--ni-out) .3s; }
+    .ni.is-go .ni__flare { animation: niFlare 1.2s var(--ni-out) .28s; }
+    .ni.is-go .ni__dot { animation: niDot .85s var(--ni-spring) .95s both; }
+    .ni.is-go .ni__star { animation: niTwinkle 6s ease-in-out 3.8s infinite; }
+    .ni.is-go .ni__c { animation: niChar .9s var(--ni-out) calc(2.02s + var(--i) * 45ms) backwards; }
+    .ni.is-go .ni__tag i { animation: niLine .9s var(--ni-io) 2.6s backwards; }
+    .ni.is-go .ni__tag span { animation: niUp .9s var(--ni-out) 2.7s backwards; }
+    .ni.is-go .ni__sub { animation: niUp .9s var(--ni-out) 2.85s backwards; }
+    .ni.is-go .ni__cta { animation: niUp .9s var(--ni-out) 3s backwards; }
+    .ni.is-go .ni__sky { animation: niFade 2s ease 1s backwards; }
+    .ni.is-go .ni__s { animation: niTw var(--d) ease-in-out var(--dl) infinite; }
+    .ni.is-go .ni__scroll { animation: niFade 1s ease 3.5s backwards; }
+    .ni.is-go .ni__scroll::after { animation: niDrop 2.2s var(--ni-io) 3.7s infinite; }
+    @keyframes niBurst { from { transform: scale(0) rotate(-120deg); opacity: 0; } 60% { opacity: 1; } to { transform: scale(1.75) rotate(0); opacity: 1; } }
+    @keyframes niSettle { from { transform: scale(1.75); } to { transform: scale(1); } }
+    @keyframes niSlide { from { transform: translateX(var(--off, 0px)); } }
+    @keyframes niHalo { from { transform: scale(.2); opacity: 0; } 40% { opacity: 1; } }
+    @keyframes niBreath { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
+    @keyframes niRing { from { transform: scale(.2); opacity: .9; } to { transform: scale(4.2); opacity: 0; } }
+    @keyframes niFlare { 0% { transform: scale(0, 0); opacity: 0; } 30% { opacity: 1; } 100% { transform: scale(1.15, 1.15); opacity: 0; } }
+    @keyframes niDot { from { transform: translate(-16px, -20px) scale(0); } }
+    @keyframes niTwinkle { 0%, 84%, 100% { transform: none; } 90% { transform: rotate(14deg) scale(1.14); } 95% { transform: rotate(-3deg) scale(.97); } }
+    @keyframes niChar { from { opacity: 0; transform: translateY(.18em); filter: blur(10px); } 60% { filter: blur(0); } }
+    @keyframes niLine { from { transform: scaleX(0); } }
+    @keyframes niUp { from { opacity: 0; transform: translateY(14px); } }
+    @keyframes niFade { from { opacity: 0; } }
+    @keyframes niTw { 0%, 100% { opacity: .15; transform: scale(.65) rotate(0); } 50% { opacity: .75; transform: scale(1) rotate(20deg); } }
+    @keyframes niDrop { from { transform: translateY(-14px); } to { transform: translateY(44px); } }
+  }
+</style>
+
+<section class="ni" id="ni-{{ u }}">
+  <div class="ni__sky" aria-hidden="true" data-ni-sky>
+    {%- assign sky = '6%,18%,14px,0|14%,64%,9px,1|22%,32%,6px,2|9%,84%,12px,0|30%,12%,8px,1|36%,78%,10px,2|47%,8%,7px,0|58%,88%,9px,1|66%,16%,12px,2|74%,70%,7px,0|82%,28%,15px,1|90%,56%,9px,2|94%,12%,7px,0|86%,86%,11px,1|18%,46%,7px,1|78%,46%,6px,0|42%,92%,7px,2|54%,22%,6px,1' | split: '|' -%}
+    {%- for st in sky -%}{%- assign v = st | split: ',' -%}
+      {%- case v[3] -%}{%- when '0' -%}{%- assign col = '#E9C9CF' -%}{%- when '1' -%}{%- assign col = '#B3A6E4' -%}{%- else -%}{%- assign col = '#F7F4F0' -%}{%- endcase -%}
+      <span class="ni__s" style="--x: {{ v[0] }}; --y: {{ v[1] }}; --s: {{ v[2] }}; --c: {{ col }}; --d: {{ forloop.index | modulo: 4 | plus: 3 }}.{{ forloop.index | modulo: 7 }}s; --dl: -{{ forloop.index | times: 0.37 }}s;"><svg viewBox="7 4 26 26"><path d="{{ star }}" fill="currentColor"/></svg></span>
+    {%- endfor -%}
+  </div>
+
+  <div class="ni__center">
+    <h1 class="ni__lock" aria-label="{{ section.settings.word_1 }}{{ section.settings.word_2 }}">
+      <button class="ni__mark" type="button" aria-label="Encender el destello" data-ni-mark>
+        <span class="ni__halo"></span><span class="ni__ring"></span><span class="ni__flare"></span>
+        <span class="ni__markin">
+          <svg viewBox="0 0 40 40" aria-hidden="true"><path class="ni__star" d="{{ star }}"/><circle class="ni__dot" cx="30.5" cy="29.5" r="2.6"/></svg>
+        </span>
+      </button>
+      <span class="ni__word" aria-hidden="true">
+        {%- for ch in c1 -%}<span class="ni__c" style="--i: {{ forloop.index0 }};">{{ ch }}</span>{%- endfor -%}
+        <span class="ni__acc">{%- for ch in c2 -%}<span class="ni__c" style="--i: {{ forloop.index0 | plus: n1 }};">{{ ch }}</span>{%- endfor -%}</span>
+      </span>
+    </h1>
+    {%- if section.settings.tagline != blank -%}<p class="ni__tag"><i></i><span>{{ section.settings.tagline }}</span><i></i></p>{%- endif -%}
+    {%- if section.settings.subtitle != blank -%}<p class="ni__sub">{{ section.settings.subtitle }}</p>{%- endif -%}
+    <div class="ni__cta">
+      <a class="ni-btn" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">{{ section.settings.button_label }}<span aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 11 11 5M6 5h5v5"/></svg></span></a>
+      {%- if section.settings.button2_label != blank -%}<a class="ni-link" href="{{ section.settings.button2_link | default: '#combos' }}">{{ section.settings.button2_label }}</a>{%- endif -%}
+    </div>
+  </div>
+  <span class="ni__scroll" aria-hidden="true"></span>
+</section>
+<script>
+  (() => {
+    const root = document.getElementById('ni-{{ u }}');
+    if (!root) return;
+    const lock = root.querySelector('.ni__lock'), word = root.querySelector('.ni__word'), mark = root.querySelector('[data-ni-mark]');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Ajusta el tamaño si el logo no entra a lo ancho y calcula cuánto se corre el destello (para que arranque centrado)
+    const measure = () => {
+      lock.style.fontSize = '';
+      const max = root.clientWidth * .92;
+      if (lock.scrollWidth > max) lock.style.fontSize = (parseFloat(getComputedStyle(lock).fontSize) * max / lock.scrollWidth).toFixed(1) + 'px';
+      const gap = parseFloat(getComputedStyle(word).marginLeft) || 0;
+      root.style.setProperty('--off', ((word.offsetWidth + gap) / 2).toFixed(1) + 'px');
+    };
+    const start = () => { if (root.classList.contains('is-go')) return; measure(); root.classList.add('is-go'); };
+    const fonts = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+    Promise.race([fonts, new Promise((r) => setTimeout(r, 900))]).then(start);
+    window.addEventListener('resize', () => { if (root.classList.contains('is-go')) measure(); });
+    if (reduce || !root.animate) return;
+
+    // Volver a encender el destello al tocarlo o al pasar el mouse
+    const halo = root.querySelector('.ni__halo'), ring = root.querySelector('.ni__ring'), flare = root.querySelector('.ni__flare'), inner = root.querySelector('.ni__markin');
+    let last = 0;
+    const flash = () => {
+      const now = performance.now(); if (now - last < 900) return; last = now;
+      ring.animate([{ transform: 'scale(.2)', opacity: .9 }, { transform: 'scale(4.2)', opacity: 0 }], { duration: 1200, easing: 'cubic-bezier(.23,1,.32,1)' });
+      flare.animate([{ transform: 'scale(0)', opacity: 0 }, { opacity: 1, offset: .3 }, { transform: 'scale(1.15)', opacity: 0 }], { duration: 1000, easing: 'cubic-bezier(.23,1,.32,1)' });
+      inner.animate([{ transform: 'scale(1) rotate(0)' }, { transform: 'scale(1.3) rotate(60deg)', offset: .4 }, { transform: 'scale(1) rotate(90deg)' }], { duration: 900, easing: 'cubic-bezier(.34,1.56,.64,1)' });
+      halo.animate([{ opacity: .5 }, { opacity: 1, offset: .3 }, { opacity: .6 }], { duration: 1200 });
+    };
+    mark.addEventListener('click', flash);
+    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      mark.addEventListener('pointerenter', flash);
+      // El cielo de destellitos se mueve apenas con el mouse
+      const sky = root.querySelector('[data-ni-sky]');
+      let tx = 0, ty = 0, cx = 0, cy = 0, raf = 0;
+      const loop = () => {
+        cx += (tx - cx) * .06; cy += (ty - cy) * .06;
+        sky.style.transform = `translate3d(${(cx * -18).toFixed(2)}px, ${(cy * -18).toFixed(2)}px, 0)`;
+        raf = Math.abs(tx - cx) + Math.abs(ty - cy) > .002 ? requestAnimationFrame(loop) : 0;
+      };
+      root.addEventListener('pointermove', (e) => { const r = root.getBoundingClientRect(); tx = (e.clientX - r.left) / r.width - .5; ty = (e.clientY - r.top) / r.height - .5; if (!raf) raf = requestAnimationFrame(loop); });
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Portada: intro de marca",
+  "settings": [
+    { "type": "text", "id": "word_1", "label": "Nombre · parte 1", "default": "nova" },
+    { "type": "text", "id": "word_2", "label": "Nombre · parte 2 (en lila)", "default": "parfum" },
+    { "type": "text", "id": "tagline", "label": "Frase", "default": "Perfumería online · Uruguay" },
+    { "type": "textarea", "id": "subtitle", "label": "Texto", "default": "Perfumes de diseñador y árabes, elegidos uno por uno. Envíos a todo Uruguay en 48 a 72 horas." },
+    { "type": "text", "id": "button_label", "label": "Botón", "default": "Ver perfumes" },
+    { "type": "url", "id": "button_link", "label": "Enlace del botón" },
+    { "type": "text", "id": "button2_label", "label": "Enlace secundario", "default": "Ver combos" },
+    { "type": "url", "id": "button2_link", "label": "Destino del enlace secundario" }
+  ],
+  "presets": [{ "name": "Portada: intro de marca" }]
+}
+{% endschema %}

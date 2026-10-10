@@ -1,0 +1,234 @@
+{%- comment -%}
+  Portada "Campaña": fotos editoriales a pantalla completa que pasan como historias de Instagram.
+  Cada escena hace un zoom lento (efecto Ken Burns) y se funde con la siguiente; arriba (celular) o abajo
+  (computadora) hay barritas de progreso como las historias. Tocar la izquierda o la derecha cambia de escena,
+  mantener apretado pausa. Al cargar, la foto se abre desde el centro y el nombre sube línea por línea.
+  Se pausa sola fuera de pantalla. Con "reducir movimiento": sin zoom ni avance automático (se cambia con las barritas).
+{%- endcomment -%}
+{%- liquid
+  assign u = section.id
+  assign n = section.blocks.size
+-%}
+<style>
+  .nc { --nc-ink: var(--c-ink, #1F1B2E); --nc-iris: var(--c-iris, #6E5BB5); --nc-soft: #5F586E; --nc-cream: 247,243,238;
+    --nc-out: cubic-bezier(.23, 1, .32, 1); --nc-io: cubic-bezier(.77, 0, .175, 1);
+    position: relative; overflow: hidden; isolation: isolate; display: grid; background: #E9E1D6; color: var(--nc-ink);
+    min-height: max(580px, calc(100svh - 112px)); -webkit-tap-highlight-color: transparent; }
+  .nc__media { position: absolute; inset: 0; z-index: -2; }
+  .nc__slide { position: absolute; inset: 0; margin: 0; opacity: 0; transition: opacity 1.4s cubic-bezier(.4, 0, .2, 1); }
+  .nc__slide.is-active { opacity: 1; }
+  .nc__slide img, .nc__slide svg { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 60% 50%; transform-origin: 62% 55%; }
+  .nc__veil { position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background: linear-gradient(90deg, rgba(var(--nc-cream), .88) 0%, rgba(var(--nc-cream), .66) 30%, rgba(var(--nc-cream), 0) 60%); }
+
+  .nc__inner { width: 100%; max-width: 1240px; margin: 0 auto; padding: clamp(40px, 8vh, 96px) clamp(20px, 4vw, 48px) clamp(96px, 14vh, 140px); display: grid; align-content: center; }
+  .nc__copy { max-width: 560px; }
+  .nc__eyebrow { display: flex; align-items: center; gap: 12px; margin: 0 0 22px; font-size: 11px; font-weight: 700; letter-spacing: .32em; text-transform: uppercase; color: var(--nc-soft); }
+  .nc__eyebrow::before { content: ''; width: 36px; height: 1px; background: currentColor; }
+  .nc__word { margin: 0; font: 400 clamp(64px, 8.6vw, 144px)/.86 var(--f-display, 'Fraunces', serif); letter-spacing: -.045em; }
+  .nc__line { display: block; overflow: hidden; padding: 0 .06em .14em 0; margin-bottom: -.1em; }
+  .nc__line > span { display: inline-block; }
+  .nc__line--2 > span { font-style: italic; color: var(--nc-iris); padding-left: .5em; }
+  .nc__sub { margin: 26px 0 0; max-width: 40ch; color: var(--nc-soft); font-size: 16px; line-height: 1.7; }
+  .nc__cta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 26px; margin-top: 30px; }
+  .nc-btn { display: inline-flex; align-items: center; gap: 12px; min-height: 54px; padding: 8px 8px 8px 26px; border-radius: 999px; text-decoration: none; font-weight: 700;
+    background: var(--nc-ink); color: #fff; box-shadow: 0 18px 36px -22px rgba(31,27,46,.7); transition: transform .45s var(--nc-out), box-shadow .45s var(--nc-out); }
+  .nc-btn span { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,.14); transition: transform .45s var(--nc-out); }
+  .nc-btn svg { width: 16px; height: 16px; }
+  .nc-link { position: relative; padding: 6px 0; font-weight: 700; color: var(--nc-ink); text-decoration: none; }
+  .nc-link::after { content: ''; position: absolute; left: 0; right: 0; bottom: 2px; height: 1px; background: currentColor; transform-origin: right; transition: transform .5s var(--nc-out); }
+  @media (hover: hover) and (pointer: fine) {
+    .nc-btn:hover { transform: translateY(-2px); box-shadow: 0 24px 40px -20px rgba(31,27,46,.6); }
+    .nc-btn:hover span { transform: translate(3px, -2px); }
+    .nc-link:hover::after { transform: scaleX(0); }
+  }
+  .nc-btn:active { transform: scale(.98); }
+
+  /* Barritas tipo historias + pie de escena */
+  .nc__foot { position: absolute; left: 0; right: 0; bottom: clamp(22px, 4vh, 36px); }
+  .nc__foot-in { max-width: 1240px; margin: 0 auto; padding: 0 clamp(20px, 4vw, 48px); display: flex; align-items: center; justify-content: flex-start; gap: 32px; }
+  .nc__bars { display: flex; gap: 8px; width: min(320px, 40vw); }
+  .nc__bar { all: unset; flex: 1; padding: 10px 0; cursor: pointer; }
+  .nc__bar:focus-visible { outline: 2px solid var(--nc-iris); outline-offset: 2px; border-radius: 4px; }
+  .nc__track { display: block; height: 2px; border-radius: 2px; background: rgba(31,27,46,.18); overflow: hidden; }
+  .nc__fill { display: block; height: 100%; background: var(--nc-ink); transform-origin: left; transform: scaleX(0); }
+  .nc__bar.is-done .nc__fill { transform: scaleX(1); }
+  .nc__caps { position: relative; min-width: 280px; height: 40px; text-align: left; }
+  .nc__cap { position: absolute; left: 0; bottom: 0; margin: 0; opacity: 0; transform: translateY(8px); transition: opacity .6s ease, transform .8s var(--nc-out); white-space: nowrap; }
+  .nc__cap.is-active { opacity: 1; transform: none; }
+  .nc__cap small { display: block; font-size: 10.5px; font-weight: 700; letter-spacing: .24em; text-transform: uppercase; color: var(--nc-soft); }
+  .nc__cap b { font: italic 400 20px/1.3 var(--f-display, 'Fraunces', serif); color: var(--nc-ink); }
+
+  @media (max-width: 749px) {
+    .nc { min-height: max(560px, calc(100svh - 100px)); }
+    .nc__slide img, .nc__slide svg { object-position: 50% 60%; transform-origin: 50% 60%; }
+    .nc__veil { background:
+      linear-gradient(180deg, rgba(var(--nc-cream), .9) 0%, rgba(var(--nc-cream), .55) 30%, rgba(var(--nc-cream), 0) 46%),
+      linear-gradient(0deg, rgba(var(--nc-cream), .95) 0%, rgba(var(--nc-cream), .7) 24%, rgba(var(--nc-cream), 0) 42%); }
+    .nc__inner { padding: 44px 20px 112px; align-content: space-between; text-align: center; }
+    .nc__copy { max-width: none; display: contents; }
+    .nc__top, .nc__bottom { display: grid; justify-items: center; }
+    .nc__eyebrow { justify-content: center; margin-bottom: 14px; } .nc__eyebrow::before { display: none; }
+    .nc__word { font-size: clamp(50px, 15vw, 84px); }
+    .nc__line--2 > span { padding-left: 0; }
+    .nc__sub, .nc-link { display: none; }
+    .nc__cta { justify-content: center; margin-top: 0; }
+    .nc__foot { top: 8px; bottom: auto; }
+    .nc__foot-in { padding: 0 14px; }
+    .nc__bars { width: 100%; gap: 6px; }
+    .nc__caps { display: none; }
+  }
+  @media (min-width: 750px) { .nc__top, .nc__bottom { display: block; } }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .nc__media { animation: ncReveal 1.5s var(--nc-io) both; }
+    .nc__eyebrow { animation: ncUp .9s var(--nc-out) .45s backwards; }
+    .nc__line > span { animation: ncLine 1.1s var(--nc-out) .6s backwards; }
+    .nc__line--2 > span { animation-delay: .74s; }
+    .nc__sub { animation: ncUp .9s var(--nc-out) 1s backwards; }
+    .nc__cta { animation: ncUp .9s var(--nc-out) 1.12s backwards; }
+    .nc__foot { animation: ncFade 1s ease 1.3s backwards; }
+    @keyframes ncReveal { from { clip-path: inset(16% 20% 16% 20% round 32px); } to { clip-path: inset(0 0 0 0 round 0); } }
+    @keyframes ncUp { from { opacity: 0; transform: translateY(14px); } }
+    @keyframes ncLine { from { transform: translateY(105%); } }
+    @keyframes ncFade { from { opacity: 0; } }
+  }
+</style>
+
+<section class="nc" id="nc-{{ u }}" data-dur="{{ section.settings.duration | times: 1000 }}" aria-roledescription="carrusel" aria-label="{{ section.settings.word_1 }}{{ section.settings.word_2 }}">
+  <div class="nc__media" aria-hidden="true">
+    {%- for block in section.blocks -%}
+      {%- assign d = block.settings.image -%}
+      {%- assign m = block.settings.image_mobile | default: d -%}
+      <figure class="nc__slide{% if forloop.first %} is-active{% endif %}" {{ block.shopify_attributes }}>
+        {%- if d != blank -%}
+          <picture>
+            <source media="(max-width: 749px)" srcset="{{ m | image_url: width: 750 }} 750w, {{ m | image_url: width: 1150 }} 1150w" sizes="100vw">
+            <img src="{{ d | image_url: width: 1600 }}" srcset="{{ d | image_url: width: 1000 }} 1000w, {{ d | image_url: width: 1600 }} 1600w, {{ d | image_url: width: 2048 }} 2048w" sizes="100vw"
+              width="{{ d.width }}" height="{{ d.height }}" alt="{{ d.alt | escape }}"{% if forloop.first %} fetchpriority="high"{% else %} loading="lazy"{% endif %}>
+          </picture>
+        {%- else -%}
+          {{ 'lifestyle-1' | placeholder_svg_tag }}
+        {%- endif -%}
+      </figure>
+    {%- endfor -%}
+  </div>
+  <div class="nc__veil"></div>
+
+  <div class="nc__inner">
+    <div class="nc__copy">
+      <div class="nc__top">
+        {%- if section.settings.eyebrow != blank -%}<p class="nc__eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}
+        <h1 class="nc__word"><span class="nc__line"><span>{{ section.settings.word_1 }}</span></span><span class="nc__line nc__line--2"><span>{{ section.settings.word_2 }}</span></span></h1>
+      </div>
+      <div class="nc__bottom">
+        {%- if section.settings.subtitle != blank -%}<p class="nc__sub">{{ section.settings.subtitle }}</p>{%- endif -%}
+        <div class="nc__cta">
+          <a class="nc-btn" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">{{ section.settings.button_label }}<span aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 11 11 5M6 5h5v5"/></svg></span></a>
+          {%- if section.settings.button2_label != blank -%}<a class="nc-link" href="{{ section.settings.button2_link | default: '#combos' }}">{{ section.settings.button2_label }}</a>{%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {%- if n > 1 -%}
+    <div class="nc__foot">
+      <div class="nc__foot-in">
+        <div class="nc__bars">
+          {%- for block in section.blocks -%}
+            <button class="nc__bar" type="button" data-nc-go="{{ forloop.index0 }}" aria-label="Escena {{ forloop.index }} de {{ n }}"><span class="nc__track"><span class="nc__fill"></span></span></button>
+          {%- endfor -%}
+        </div>
+        <div class="nc__caps" aria-live="polite">
+          {%- for block in section.blocks -%}
+            <p class="nc__cap{% if forloop.first %} is-active{% endif %}"><small>{{ forloop.index | prepend: '0' }} · {{ block.settings.note }}</small><b>{{ block.settings.title }}</b></p>
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+</section>
+<script>
+  (() => {
+    const root = document.getElementById('nc-{{ u }}');
+    if (!root) return;
+    const slides = [...root.querySelectorAll('.nc__slide')], bars = [...root.querySelectorAll('.nc__bar')], caps = [...root.querySelectorAll('.nc__cap')];
+    const N = slides.length;
+    if (N < 2) return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const DUR = +root.dataset.dur || 6000;
+    let i = 0, bar = null, inView = true, held = false, downAt = 0;
+    const ken = new Map();
+
+    const pic = (k) => slides[k].querySelector('img, svg');
+    const go = (k) => {
+      i = (k + N) % N;
+      slides.forEach((s, j) => s.classList.toggle('is-active', j === i));
+      caps.forEach((c, j) => c.classList.toggle('is-active', j === i));
+      if (bar) { bar.onfinish = null; bar.cancel(); }
+      bars.forEach((b, j) => { b.classList.toggle('is-done', j < i); b.setAttribute('aria-current', j === i ? 'true' : 'false'); });
+      if (reduce || !root.animate) return;
+      const el = pic(i);
+      if (el) {
+        if (ken.has(el)) ken.get(el).cancel();
+        ken.set(el, el.animate([{ transform: 'scale(1.03)' }, { transform: 'scale(1.12)' }], { duration: DUR + 1600, easing: 'linear', fill: 'forwards' }));
+      }
+      bar = bars[i].querySelector('.nc__fill').animate([{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], { duration: DUR, easing: 'linear', fill: 'forwards' });
+      bar.onfinish = () => go(i + 1);
+      sync();
+    };
+    // Pausa: fuera de pantalla, pestaña oculta o mientras se mantiene apretado
+    const sync = () => {
+      const run = inView && !held && !document.hidden;
+      if (bar) run ? bar.play() : bar.pause();
+      const k = ken.get(pic(i)); if (k) run ? k.play() : k.pause();
+    };
+
+    bars.forEach((b) => b.addEventListener('click', (e) => { e.stopPropagation(); go(+b.dataset.ncGo); }));
+    root.addEventListener('pointerdown', (e) => { if (e.target.closest('a, button')) return; downAt = performance.now(); held = true; sync(); });
+    const release = () => { if (held) { held = false; sync(); } };
+    root.addEventListener('pointerup', release); root.addEventListener('pointercancel', release); root.addEventListener('pointerleave', release);
+    // Tocar a la izquierda vuelve, a la derecha avanza (como las historias); mantener apretado solo pausa
+    root.addEventListener('click', (e) => {
+      if (e.target.closest('a, button') || performance.now() - downAt > 280) return;
+      const r = root.getBoundingClientRect();
+      go(e.clientX - r.left < r.width * .3 ? i - 1 : i + 1);
+    });
+    document.addEventListener('visibilitychange', sync);
+    if ('IntersectionObserver' in window) new IntersectionObserver(([en]) => { inView = en.isIntersecting; sync(); }, { threshold: .2 }).observe(root);
+
+    if (reduce) { go(0); return; }
+    setTimeout(() => go(0), 900);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Portada: campaña",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Etiqueta", "default": "Perfumería online · Uruguay" },
+    { "type": "text", "id": "word_1", "label": "Nombre · línea 1", "default": "nova" },
+    { "type": "text", "id": "word_2", "label": "Nombre · línea 2 (en color)", "default": "parfum" },
+    { "type": "textarea", "id": "subtitle", "label": "Texto", "default": "Perfumes de diseñador y árabes, elegidos uno por uno. Pagá con Mercado Pago y recibilo en todo Uruguay en 48 a 72 horas." },
+    { "type": "text", "id": "button_label", "label": "Botón", "default": "Ver perfumes" },
+    { "type": "url", "id": "button_link", "label": "Enlace del botón" },
+    { "type": "text", "id": "button2_label", "label": "Enlace secundario", "default": "Ver combos" },
+    { "type": "url", "id": "button2_link", "label": "Destino del enlace secundario" },
+    { "type": "range", "id": "duration", "label": "Segundos por escena", "min": 4, "max": 10, "step": 1, "default": 6 }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Escena",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Foto (computadora, horizontal)" },
+        { "type": "image_picker", "id": "image_mobile", "label": "Foto (celular, vertical)" },
+        { "type": "text", "id": "title", "label": "Título de la escena", "default": "Luz de mañana" },
+        { "type": "text", "id": "note", "label": "Detalle", "default": "Frescos y florales" }
+      ]
+    }
+  ],
+  "max_blocks": 5,
+  "presets": [{ "name": "Portada: campaña", "blocks": [{ "type": "slide" }, { "type": "slide" }, { "type": "slide" }] }]
+}
+{% endschema %}

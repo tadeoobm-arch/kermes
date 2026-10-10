@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#FBF9F6">
+    <link rel="canonical" href="{{ canonical_url }}">
+
+    {%- if settings.favicon != blank -%}
+      <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 64, height: 64 }}">
+    {%- else -%}
+      <link rel="icon" type="image/svg+xml" href="{{ 'favicon.svg' | asset_url }}">
+    {%- endif -%}
+
+    {%- capture seo_title -%}
+      {{ page_title }}
+      {%- if current_tags %} &ndash; {{ current_tags | join: ', ' }}{% endif -%}
+      {%- if current_page != 1 %} &ndash; Página {{ current_page }}{% endif -%}
+      {%- unless page_title contains shop.name %} | {{ shop.name }}{% endunless -%}
+    {%- endcapture -%}
+    <title>{{ seo_title | strip }}</title>
+    {%- if page_description -%}
+      <meta name="description" content="{{ page_description | escape }}">
+    {%- endif -%}
+
+    {% render 'meta-tags' %}
+    {% render 'fonts' %}
+
+    {{ 'base.css' | asset_url | stylesheet_tag }}
+    <script src="{{ 'theme.js' | asset_url }}" defer></script>
+    <script>
+      window.NovaParfum = {
+        routes: {
+          root: {{ routes.root_url | json }},
+          cart: {{ routes.cart_url | json }},
+          cartAdd: {{ routes.cart_add_url | json }},
+          trackingProxy: {{ settings.tracking_proxy_path | default: '/apps/novaparfum/track' | json }}
+        },
+        strings: {
+          added: {{ 'cart.added' | t | json }},
+          viewCart: {{ 'cart.view' | t | json }},
+          soldOut: {{ 'products.sold_out' | t | json }},
+          addToCart: {{ 'products.add_to_cart' | t | json }}
+        }
+      };
+    </script>
+
+    {% render 'structured-data-organization' %}
+
+    {{ content_for_header }}
+  </head>
+
+  <body class="template-{{ template.name }}">
+    <a class="skip-link visually-hidden" href="#main">Saltar al contenido</a>
+
+    {% sections 'header-group' %}
+
+    <main id="main" role="main" tabindex="-1">
+      {{ content_for_layout }}
+    </main>
+
+    {% sections 'footer-group' %}
+
+    {%- if settings.whatsapp_number != blank -%}
+      {%- assign wa_digits = settings.whatsapp_number | remove: '+' | remove: ' ' | remove: '-' -%}
+      <a class="whatsapp-float" href="https://wa.me/{{ wa_digits }}?text={{ settings.whatsapp_message | url_encode }}" target="_blank" rel="noopener" aria-label="Escribinos por WhatsApp">
+        {% render 'icon', icon: 'whatsapp' %}
+      </a>
+    {%- endif -%}
+  </body>
+</html>
