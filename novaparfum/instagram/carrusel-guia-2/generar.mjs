@@ -1,122 +1,118 @@
 // Carrusel "¿Qué perfume estás buscando?", segunda versión: perfumes que no salieron en ninguna publicación anterior (7 imágenes de 1080 × 1440, 3:4).
-// Identidad de NovaParfum como el resto del feed: fondo #2F2A4A, Fraunces + Manrope, logo con la estrella y frascos sobre tarjetas claras.
-// Categorías según la descripción de cada perfume en Shopify; frascos con foto verificada de 100 ml, sin el texto "100 ml" (pedido de la tienda, 11/10/2026).
+// Formato pedido por la tienda (como el carrusel de referencia): seis frascos alrededor de "Quiero un perfume ___", con el nombre debajo,
+// todos enteros dentro de la imagen. Identidad de NovaParfum: logo con la estrella arriba, Fraunces + Manrope, violeta de la marca en óvalo y líneas.
+// Categorías según la descripción de cada perfume en Shopify; frascos con foto verificada de 100 ml, sin el texto "100 ml".
 // Uso: node generar.mjs <carpeta-recortes> <carpeta-salida>
 import { chromium } from 'playwright';
 import { readFileSync } from 'fs';
 const CUT = process.argv[2], OUT = process.argv[3];
 const STAR = 'M20 4c1 8.4 4.2 11.8 12.6 12.8C24.2 17.8 21 21.2 20 29.6 19 21.2 15.8 17.8 7.4 16.8 15.8 15.8 19 12.4 20 4Z';
 const img = n => 'data:image/png;base64,' + readFileSync(`${CUT}/${n}.png`).toString('base64');
-const INK = '#2F2A4A', DEEP = '#1E1A33', IRIS = '#7A68B8', LILAC = '#B3A6E4', POWDER = '#E9C9CF', CREAM = '#F7F4F0';
+const INK = '#2F2A4A', IRIS = '#7A68B8', LILAC = '#B3A6E4', POWDER = '#E9C9CF';
 
-const CATS = [
-  { f: '2-dulce', title: 'Dulce', sub: 'Caramelo, azúcar moreno y flores', items: [
-    { img: 'flowerbomb', brand: 'Viktor&Rolf', name: 'Flowerbomb', line: 'Jazmín, rosa y pachulí' },
-    { img: 'gardenia', brand: 'Gucci', name: 'Flora Gorgeous Gardenia', line: 'Gardenia, pera y azúcar moreno' },
-    { img: 'amen', brand: 'Mugler', name: 'A*Men', line: 'Café, pachulí y caramelo' } ] },
-  { f: '3-elegante', title: 'Elegante', sub: 'Para quedar bien en cualquier ocasión', items: [
-    { img: 'n5', brand: 'Chanel', name: 'N°5', line: 'Aldehídos, rosa y jazmín' },
-    { img: 'si', brand: 'Armani', name: 'Sì', line: 'Grosella negra, rosa y vainilla' },
-    { img: 'dhi', brand: 'Dior', name: 'Homme Intense', line: 'Iris empolvado y sofisticado' } ] },
-  { f: '4-de-noche', title: 'De noche', sub: 'Intensos, para salir', items: [
-    { img: 'intensecafe', brand: 'Montale', name: 'Intense Café', line: 'Café tostado, rosa y vainilla' },
-    { img: 'lanuit', brand: 'YSL', name: "La Nuit de L'Homme", line: 'Cardamomo, lavanda y cedro' },
-    { img: 'viking', brand: 'Creed', name: 'Viking', line: 'Menta, pimienta y maderas nobles' } ] },
-  { f: '5-para-el-calor', title: 'Para el calor', sub: 'Frescos y livianos', items: [
-    { img: 'daisy', brand: 'Marc Jacobs', name: 'Daisy', line: 'Frutillas, violeta y flores blancas' },
-    { img: 'dylanfemme', brand: 'Versace', name: 'Dylan Blue pour Femme', line: 'Fresca, frutal y vibrante' },
-    { img: 'git', brand: 'Creed', name: 'Green Irish Tweed', line: 'Verde, limpio y aristocrático' } ] },
-  { f: '6-sin-gastar-tanto', title: 'Sin gastar tanto', sub: 'Árabes desde $ 3.100', items: [
-    { img: 'chocolat', brand: 'Armaf', name: 'Odyssey Dubai Chocolat', line: '$ 3.100' },
-    { img: 'zanzibar', brand: 'Lattafa', name: 'Asad Zanzibar', line: '$ 3.300' },
-    { img: 'marshmallow', brand: 'Armaf', name: 'Odyssey Marshmallow', line: '$ 3.600' } ] },
+// Lugares de los frascos: arriba (TL, TR), a los costados del título (ML, MR) y abajo (BL, BR).
+// x, y, ancho y alto de la caja donde entra el frasco (apoyado abajo), rotación y ancho del texto.
+const SLOTS = {
+  TL: { x: 36, y: 92, w: 380, h: 372, r: -7, tw: 360 },
+  TR: { x: 664, y: 92, w: 380, h: 372, r: 7, tw: 360 },
+  ML: { x: 14, y: 572, w: 244, h: 318, r: -5, tw: 250 },
+  MR: { x: 822, y: 572, w: 244, h: 318, r: 5, tw: 250 },
+  BL: { x: 46, y: 982, w: 390, h: 346, r: 6, tw: 360 },
+  BR: { x: 644, y: 982, w: 390, h: 346, r: -6, tw: 360 },
+};
+// Precios de Shopify del 11/10/2026 (solo en "Sin gastar tanto").
+const SLIDES = [
+  { f: '1-portada', pre: '¿Qué perfume', word: 'estás buscando?', sub: 'Te lo hacemos fácil. Deslizá →', items: {
+    TL: ['n5', 'Chanel', 'N°5'], TR: ['viking', 'Creed', 'Viking'], ML: ['gardenia', 'Gucci', 'Flora Gorgeous Gardenia'],
+    MR: ['si', 'Armani', 'Sì'], BL: ['dylanfemme', 'Versace', 'Dylan Blue pour Femme'], BR: ['royaloud', 'Creed', 'Royal Oud'] } },
+  { f: '2-dulce', pre: 'Quiero un perfume', word: 'Dulce', items: {
+    TL: ['flowerbomb', 'Viktor&Rolf', 'Flowerbomb'], TR: ['amen', 'Mugler', 'A*Men'], ML: ['gardenia', 'Gucci', 'Flora Gorgeous Gardenia'],
+    MR: ['tonka', 'Montale', 'Arabians Tonka'], BL: ['chocolat', 'Armaf', 'Odyssey Dubai Chocolat'], BR: ['marshmallow', 'Armaf', 'Odyssey Marshmallow'] } },
+  { f: '3-elegante', pre: 'Quiero un perfume', word: 'Elegante', items: {
+    TL: ['n5', 'Chanel', 'N°5'], TR: ['royaloud', 'Creed', 'Royal Oud'], ML: ['yedp', 'YSL', 'Y Eau de Parfum'],
+    MR: ['pradalhomme', 'Prada', "L'Homme"], BL: ['gentleman', 'Givenchy', 'Gentleman'], BR: ['dhi', 'Dior', 'Homme Intense'] } },
+  { f: '4-de-noche', pre: 'Quiero un perfume', word: 'De noche', items: {
+    TL: ['viking', 'Creed', 'Viking'], TR: ['erosflame', 'Versace', 'Eros Flame'], ML: ['blackaoud', 'Montale', 'Black Aoud'],
+    MR: ['si', 'Armani', 'Sì'], BL: ['lanuit', 'YSL', "La Nuit de L'Homme"], BR: ['intensecafe', 'Montale', 'Intense Café'] } },
+  { f: '5-para-el-calor', pre: 'Quiero un perfume', word: 'Para el<br>calor', items: {
+    TL: ['daisy', 'Marc Jacobs', 'Daisy'], TR: ['git', 'Creed', 'Green Irish Tweed'], ML: ['reflection', 'Amouage', 'Reflection Man'],
+    MR: ['toy2pearl', 'Moschino', 'Toy 2 Pearl'], BL: ['dylanfemme', 'Versace', 'Dylan Blue pour Femme'], BR: ['uomogreen', 'Valentino', 'Uomo Green Stravaganza'] } },
+  { f: '6-sin-gastar-tanto', pre: 'Quiero un perfume', word: 'Sin gastar<br>tanto', items: {
+    TL: ['legend', 'Montblanc', 'Legend', '$ 5.500'], TR: ['versense', 'Versace', 'Versense', '$ 5.000'], ML: ['zanzibar', 'Lattafa', 'Asad Zanzibar', '$ 3.300'],
+    MR: ['yaratous', 'Lattafa', 'Yara Tous', '$ 3.300'], BL: ['tommygirl', 'Tommy Hilfiger', 'Tommy Girl', '$ 4.150'], BR: ['yaraelixir', 'Lattafa', 'Yara Elixir', '$ 3.600'] } },
+  { f: '7-cierre', pre: '¿A vos cuál', word: 'te gusta más?', sub: 'Contanos en los comentarios 👇', pill: 'Link en el perfil · Envío a todo Uruguay', items: {
+    TL: ['toy2pearl', 'Moschino', 'Toy 2 Pearl'], TR: ['erosflame', 'Versace', 'Eros Flame'],
+    BL: ['yaraelixir', 'Lattafa', 'Yara Elixir'], BR: ['gentleman', 'Givenchy', 'Gentleman'] } },
 ];
 const css = `
 html,body{margin:0}
-.c{width:1080px;height:1440px;position:relative;overflow:hidden;color:${CREAM};font-family:Manrope,sans-serif;font-variant-numeric:lining-nums;
- background:radial-gradient(ellipse 85% 60% at 50% 40%,#463E6E 0%,${INK} 60%,#221D38 100%)}
-.sp{position:absolute;fill:${POWDER};opacity:.45}
-.logo{position:absolute;top:62px;left:0;right:0;display:flex;justify-content:center;align-items:center;gap:12px;z-index:5}
-.logo svg{width:34px;height:34px}.logo b{font:400 38px Fraunces,serif;letter-spacing:-.01em}.logo b span{color:${LILAC}}
-.fr{font-family:Fraunces,serif;font-weight:400;font-variation-settings:'opsz' 48;letter-spacing:-.015em}
-/* tarjeta clara, como en los posts de producto */
-.card{border-radius:34px;background:radial-gradient(ellipse 70% 60% at 50% 45%,#FFFFFF 0%,${CREAM} 70%,#EFEAF3 100%);box-shadow:0 24px 50px rgba(15,12,30,.35)}
-/* portada */
-.b{position:absolute;z-index:3;filter:drop-shadow(0 30px 34px rgba(12,10,24,.55)) drop-shadow(0 4px 8px rgba(12,10,24,.35))}
-.b img{display:block;width:100%;height:100%;object-fit:contain}
-.glow{position:absolute;z-index:2;border-radius:50%;background:radial-gradient(closest-side,rgba(233,201,207,.30),rgba(179,166,228,.12) 55%,transparent);filter:blur(6px)}
+.c{width:1080px;height:1440px;position:relative;overflow:hidden;color:${INK};font-family:Manrope,sans-serif;font-variant-numeric:lining-nums;
+ background:radial-gradient(ellipse 80% 60% at 50% 45%,#FDFBF7 0%,#F7F2EA 55%,#EEE5D9 100%)}
+/* seda: pliegues claros y sombras suaves */
+.silk{position:absolute;inset:-200px;filter:blur(26px);opacity:.9;
+ background:
+  linear-gradient(118deg,transparent 0 18%,rgba(255,255,255,.8) 21%,transparent 26%,transparent 40%,rgba(255,255,255,.65) 44%,transparent 50%,transparent 62%,rgba(255,255,255,.6) 66%,transparent 72%),
+  linear-gradient(118deg,transparent 0 28%,rgba(120,95,70,.08) 31%,transparent 36%,transparent 52%,rgba(120,95,70,.07) 56%,transparent 61%,transparent 76%,rgba(120,95,70,.06) 80%,transparent 86%),
+  radial-gradient(ellipse 40% 30% at 50% 50%,rgba(233,201,207,.25),transparent)}
+.sp{position:absolute;z-index:1}
+.logo{position:absolute;top:40px;left:0;right:0;display:flex;justify-content:center;align-items:center;gap:10px;z-index:5}
+.logo svg{width:30px;height:30px}.logo b{font:400 34px Fraunces,serif;letter-spacing:-.01em}.logo b span{color:${IRIS}}
+.slot{position:absolute;z-index:3;display:flex;align-items:flex-end;justify-content:center}
+.slot img{max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(18px 26px 22px rgba(70,50,30,.28)) drop-shadow(3px 5px 6px rgba(70,50,30,.18))}
+.lab{position:absolute;z-index:4;text-align:center}
+.lab .br{font:600 15px Manrope,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:${IRIS}}
+.lab .nm{margin-top:3px;font:600 22px/1.15 Manrope,sans-serif;text-transform:uppercase;letter-spacing:.02em}
+.lab .pr{margin-top:4px;font:700 26px Manrope,sans-serif;color:${IRIS}}
 .lines{position:absolute;inset:0;z-index:2}
-.h1{position:absolute;left:0;right:0;top:596px;text-align:center;z-index:4;font-size:92px;line-height:1.04}
-.h2{position:absolute;left:0;right:0;top:806px;text-align:center;z-index:4;font:400 42px Manrope,sans-serif;color:${POWDER}}
-.swipe{position:absolute;left:50%;transform:translateX(-50%);bottom:70px;z-index:6;padding:14px 30px;border-radius:99px;background:${CREAM};color:${INK};font:600 26px Manrope,sans-serif;letter-spacing:.06em}
-/* categorías */
-.eb{position:absolute;top:160px;left:0;right:0;text-align:center;font:600 24px Manrope,sans-serif;letter-spacing:.32em;color:${LILAC}}
-.ct{position:absolute;top:186px;left:40px;right:40px;text-align:center;font-size:124px;line-height:1.05;white-space:nowrap}
-.cs{position:absolute;top:360px;left:40px;right:40px;text-align:center;font:400 36px Manrope,sans-serif;color:rgba(247,244,240,.72)}
-.row{position:absolute;left:40px;right:40px;top:452px;display:flex;justify-content:center;gap:24px}
-.it{flex:1;max-width:316px;display:flex;flex-direction:column;align-items:center;text-align:center}
-.it .card{width:100%;height:610px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:34px;box-sizing:border-box}
-.it .card img{max-width:260px;max-height:510px;object-fit:contain;filter:drop-shadow(0 22px 24px rgba(47,42,74,.28)) drop-shadow(0 3px 5px rgba(47,42,74,.18))}
-.it .br{margin-top:28px;font:600 19px Manrope,sans-serif;letter-spacing:.22em;color:${LILAC};text-transform:uppercase}
-.it .nm{margin-top:8px;font-size:38px;line-height:1.08}
-.it .ln{margin-top:10px;font:400 24px/1.3 Manrope,sans-serif;color:rgba(247,244,240,.66)}
-.it .ln.pr{font:600 36px Manrope,sans-serif;color:${POWDER}}
-.foot{position:absolute;left:0;right:0;bottom:56px;display:flex;justify-content:center}
-.dots{display:flex;gap:10px}.dots i{width:11px;height:11px;border-radius:50%;background:rgba(247,244,240,.22)}.dots i.on{background:${POWDER}}
-/* cierre */
-.q{position:absolute;top:190px;left:60px;right:60px;text-align:center;font-size:104px;line-height:1.02}
-.q2{position:absolute;top:432px;left:0;right:0;text-align:center;font:400 40px Manrope,sans-serif;color:${POWDER}}
-.stage{position:absolute;left:110px;right:110px;top:530px;height:500px;display:flex;align-items:flex-end;justify-content:center;gap:34px;padding-bottom:40px;box-sizing:border-box}
-.stage img{max-height:400px;max-width:250px;object-fit:contain;filter:drop-shadow(0 22px 24px rgba(47,42,74,.28)) drop-shadow(0 3px 5px rgba(47,42,74,.18))}
-.cta{position:absolute;top:1088px;left:50%;transform:translateX(-50%);padding:24px 46px;border-radius:99px;background:${CREAM};color:${INK};font:700 38px Manrope,sans-serif;white-space:nowrap}
-.cta2{position:absolute;top:1210px;left:0;right:0;text-align:center;font:400 30px/1.5 Manrope,sans-serif;color:rgba(247,244,240,.72)}
+.mid{position:absolute;left:250px;right:250px;z-index:4;display:flex;flex-direction:column;align-items:center;text-align:center}
+.pre{font:700 34px Manrope,sans-serif;letter-spacing:.06em;text-transform:uppercase}
+.oval{margin-top:10px;padding:14px 46px 20px;border:2.4px solid ${IRIS};border-radius:50%;font-family:Fraunces,serif;font-weight:400;font-variation-settings:'opsz' 48;
+ font-size:96px;line-height:1;letter-spacing:-.015em;white-space:nowrap}
+.sub{margin-top:18px;font:500 28px Manrope,sans-serif;color:#5A5470}
+.pill{position:absolute;left:50%;transform:translateX(-50%);z-index:6;padding:14px 30px;border-radius:99px;background:${INK};color:#F7F4F0;font:600 26px Manrope,sans-serif;letter-spacing:.04em;white-space:nowrap}
 `;
-const logo = `<div class="logo"><svg viewBox="0 0 40 40"><path d="${STAR}" fill="${POWDER}"/><circle cx="30.5" cy="29.5" r="2.6" fill="${LILAC}"/></svg><b>nova<span>parfum</span></b></div>`;
-const spark = (x, y, w, o = .45) => `<svg class="sp" style="left:${x}px;top:${y}px;width:${w}px;opacity:${o}" viewBox="0 0 40 40"><path d="${STAR}"/></svg>`;
-const sparks = spark(48, 70, 26) + spark(1010, 300, 18) + spark(70, 1320, 16) + spark(990, 1250, 22, .35);
-const dots = n => `<div class="dots">${Array.from({ length: 7 }, (_, i) => `<i class="${i === n ? 'on' : ''}"></i>`).join('')}</div>`;
-// frasco suelto en la portada: x, y, ancho, alto, rotación, con un brillo suave detrás para que se lea sobre el fondo oscuro
-const bottle = (n, x, y, w, h, r) => `<div class="glow" style="left:${x - 30}px;top:${y + h * .1}px;width:${w + 60}px;height:${h * .85}px"></div><div class="b" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px;transform:rotate(${r}deg)"><img src="${img(n)}"></div>`;
-const cover = `${logo}
-  ${bottle('flowerbomb', -70, 60, 400, 470, -14)}
-  ${bottle('viking', 760, 70, 330, 470, 13)}
-  ${bottle('daisy', -70, 930, 340, 500, 10)}
-  ${bottle('dylanfemme', 730, 940, 400, 500, -12)}
-  ${bottle('n5', 935, 560, 220, 370, 14)}
-  ${bottle('gardenia', -45, 480, 205, 390, -9)}
-  <svg class="lines" viewBox="0 0 1080 1440" fill="none" stroke="${LILAC}" stroke-width="2.2" stroke-linecap="round" opacity=".7">
-    <path d="M330 420 C 430 450, 470 500, 480 545"/><circle cx="480" cy="551" r="5" fill="${LILAC}"/>
-    <path d="M760 430 C 650 450, 610 500, 600 545"/><circle cx="600" cy="551" r="5" fill="${LILAC}"/>
-    <path d="M300 1030 C 420 1020, 470 970, 480 925"/><circle cx="480" cy="919" r="5" fill="${LILAC}"/>
-    <path d="M770 1020 C 660 1020, 610 970, 600 925"/><circle cx="600" cy="919" r="5" fill="${LILAC}"/>
-  </svg>
-  <div class="h1 fr">¿Qué perfume<br>estás buscando?</div>
-  <div class="h2">Te lo hacemos fácil.</div>
-  <div class="swipe">Deslizá →</div>`;
-const catSlide = (c, k) => `${sparks}${logo}
-  <div class="eb">SI BUSCÁS ALGO</div><div class="ct fr">${c.title}</div><div class="cs">${c.sub}</div>
-  <div class="row">${c.items.map(it => `<div class="it"><div class="card"><img src="${img(it.img)}"></div>
-    <div class="br">${it.brand}</div><div class="nm fr">${it.name}</div>
-    <div class="ln${it.line.startsWith('$') ? ' pr' : ''}">${it.line}</div></div>`).join('')}</div>
-  <div class="foot">${dots(k)}</div>`;
-const close = `${sparks}${logo}
-  <div class="q fr">¿A vos cuál<br>te gusta más?</div>
-  <div class="q2">Contanos en los comentarios 👇</div>
-  <div class="stage card"><img src="${img('si')}"><img src="${img('intensecafe')}"><img src="${img('lanuit')}"></div>
-  <div class="cta">Link en el perfil</div>
-  <div class="cta2">Envío a todo Uruguay<br>Pagás con Mercado Pago</div>
-  <div class="foot">${dots(6)}</div>`;
-const SLIDES = [{ f: '1-portada', html: cover }, ...CATS.map((c, i) => ({ f: c.f, html: catSlide(c, i + 1) })), { f: '7-cierre', html: close }];
+const logo = `<div class="logo"><svg viewBox="0 0 40 40"><path d="${STAR}" fill="${IRIS}"/><circle cx="30.5" cy="29.5" r="2.6" fill="${LILAC}"/></svg><b>nova<span>parfum</span></b></div>`;
+const spark = (x, y, w, c, o) => `<svg class="sp" style="left:${x}px;top:${y}px;width:${w}px;opacity:${o}" viewBox="0 0 40 40"><path d="${STAR}" fill="${c}"/></svg>`;
+const sparks = spark(470, 515, 22, IRIS, .5) + spark(590, 915, 18, POWDER, .9) + spark(40, 470, 16, LILAC, .7) + spark(1020, 930, 16, LILAC, .7);
+const slotHtml = (k, [n, brand, name, price]) => {
+  const s = SLOTS[k];
+  return `<div class="slot" style="left:${s.x}px;top:${s.y}px;width:${s.w}px;height:${s.h}px;transform:rotate(${s.r}deg)"><img src="${img(n)}"></div>
+  <div class="lab" style="left:${s.x + s.w / 2 - s.tw / 2}px;top:${s.y + s.h + 14}px;width:${s.tw}px"><div class="br">${brand}</div><div class="nm">${name}</div>${price ? `<div class="pr">${price}</div>` : ''}</div>`;
+};
+// líneas curvas del título a los frascos, como en el carrusel de referencia (se ubican según la altura del bloque del medio)
+const lines = `<svg class="lines" viewBox="0 0 1080 1440" fill="none" stroke="${IRIS}" stroke-width="2.2" stroke-linecap="round" opacity=".75"></svg>`;
+const linePaths = (top, bottom, c) => `
+  <path d="M478 ${top} C 470 ${top - 55}, 425 ${top - 85}, 372 ${top - 98}"/><circle cx="478" cy="${top + 6}" r="5" fill="${c}"/>
+  <path d="M602 ${top} C 610 ${top - 55}, 655 ${top - 85}, 708 ${top - 98}"/><circle cx="602" cy="${top + 6}" r="5" fill="${c}"/>
+  <path d="M478 ${bottom} C 470 ${bottom + 48}, 425 ${bottom + 72}, 372 ${bottom + 82}"/><circle cx="478" cy="${bottom - 6}" r="5" fill="${c}"/>
+  <path d="M602 ${bottom} C 610 ${bottom + 48}, 655 ${bottom + 72}, 708 ${bottom + 82}"/><circle cx="602" cy="${bottom - 6}" r="5" fill="${c}"/>`;
+const page = s => `<div class="silk"></div>${sparks}${logo}
+  ${Object.entries(s.items).map(([k, v]) => slotHtml(k, v)).join('')}
+  ${lines}
+  <div class="mid"><div class="pre">${s.pre}</div><div class="oval">${s.word}</div>${s.sub ? `<div class="sub">${s.sub}</div>` : ''}</div>
+  ${s.pill ? `<div class="pill">${s.pill}</div>` : ''}`;
 const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
 const p = await (await b.newContext({ viewport: { width: 1080, height: 1440 } })).newPage();
 for (const s of SLIDES) {
-  await p.setContent(`<!doctype html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet"><style>${css}</style></head><body><div class="c">${s.html}</div></body></html>`, { waitUntil: 'networkidle' });
+  await p.setContent(`<!doctype html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet"><style>${css}</style></head><body><div class="c">${page(s)}</div></body></html>`, { waitUntil: 'networkidle' });
   await p.evaluate(() => document.fonts.ready);
-  // títulos largos en una línea
-  await p.evaluate(() => { const el = document.querySelector('.ct'); if (!el) return; let fs = 124; while (el.scrollWidth > el.clientWidth && fs > 80) { fs -= 4; el.style.fontSize = fs + 'px'; } });
-  // que el texto de abajo no pise los puntos
-  const bottom = await p.evaluate(() => Math.max(0, ...[...document.querySelectorAll('.it')].map(e => e.getBoundingClientRect().bottom)));
+  const { top, bottom } = await p.evaluate(() => {
+    // el óvalo no puede pisar los frascos de los costados: achica la letra si hace falta
+    const o = document.querySelector('.oval'); let fs = 96; while (o.getBoundingClientRect().width > 580 && fs > 56) { fs -= 4; o.style.fontSize = fs + 'px'; }
+    // el bloque del medio queda centrado entre las líneas de arriba (y=560) y las de abajo (y=893)
+    const m = document.querySelector('.mid'); const h = m.getBoundingClientRect().height; m.style.top = Math.round(726 - h / 2) + 'px';
+    const pill = document.querySelector('.pill'); if (pill) { pill.style.top = Math.round(726 + h / 2 + 26) + 'px'; }
+    return { top: Math.round(m.getBoundingClientRect().top - 14), bottom: Math.round((pill || m).getBoundingClientRect().bottom + 14) };
+  });
+  await p.evaluate(html => { document.querySelector('.lines').innerHTML = html; }, linePaths(top, bottom, IRIS));
+  // controles: todo dentro de la imagen
+  const chk = await p.evaluate(() => {
+    const out = [];
+    for (const e of document.querySelectorAll('.slot img, .lab, .pill')) { const r = e.getBoundingClientRect(); if (r.left < 4 || r.right > 1076 || r.top < 4 || r.bottom > 1432) out.push(`FUERA ${e.className || 'img'}: ${Math.round(r.left)},${Math.round(r.top)},${Math.round(r.right)},${Math.round(r.bottom)}`); }
+    const m = document.querySelector('.mid').getBoundingClientRect(); out.push(`medio ${Math.round(m.top)}-${Math.round(m.bottom)}, óvalo ${Math.round(document.querySelector('.oval').getBoundingClientRect().width)} px`);
+    return out;
+  });
   await p.locator('.c').screenshot({ path: `${OUT}/${s.f}.png` });
-  console.log(s.f, bottom > 1360 ? `TEXTO HASTA ${Math.round(bottom)}: PISA LOS PUNTOS` : 'ok');
+  console.log(s.f, chk.join(' | '));
 }
 await b.close();
