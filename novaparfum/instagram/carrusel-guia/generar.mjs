@@ -1,5 +1,5 @@
 // Carrusel "¿Qué perfume estás buscando?" (7 imágenes de 1080 × 1440, 3:4).
-// Categorías según la descripción de cada perfume en Shopify; frascos con foto verificada de 100 ml y "100 ml" al lado.
+// Categorías según la descripción de cada perfume en Shopify; frascos con foto verificada de 100 ml, sin el texto "100 ml" (pedido de la tienda, 11/10/2026).
 // Uso: node generar.mjs <carpeta-recortes> <carpeta-salida>
 import { chromium } from 'playwright';
 import { readFileSync } from 'fs';
@@ -42,7 +42,6 @@ html,body{margin:0}
 .logo svg{width:34px;height:34px}.logo b{font:400 38px Fraunces,serif}.logo b span{color:${IRIS}}
 .b{position:absolute;filter:drop-shadow(22px 30px 26px rgba(70,50,30,.30)) drop-shadow(4px 6px 6px rgba(70,50,30,.18))}
 .b img{display:block;width:100%;height:100%;object-fit:contain}
-.tag{position:absolute;padding:6px 14px;border-radius:99px;background:${IRIS};color:${CREAM};font:700 20px Manrope,sans-serif;letter-spacing:.04em;z-index:6;white-space:nowrap}
 /* portada */
 .lines{position:absolute;inset:0;z-index:2}
 .h1{position:absolute;left:0;right:0;top:604px;text-align:center;z-index:4;font:700 72px/1.06 Manrope,sans-serif;letter-spacing:-.01em;text-transform:uppercase}
@@ -60,7 +59,6 @@ html,body{margin:0}
 .it .nm{margin-top:6px;font:400 40px/1.08 Fraunces,serif;font-variation-settings:'opsz' 36}
 .it .ln{margin-top:10px;font:500 25px/1.3 Manrope,sans-serif;color:#5A5470}
 .it .ln.pr{font:700 36px Manrope,sans-serif;color:${IRIS}}
-.it .ml{margin-top:12px;padding:5px 14px;border-radius:99px;background:${IRIS};color:${CREAM};font:700 20px Manrope,sans-serif}
 .foot{position:absolute;left:0;right:0;bottom:56px;display:flex;justify-content:center;align-items:center;gap:14px;font:600 24px Manrope,sans-serif;color:#6E6884}
 .dots{display:flex;gap:10px}.dots i{width:11px;height:11px;border-radius:50%;background:rgba(47,42,74,.2)}.dots i.on{background:${IRIS}}
 /* cierre */
@@ -71,15 +69,15 @@ html,body{margin:0}
 `;
 const logo = `<div class="logo"><svg viewBox="0 0 40 40"><path d="${STAR}" fill="${IRIS}"/><circle cx="30.5" cy="29.5" r="2.6" fill="${LILAC}"/></svg><b>nova<span>parfum</span></b></div>`;
 const dots = n => `<div class="dots">${Array.from({ length: 7 }, (_, i) => `<i class="${i === n ? 'on' : ''}"></i>`).join('')}</div>`;
-// frasco suelto en la portada / cierre: x, y, ancho, alto, rotación, posición de la etiqueta
-const bottle = (n, x, y, w, h, r, tx, ty) => `<div class="b" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px;transform:rotate(${r}deg)"><img src="${img(n)}"></div><div class="tag" style="left:${tx}px;top:${ty}px">100 ml</div>`;
+// frasco suelto en la portada / cierre: x, y, ancho, alto, rotación
+const bottle = (n, x, y, w, h, r) => `<div class="b" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px;transform:rotate(${r}deg)"><img src="${img(n)}"></div>`;
 const cover = `${logo}
-  ${bottle('angels-frasco', -70, 60, 400, 470, -14, 250, 470)}
-  ${bottle('smw', 760, 70, 330, 470, 13, 790, 500)}
-  ${bottle('interlude', -60, 900, 320, 560, 10, 210, 1210)}
-  ${bottle('swyint', 720, 930, 420, 540, -12, 760, 930)}
-  ${bottle('naxos', 935, 540, 230, 400, 16, 925, 500)}
-  ${bottle('aventus', -150, 500, 280, 440, -9, 40, 900)}
+  ${bottle('angels-frasco', -70, 60, 400, 470, -14)}
+  ${bottle('smw', 760, 70, 330, 470, 13)}
+  ${bottle('interlude', -60, 900, 320, 560, 10)}
+  ${bottle('swyint', 720, 930, 420, 540, -12)}
+  ${bottle('naxos', 935, 540, 230, 400, 16)}
+  ${bottle('aventus', -150, 500, 280, 440, -9)}
   <svg class="lines" viewBox="0 0 1080 1440" fill="none" stroke="${IRIS}" stroke-width="2.2" stroke-linecap="round" opacity=".75">
     <path d="M330 420 C 430 450, 470 500, 480 560"/><circle cx="480" cy="566" r="5" fill="${IRIS}"/>
     <path d="M760 430 C 650 450, 610 500, 600 560"/><circle cx="600" cy="566" r="5" fill="${IRIS}"/>
@@ -93,16 +91,16 @@ const catSlide = (c, k) => `${logo}
   <div class="eb">SI BUSCÁS ALGO</div><div class="ct">${c.title}</div><div class="cs">${c.sub}</div>
   <div class="row">${c.items.map(it => `<div class="it"><div class="ph"><img src="${img(it.img)}"></div>
     <div class="br">${it.brand}</div><div class="nm">${it.name}</div>
-    <div class="ln${it.line.startsWith('$') ? ' pr' : ''}">${it.line}</div><div class="ml">100 ml</div></div>`).join('')}</div>
+    <div class="ln${it.line.startsWith('$') ? ' pr' : ''}">${it.line}</div></div>`).join('')}</div>
   <div class="foot">${dots(k)}</div>`;
 const close = `${logo}
   <div class="q">¿A vos cuál<br>te gusta más?</div>
   <div class="q2">Contanos en los comentarios 👇</div>
-  ${bottle('guidance', 70, 600, 300, 400, -10, 120, 980)}
-  ${bottle('santal', 400, 560, 270, 460, 3, 470, 1010)}
-  ${bottle('another13', 700, 600, 270, 420, 11, 760, 990)}
+  ${bottle('guidance', 70, 600, 300, 400, -10)}
+  ${bottle('santal', 400, 560, 270, 460, 3)}
+  ${bottle('another13', 700, 600, 270, 420, 11)}
   <div class="cta">Link en el perfil</div>
-  <div class="cta2">Todos en 100 ml · Envío a todo Uruguay<br>Pagás con Mercado Pago</div>
+  <div class="cta2">Envío a todo Uruguay<br>Pagás con Mercado Pago</div>
   <div class="foot">${dots(6)}</div>`;
 const SLIDES = [{ f: '1-portada', html: cover }, ...CATS.map((c, i) => ({ f: c.f, html: catSlide(c, i + 1) })), { f: '7-cierre', html: close }];
 const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });

@@ -12,13 +12,15 @@ La idea viene de un carrusel guía de @elixir.ar: una portada con frascos alrede
 
   La línea corta debajo de cada nombre sale de esa misma descripción.
 - **Sin gastar tanto.** Los árabes no tienen notas en la descripción, así que van con su precio, el de Shopify del 10/10/2026.
-- **Fotos de 100 ml.** Todas están verificadas: el nombre del archivo o la caja dice 100 ml, o la marca solo lo hace en 100 ml (ver `../reels/textos.md` y `../historia-nicho/LEEME.md`). Cada frasco lleva la etiqueta "100 ml".
+- **Fotos de 100 ml.** Todas están verificadas: el nombre del archivo o la caja dice 100 ml, o la marca solo lo hace en 100 ml (ver `../reels/textos.md` y `../historia-nicho/LEEME.md`).
+- **Sin el texto "100 ml".** El 11/10/2026 la tienda pidió sacarlo de este carrusel: de las etiquetas de los frascos, de debajo de cada perfume, del cierre y del texto de la publicación. Las fotos siguen siendo las de 100 ml.
+- **Precios.** Los de los árabes se revisaron en Shopify el 11/10/2026 y no cambiaron.
 
 ## Texto para la publicación
 ```
 ¿No sabés qué perfume elegir? Te lo hacemos fácil.
 
-Dulce, elegante, de noche, para el calor o sin gastar tanto: deslizá y encontrá el tuyo. Todos en 100 ml.
+Dulce, elegante, de noche, para el calor o sin gastar tanto: deslizá y encontrá el tuyo.
 
 ¿A vos cuál te gusta más? Contanos en los comentarios 👇
 Link en el perfil · Envío a todo Uruguay

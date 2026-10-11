@@ -8,11 +8,6 @@ Pedido por la tienda.
 
 Sin precio tachado ("antes"). Este perfume no aparece en ninguna publicación de Instagram ni en el catálogo de WhatsApp, así que no hay piezas para rehacer.
 
-## Cambio de texto: Hugo Man sin tamaño
+## Descripción de Hugo Man: cambiada y vuelta atrás
 
-Pedido por la tienda: que la ficha no diga el tamaño.
-
-- Antes, primera línea de la descripción: "Fragancia masculina verde y fresca, presentación de 125 ml."
-- Ahora: "Fragancia masculina verde y fresca."
-
-Lo demás quedó igual: notas, título, fotos, precio y la línea "Consultanos por disponibilidad y presentaciones". En las fotos no se ve el tamaño. Ni el título ni la variante ("Default") decían ml, así que no hubo que tocar nada más.
+Saqué "presentación de 125 ml" de la descripción porque entendí mal un pedido que en realidad era sobre el carrusel de Instagram. Ese mismo día volví a poner la descripción original, así que la ficha quedó como estaba.
