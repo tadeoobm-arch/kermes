@@ -91,12 +91,14 @@ Hay dos excepciones:
 
 ## Texto para la publicación
 ```
-¿No sabés qué perfume elegir? Te lo hacemos fácil.
+¿No sabés qué perfume elegir? Te lo hacemos fácil ✨
 
-Dulce, elegante, de noche, para el calor o sin gastar tanto: deslizá y encontrá el tuyo.
+Dulce, elegante, de noche, para el calor o sin gastar tanto: deslizá y encontrá el tuyo 👉
 
-¿A vos cuál te gusta más? Contanos en los comentarios 👇
-Link en el perfil · Envío a todo Uruguay
+¿Cuál te llevás? Contanos en los comentarios 👇
+Guardalo para cuando no sepas qué regalar 🎁
 
-#perfumes #perfumesuruguay #perfumesmontevideo #fragancias
+Pedilo desde el link en el perfil · Envío a todo Uruguay
+
+#perfumes #perfumesuruguay #perfumesmontevideo #fragancias #perfumesarabes
 ```
