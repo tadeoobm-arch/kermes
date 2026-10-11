@@ -1,7 +1,7 @@
 # Carrusel "¿Qué perfume estás buscando?", segunda versión (11/10/2026)
 
 Tiene la misma idea que `../carrusel-guia/` pero otros perfumes: ninguno salió antes en una publicación, historia o Reel.
-La identidad es la de NovaParfum, como el resto del feed: fondo #2F2A4A, títulos en Fraunces, textos en Manrope, logo con la estrella y frascos sobre tarjetas claras. La tienda lo pidió así porque la versión con fondo de seda crema se parecía a la publicación de referencia. Son siete imágenes de 1080 × 1440 (3:4), en el orden de los nombres de archivo, y no llevan el texto "100 ml".
+La identidad es la de NovaParfum, como el resto del feed: fondo #2F2A4A, títulos en Fraunces, textos en Manrope, logo con la estrella y frascos sobre tarjetas claras. La tienda pidió que la publicación mantuviera la identidad de NovaParfum. La primera prueba, con fondo de seda crema, está en el historial de git. Son siete imágenes de 1080 × 1440 (3:4), en el orden de los nombres de archivo, y no llevan el texto "100 ml".
 
 Para volver a generarlas: `node generar.mjs <carpeta-recortes> <carpeta-salida>`. Los recortes son PNG con el fondo quitado y no están en el repositorio.
 
