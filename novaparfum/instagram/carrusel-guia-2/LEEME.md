@@ -89,6 +89,11 @@ Hay dos excepciones:
 - Armani Code (125 ml), Mugler Angel (la foto es de 50 ml), Versace Dylan Blue pour Homme (la caja es de 200 ml).
 - Spicebomb Extreme, Black Opium, Alien y Crystal Noir: no se hacen en 100 ml.
 
+## Versión para TikTok (`tiktok/`)
+- **Formato:** las mismas siete imágenes en vertical, 1080 × 1920. El contenido va al 92 % y empieza a 210 px del borde de arriba, sobre el mismo fondo de seda. Así quedan libres la parte de arriba (pestañas de TikTok) y los últimos 386 px (texto de la publicación).
+- **Cómo se arman:** `node generar.mjs <recortes> <salida> 9x16` saca cada imagen sin fondo más `fondo-9x16.png`, y después se combinan con Python.
+- **Programación:** domingo 11/10/2026 a las 20:30 en TikTok, como publicación de fotos, con el mismo texto que en Instagram. Va con título "¿Qué perfume estás buscando?", música elegida por TikTok y marcada como contenido de la propia marca. Id en Metricool: 393379585.
+
 ## Texto para la publicación
 ```
 ¿No sabés qué perfume elegir? Te lo hacemos fácil ✨

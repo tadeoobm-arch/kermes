@@ -2,10 +2,11 @@
 // Formato pedido por la tienda (como el carrusel de referencia): seis frascos alrededor de "Quiero un perfume ___", con el nombre debajo,
 // todos enteros dentro de la imagen. Identidad de NovaParfum: logo con la estrella arriba, Fraunces + Manrope, violeta de la marca en óvalo y líneas.
 // Categorías según la descripción de cada perfume en Shopify; frascos con foto verificada de 100 ml, sin el texto "100 ml".
-// Uso: node generar.mjs <carpeta-recortes> <carpeta-salida>
+// Uso: node generar.mjs <carpeta-recortes> <carpeta-salida> [9x16]
+// Con 9x16 saca cada imagen sin fondo más un fondo de 1080 × 1920 (fondo-9x16.png), para armar la versión vertical de TikTok (ver LEEME.md).
 import { chromium } from 'playwright';
 import { readFileSync } from 'fs';
-const CUT = process.argv[2], OUT = process.argv[3];
+const CUT = process.argv[2], OUT = process.argv[3], V = process.argv[4] === '9x16';
 const STAR = 'M20 4c1 8.4 4.2 11.8 12.6 12.8C24.2 17.8 21 21.2 20 29.6 19 21.2 15.8 17.8 7.4 16.8 15.8 15.8 19 12.4 20 4Z';
 const img = n => 'data:image/png;base64,' + readFileSync(`${CUT}/${n}.png`).toString('base64');
 const INK = '#2F2A4A', IRIS = '#7A68B8', LILAC = '#B3A6E4', POWDER = '#E9C9CF';
@@ -86,7 +87,7 @@ const linePaths = (top, bottom, c) => `
   <path d="M602 ${top} C 610 ${top - 55}, 655 ${top - 85}, 708 ${top - 98}"/><circle cx="602" cy="${top + 6}" r="5" fill="${c}"/>
   <path d="M478 ${bottom} C 470 ${bottom + 48}, 425 ${bottom + 72}, 372 ${bottom + 82}"/><circle cx="478" cy="${bottom - 6}" r="5" fill="${c}"/>
   <path d="M602 ${bottom} C 610 ${bottom + 48}, 655 ${bottom + 72}, 708 ${bottom + 82}"/><circle cx="602" cy="${bottom - 6}" r="5" fill="${c}"/>`;
-const page = s => `<div class="silk"></div>${sparks}${logo}
+const page = s => `${V ? '' : '<div class="silk"></div>'}${sparks}${logo}
   ${Object.entries(s.items).map(([k, v]) => slotHtml(k, v)).join('')}
   ${lines}
   <div class="mid"><div class="pre">${s.pre}</div><div class="oval">${s.word}</div>${s.sub ? `<div class="sub">${s.sub}</div>` : ''}</div>
@@ -94,7 +95,7 @@ const page = s => `<div class="silk"></div>${sparks}${logo}
 const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
 const p = await (await b.newContext({ viewport: { width: 1080, height: 1440 } })).newPage();
 for (const s of SLIDES) {
-  await p.setContent(`<!doctype html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet"><style>${css}</style></head><body><div class="c">${page(s)}</div></body></html>`, { waitUntil: 'networkidle' });
+  await p.setContent(`<!doctype html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet"><style>${css}</style></head><body><div class="c"${V ? ' style="background:none"' : ''}>${page(s)}</div></body></html>`, { waitUntil: 'networkidle' });
   await p.evaluate(() => document.fonts.ready);
   const { top, bottom } = await p.evaluate(() => {
     // el óvalo no puede pisar los frascos de los costados: achica la letra si hace falta
@@ -112,7 +113,12 @@ for (const s of SLIDES) {
     const m = document.querySelector('.mid').getBoundingClientRect(); out.push(`medio ${Math.round(m.top)}-${Math.round(m.bottom)}, óvalo ${Math.round(document.querySelector('.oval').getBoundingClientRect().width)} px`);
     return out;
   });
-  await p.locator('.c').screenshot({ path: `${OUT}/${s.f}.png` });
+  await p.locator('.c').screenshot({ path: `${OUT}/${s.f}.png`, omitBackground: V });
   console.log(s.f, chk.join(' | '));
+}
+if (V) {
+  await p.setViewportSize({ width: 1080, height: 1920 });
+  await p.setContent(`<!doctype html><html><head><meta charset="utf-8"><style>${css}</style></head><body><div class="c" style="height:1920px"><div class="silk"></div></div></body></html>`);
+  await p.locator('.c').screenshot({ path: `${OUT}/fondo-9x16.png` });
 }
 await b.close();

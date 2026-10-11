@@ -122,3 +122,18 @@ Los videos se sirven desde Archivos de Shopify en su calidad original de 1080 ×
 
 Metricool todavía no tenía datos para recomendar un horario, porque la cuenta es nueva. Se eligieron las 20:30.
 Van sin música: si se le agrega, tiene que ser antes de que se publique.
+
+## TikTok (programado el 11/10/2026 en Metricool, cuenta novaparfumuy)
+Son los mismos videos y textos que en Instagram, en publicaciones aparte, para no tocar las de Instagram. Salen solos a las 20:30 (Montevideo).
+En todos está marcado "contenido de tu propia marca" (TikTok pide declararlo cuando se promociona el negocio propio). Los videos no tienen música.
+
+| Video | Fecha | Título en TikTok | Id en Metricool |
+|---|---|---|---|
+| 2 · para él | lunes 12/10 | 4 clásicos para él | 393380272 |
+| 1 · árabes | martes 13/10 | Perfumes árabes a menos de $ 3.500 | 393380044 |
+| 3 · para ella | miércoles 14/10 | 4 clásicos para ella | 393380313 |
+| 5 · ¿Cuál elegís? | viernes 16/10 | ¿Cuál elegís? Comentá el número | 393380351 |
+| 4 · nicho | domingo 18/10 | Perfumes de nicho en Uruguay | 393380376 |
+| 6 · ¿Cuál elegís? 2 | martes 20/10 | ¿Cuál elegís? Parte 2 | 393380427 |
+
+Los precios de los Reels 1, 2 y 3 se revisaron contra Shopify el 11/10/2026 y siguen iguales.
