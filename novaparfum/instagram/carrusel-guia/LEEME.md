@@ -27,3 +27,8 @@ Link en el perfil · Envío a todo Uruguay
 
 #perfumes #perfumesuruguay #perfumesmontevideo #fragancias
 ```
+
+## Programación
+- **Cuándo:** jueves 15/10/2026 a las 20:30 (Montevideo), en el feed de Instagram como carrusel de 7 imágenes. Publicación automática desde Metricool, id 393345247.
+- **Imágenes:** subidas a Shopify (Contenido → Archivos) como `carrusel-guia-1-portada.jpg` … `carrusel-guia-7-cierre.jpg`, en JPEG de 1080 × 1440.
+- **Texto:** el de arriba, sin "Todos en 100 ml".
