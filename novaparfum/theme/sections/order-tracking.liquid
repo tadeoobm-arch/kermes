@@ -1,0 +1,37 @@
+{%- comment -%}
+  "Seguí tu pedido": consulta por número de pedido + email o teléfono.
+  Consulta la app NovaParfum Ops mediante el App Proxy de Shopify (firma verificada del lado del servidor).
+  ESTO REQUIERE QUE EL USUARIO CONECTE SU CUENTA: la app debe estar desplegada e instalada (ver docs/SETUP.md).
+{%- endcomment -%}
+<div class="container section">
+  <div class="track" data-tracking>
+    <p class="eyebrow">{% render 'icon', icon: 'truck' %} Seguimiento</p>
+    <h1>{{ section.settings.heading }}</h1>
+    <p class="muted">{{ section.settings.text }}</p>
+
+    <form data-tracking-form novalidate>
+      <div class="field">
+        <label for="TrackOrder">Número de pedido</label>
+        <input id="TrackOrder" name="pedido" inputmode="numeric" autocomplete="off" placeholder="Ej.: 1045" required>
+      </div>
+      <div class="field">
+        <label for="TrackContact">Email o teléfono de la compra</label>
+        <input id="TrackContact" name="contacto" autocomplete="email" placeholder="tu@email.com o 09X XXX XXX" required>
+      </div>
+      <button class="btn btn--primary btn--block" type="submit">Consultar estado</button>
+      <p class="muted" style="font-size:13px;margin:0">¿Tenés cuenta? También podés ver tus pedidos en <a href="{{ routes.account_url }}">Mi cuenta</a>.</p>
+    </form>
+
+    <div data-tracking-result aria-live="polite" style="margin-top:20px"></div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Seguí tu pedido",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Título", "default": "Seguí tu pedido" },
+    { "type": "textarea", "id": "text", "label": "Texto", "default": "Ingresá el número de pedido (lo encontrás en el email de confirmación) y el email o teléfono que usaste al comprar." }
+  ]
+}
+{% endschema %}

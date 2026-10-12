@@ -1,0 +1,7 @@
+{
+  "sections": {
+    "main": { "type": "main-product", "settings": { "show_tiers": true, "tier2": 10, "tier3": 15, "show_dynamic_checkout": false } },
+    "relacionados": { "type": "featured-collection", "settings": { "eyebrow": "También te puede gustar", "heading": "Más vendidos", "collection": "mas-vendidos", "limit": 4, "mist": true } }
+  },
+  "order": ["main", "relacionados"]
+}

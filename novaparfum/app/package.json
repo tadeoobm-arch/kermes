@@ -1,0 +1,31 @@
+{
+  "name": "novaparfum-ops",
+  "version": "1.0.0",
+  "private": true,
+  "description": "NovaParfum: automatización de pedidos pagados, proveedores, planilla, seguimiento y notificaciones sobre Shopify.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.9"
+  },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env src/index.js",
+    "dev": "node --env-file-if-exists=.env --watch src/index.js",
+    "test": "node --test --test-reporter=spec \"test/**/*.test.js\"",
+    "simulate": "node ../scripts/simulate-purchase.mjs",
+    "setup:shopify": "node --env-file-if-exists=.env ../scripts/setup-shopify.mjs",
+    "setup:store": "node --env-file-if-exists=.env ../scripts/setup-store-structure.mjs",
+    "setup:sheet": "node --env-file-if-exists=.env ../scripts/setup-sheet.mjs",
+    "import:products": "node --env-file-if-exists=.env ../scripts/import-products.mjs",
+    "discounts:volume": "node --env-file-if-exists=.env ../scripts/create-volume-discounts.mjs",
+    "reports": "node --env-file-if-exists=.env ../scripts/reports.mjs",
+    "reconcile": "node --env-file-if-exists=.env ../scripts/reconcile.mjs",
+    "check:secrets": "node ../scripts/check-secrets.mjs",
+    "check:theme": "node ../scripts/theme-check.mjs"
+  },
+  "dependencies": {
+    "nodemailer": "^7.0.0"
+  },
+  "devDependencies": {
+    "@shopify/theme-check-node": "^3.30.0"
+  }
+}

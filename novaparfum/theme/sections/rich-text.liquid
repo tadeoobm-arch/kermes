@@ -1,0 +1,22 @@
+<section class="section {% if section.settings.mist %}section--mist{% endif %}">
+  <div class="container" style="max-width:820px;text-align:{{ section.settings.align }}">
+    {%- if section.settings.heading != blank -%}<h2>{{ section.settings.heading }}</h2>{%- endif -%}
+    <div class="rte">{{ section.settings.text }}</div>
+    {%- if section.settings.button_label != blank -%}<a class="btn btn--primary" href="{{ section.settings.button_link }}">{{ section.settings.button_label }}</a>{%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Texto",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Título", "default": "Nuestra historia" },
+    { "type": "richtext", "id": "text", "label": "Texto", "default": "<p>Escribí tu texto.</p>" },
+    { "type": "text", "id": "button_label", "label": "Botón" },
+    { "type": "url", "id": "button_link", "label": "Link" },
+    { "type": "select", "id": "align", "label": "Alineación", "default": "left", "options": [{ "value": "left", "label": "Izquierda" }, { "value": "center", "label": "Centro" }] },
+    { "type": "checkbox", "id": "mist", "label": "Fondo lavanda suave", "default": false }
+  ],
+  "presets": [{ "name": "Texto" }]
+}
+{% endschema %}

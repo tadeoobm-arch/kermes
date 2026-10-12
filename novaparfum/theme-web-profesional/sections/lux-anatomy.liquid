@@ -1,0 +1,219 @@
+{%- comment -%}
+  Anatomía de la fragancia (oscura): el frasco al centro y seis ingredientes conectados como una molécula.
+  Las líneas se dibujan al entrar en pantalla, los ingredientes flotan, y a la derecha las barras de composición
+  se llenan con su porcentaje. Al pasar por un ingrediente (o por una barra) se iluminan los dos.
+  Con "reducir movimiento": todo visible y quieto.
+{%- endcomment -%}
+{%- liquid
+  assign u = section.id
+  comment
+    nodo: clave|símbolo|etiqueta|ángulo|barra(1-4)
+  endcomment
+  assign nodes = 'lima|nnLime|Lima|-150|1;iris|nnIris|Iris|-90|2;jazmin|nnJasmine|Jazmín|-30|2;ambar|nnAmber|Ámbar|30|4;madera|nnWood|Sándalo|90|3;vainilla|nnVanilla|Vainilla|150|4' | split: ';'
+-%}
+<style>
+  .an { --an-gold: #C9A46A; --an-ink: #EEE8E0; --an-soft: #9C958E; --an-out: cubic-bezier(.23, 1, .32, 1);
+    position: relative; overflow: hidden; color: var(--an-ink); padding-block: clamp(72px, 9vw, 120px);
+    background: radial-gradient(60% 60% at 50% 45%, #2A282C 0%, #1A191C 60%, #121113 100%); }
+  .an::before { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .35;
+    background-image: radial-gradient(rgba(255,255,255,.08) 1px, transparent 1px); background-size: 22px 22px; }
+  .an__grid { position: relative; display: grid; gap: 40px; align-items: center; }
+  .an__eyebrow { display: flex; align-items: center; gap: 12px; margin: 0 0 16px; font-size: 11px; font-weight: 700; letter-spacing: .3em; text-transform: uppercase; color: var(--an-gold); }
+  .an__eyebrow::before { content: ''; width: 36px; height: 1px; background: currentColor; }
+  .an__title { margin: 0 0 18px; font: 400 clamp(36px, 4.4vw, 62px)/1 var(--f-display, 'Fraunces', serif); letter-spacing: -.03em; }
+  .an__title em { font-style: italic; color: #E8CF9C; }
+  .an__text { margin: 0 0 28px; max-width: 34ch; color: var(--an-soft); line-height: 1.7; }
+  .an-btn { display: inline-flex; align-items: center; gap: 12px; min-height: 52px; padding: 8px 8px 8px 24px; border-radius: 999px; text-decoration: none; font-weight: 700;
+    color: var(--an-ink); box-shadow: inset 0 0 0 1px rgba(201,164,106,.55); transition: transform .45s var(--an-out), background-color .3s ease; }
+  .an-btn span { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: var(--an-gold); color: #16110D; transition: transform .45s var(--an-out); }
+  .an-btn svg { width: 16px; height: 16px; }
+  @media (hover: hover) and (pointer: fine) { .an-btn:hover { background: rgba(201,164,106,.1); } .an-btn:hover span { transform: translate(3px, -2px); } }
+  .an-btn:active { transform: scale(.98); }
+
+  .an__stage { position: relative; width: min(100%, 560px); aspect-ratio: 1; justify-self: center; }
+  .an__ring { position: absolute; inset: 30%; border-radius: 50%; background: radial-gradient(closest-side, rgba(232,207,156,.14), rgba(232,207,156,0));
+    box-shadow: inset 0 0 0 1px rgba(201,164,106,.25); }
+  .an__ring--2 { inset: 14%; box-shadow: inset 0 0 0 1px rgba(201,164,106,.1); background: none; }
+  .an__lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .an__lines line { stroke: rgba(201,164,106,.5); stroke-width: .25; stroke-dasharray: 60; stroke-dashoffset: 0; transition: stroke .3s ease, stroke-width .3s ease; }
+  .an__lines circle { fill: var(--an-gold); }
+  .an__bottle { position: absolute; left: 50%; top: 50%; width: 22%; translate: -50% -52%; }
+  .an__bottle .nb { width: 100%; display: block; overflow: visible; filter: drop-shadow(0 18px 24px rgba(0,0,0,.6)); }
+  .an__node { position: absolute; left: var(--x); top: var(--y); width: 17%; translate: -50% -50%; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: default; }
+  .an__orb { position: relative; width: 100%; aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center;
+    background: radial-gradient(70% 70% at 35% 30%, #3A3638, #1E1C1F); box-shadow: inset 0 0 0 1px rgba(201,164,106,.35), 0 18px 30px -16px rgba(0,0,0,.8);
+    transition: box-shadow .4s ease, transform .5s var(--an-out); }
+  .an__orb svg { position: absolute; inset: 15%; width: 70%; height: 70%; overflow: visible; }
+  .an__label { font-size: 10.5px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; white-space: nowrap; color: var(--an-soft); transition: color .3s ease; }
+
+  .an__bars { display: grid; gap: 18px; }
+  .an__bars-title { margin: 0 0 4px; font-size: 11px; font-weight: 700; letter-spacing: .3em; text-transform: uppercase; color: var(--an-soft); }
+  .an__row { display: grid; grid-template-columns: 1fr auto; gap: 8px 12px; align-items: end; cursor: default; transition: opacity .3s ease; }
+  .an__row b { font: 400 20px/1 var(--f-display, 'Fraunces', serif); }
+  .an__row span { font-size: 13px; font-variant-numeric: tabular-nums; color: var(--an-gold); }
+  .an__track { grid-column: 1 / -1; height: 2px; background: rgba(255,255,255,.1); overflow: hidden; }
+  .an__fill { display: block; height: 100%; width: calc(var(--p) * 1%); background: linear-gradient(90deg, #A9824A, #E8CF9C); transform-origin: left; }
+
+  /* Resaltado vinculado */
+  .an.is-hot .an__node:not(.is-hot) { opacity: .35; }
+  .an.is-hot .an__row:not(.is-hot) { opacity: .35; }
+  .an__node.is-hot .an__orb { box-shadow: inset 0 0 0 1.5px var(--an-gold), 0 0 40px rgba(232,207,156,.35); transform: scale(1.08); }
+  .an__node.is-hot .an__label { color: var(--an-ink); }
+  .an__node { transition: opacity .3s ease; }
+  .an__lines line.is-hot { stroke: #E8CF9C; stroke-width: .5; }
+
+  @media (min-width: 990px) { .an__grid { grid-template-columns: .9fr 1.4fr .8fr; } }
+  @media (max-width: 989px) {
+    .an__copy { text-align: center; } .an__eyebrow { justify-content: center; } .an__eyebrow::before { display: none; } .an__text { margin-inline: auto; }
+    .an__stage { width: min(86vw, 420px); }
+    .an__label { font-size: 9px; letter-spacing: .14em; }
+    .an__bars { max-width: 460px; width: 100%; justify-self: center; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .an__orb { animation: anFloat calc(5s + var(--i) * .6s) ease-in-out calc(var(--i) * -.8s) infinite alternate; }
+    .an .nb__sheen { animation: anSheen 6s var(--an-out) 1s infinite; }
+    .an__ring { animation: anPulse 5s ease-in-out infinite; }
+    .js .an__lines line { stroke-dashoffset: 60; transition: stroke-dashoffset 1.4s var(--an-out), stroke .3s ease, stroke-width .3s ease; transition-delay: calc(var(--i) * 90ms), 0s, 0s; }
+    .js .an.is-in .an__lines line { stroke-dashoffset: 0; }
+    .js .an__node { opacity: 0; transform: scale(.7); transition: opacity .8s var(--an-out), transform 1s var(--an-out); transition-delay: calc(.4s + var(--i) * 90ms); }
+    .js .an.is-in .an__node { opacity: 1; transform: none; }
+    .js .an.is-in.is-hot .an__node:not(.is-hot) { opacity: .35; transition-delay: 0s; }
+    .js .an__fill { transform: scaleX(0); transition: transform 1.4s var(--an-out); transition-delay: calc(.5s + var(--i) * 120ms); }
+    .js .an.is-in .an__fill { transform: none; }
+    @keyframes anFloat { from { transform: translateY(-5px); } to { transform: translateY(6px); } }
+    @keyframes anSheen { 0%, 60% { transform: translateX(0) skewX(-14deg); } 100% { transform: translateX(330px) skewX(-14deg); } }
+    @keyframes anPulse { 0%, 100% { opacity: 1; } 50% { opacity: .6; } }
+  }
+</style>
+
+<section class="an" id="anatomia" data-an>
+  <div class="container an__grid">
+    <div class="an__copy">
+      <p class="an__eyebrow">{{ section.settings.eyebrow }}</p>
+      <h2 class="an__title">{{ section.settings.title }}</h2>
+      <p class="an__text">{{ section.settings.text }}</p>
+      <a class="an-btn" href="{{ section.settings.link | default: routes.all_products_collection_url }}">{{ section.settings.button }}<span aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 11 11 5M6 5h5v5"/></svg></span></a>
+    </div>
+
+    <div class="an__stage">
+      <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <defs>
+          <symbol id="nnLime-{{ u }}" viewBox="-50 -50 100 100"><circle r="46" fill="#7FA83A"/><circle r="40" fill="#D9EC9A"/>
+            <g fill="#B8D964">{% for k in (0..7) %}<path transform="rotate({{ k | times: 45 }})" d="M3 -3 Q14 -34 34 -8 Q22 -1 3 -3Z"/>{% endfor %}</g><circle r="4" fill="#F1F8D2"/></symbol>
+          <symbol id="nnIris-{{ u }}" viewBox="-50 -50 100 100">
+            <path d="M0 10 C-6 30 -2 44 0 48" stroke="#4E6A3A" stroke-width="3" fill="none"/>
+            <g fill="#7B5BC2">{% for k in (0..2) %}<path transform="rotate({{ k | times: 120 }})" d="M0 0 C-16 -10 -18 -36 0 -44 C18 -36 16 -10 0 0Z"/>{% endfor %}</g>
+            <g fill="#A98BE6">{% for k in (0..2) %}<path transform="rotate({{ k | times: 120 | plus: 60 }})" d="M0 0 C-10 -8 -10 -26 0 -32 C10 -26 10 -8 0 0Z"/>{% endfor %}</g>
+            <circle r="5" fill="#F2C94C"/></symbol>
+          <symbol id="nnJasmine-{{ u }}" viewBox="-50 -50 100 100"><g fill="#FBF8F1" stroke="#D9CDB8" stroke-width="1.2">{% for k in (0..4) %}<path transform="rotate({{ k | times: 72 }})" d="M0 -6 C-14 -16 -14 -40 0 -46 C14 -40 14 -16 0 -6Z"/>{% endfor %}</g><circle r="7" fill="#E8C873"/></symbol>
+          <symbol id="nnAmber-{{ u }}" viewBox="-50 -50 100 100"><radialGradient id="nnAmberG-{{ u }}" cx=".35" cy=".35" r=".8"><stop offset="0" stop-color="#FFE2A0"/><stop offset=".5" stop-color="#E39A2D"/><stop offset="1" stop-color="#8E4A10"/></radialGradient>
+            <path d="M-6 -40 C22 -30 40 -4 30 20 C20 40 -20 42 -32 18 C-42 -4 -30 -34 -6 -40Z" fill="url(#nnAmberG-{{ u }})"/><ellipse cx="-10" cy="-10" rx="7" ry="11" fill="#fff" opacity=".5"/></symbol>
+          <symbol id="nnWood-{{ u }}" viewBox="-50 -50 100 100"><g transform="rotate(-20)"><rect x="-42" y="-22" width="84" height="14" rx="2" fill="#9A6A3E"/><rect x="-36" y="-4" width="78" height="14" rx="2" fill="#7A4E2A"/><rect x="-40" y="14" width="80" height="14" rx="2" fill="#B07E4E"/>
+            <path d="M-38 -15 H36 M-30 3 H38 M-34 21 H36" stroke="#5E3A1E" stroke-width="1.2" opacity=".6"/></g></symbol>
+          <symbol id="nnVanilla-{{ u }}" viewBox="-50 -50 100 100"><path d="M-42 34 C-16 14 12 -10 42 -36" stroke="#3B2416" stroke-width="8" stroke-linecap="round" fill="none"/><path d="M-36 40 C-10 18 18 -6 44 -26" stroke="#4E3020" stroke-width="7" stroke-linecap="round" fill="none"/>
+            <g fill="#F4E7C9">{% for k in (0..3) %}<path transform="translate({{ k | times: 12 | minus: 26 }} {{ k | times: -10 | plus: 18 }})" d="M0 -9 C5 -4 9 0 0 9 C-9 0 -5 -4 0 -9Z"/>{% endfor %}</g></symbol>
+        </defs>
+      </svg>
+      <div class="an__ring an__ring--2"></div>
+      <div class="an__ring"></div>
+      <svg class="an__lines" viewBox="0 0 100 100" aria-hidden="true">
+        {%- for n in nodes -%}{%- assign v = n | split: '|' -%}
+          <line data-k="{{ v[0] }}" style="--i: {{ forloop.index0 }};" x1="50" y1="50" x2="0" y2="0" data-a="{{ v[3] }}"/>
+        {%- endfor -%}
+      </svg>
+      <div class="an__bottle" aria-hidden="true">{% render 'nova-bottle', uid: u, liquid_a: '#EFD08C', liquid_b: '#C38A3A', liquid_c: '#6A3A12' %}</div>
+      {%- for n in nodes -%}{%- assign v = n | split: '|' -%}
+        <div class="an__node" data-k="{{ v[0] }}" data-bar="{{ v[4] }}" data-a="{{ v[3] }}" style="--i: {{ forloop.index0 }};" tabindex="0" aria-label="{{ v[2] }}">
+          <span class="an__orb"><svg aria-hidden="true"><use href="#{{ v[1] }}-{{ u }}"/></svg></span>
+          <span class="an__label">{{ v[2] }}</span>
+        </div>
+      {%- endfor -%}
+    </div>
+
+    <div class="an__bars">
+      <p class="an__bars-title">{{ section.settings.bars_title }}</p>
+      {%- for i in (1..4) -%}
+        {%- assign lk = 'bar_' | append: i | append: '_label' -%}{%- assign pk = 'bar_' | append: i | append: '_pct' -%}
+        <div class="an__row" data-bar="{{ i }}" style="--i: {{ forloop.index0 }};">
+          <b>{{ section.settings[lk] }}</b><span data-count="{{ section.settings[pk] }}">{{ section.settings[pk] }}%</span>
+          <i class="an__track"><i class="an__fill" style="--p: {{ section.settings[pk] }};"></i></i>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+<script>
+  (() => {
+    const root = document.querySelector('#shopify-section-{{ section.id }} [data-an]');
+    if (!root) return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const R = 37; // radio (en % del escenario) de la órbita de ingredientes
+    // Posicionar ingredientes y líneas según su ángulo
+    root.querySelectorAll('.an__node').forEach((n) => {
+      const a = (+n.dataset.a) * Math.PI / 180;
+      n.style.setProperty('--x', (50 + Math.cos(a) * R).toFixed(2) + '%');
+      n.style.setProperty('--y', (50 + Math.sin(a) * R).toFixed(2) + '%');
+    });
+    const svg = root.querySelector('.an__lines');
+    svg.querySelectorAll('line').forEach((l) => {
+      const a = (+l.dataset.a) * Math.PI / 180;
+      const x = 50 + Math.cos(a) * (R - 9), y = 50 + Math.sin(a) * (R - 9);
+      l.setAttribute('x2', x.toFixed(2)); l.setAttribute('y2', y.toFixed(2));
+      const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      c.setAttribute('cx', (50 + Math.cos(a) * (R - 22)).toFixed(2)); c.setAttribute('cy', (50 + Math.sin(a) * (R - 22)).toFixed(2)); c.setAttribute('r', '.7');
+      svg.appendChild(c);
+    });
+    // Resaltado vinculado ingrediente ↔ barra
+    const nodes = [...root.querySelectorAll('.an__node')], rows = [...root.querySelectorAll('.an__row')], lines = [...svg.querySelectorAll('line')];
+    const hot = (bar) => {
+      root.classList.toggle('is-hot', !!bar);
+      nodes.forEach((n) => n.classList.toggle('is-hot', n.dataset.bar === bar));
+      rows.forEach((r) => r.classList.toggle('is-hot', r.dataset.bar === bar));
+      lines.forEach((l) => { const n = nodes.find((x) => x.dataset.k === l.dataset.k); l.classList.toggle('is-hot', !!n && n.dataset.bar === bar); });
+    };
+    [...nodes, ...rows].forEach((el) => {
+      el.addEventListener('pointerenter', () => hot(el.dataset.bar));
+      el.addEventListener('pointerleave', () => hot(null));
+      el.addEventListener('focus', () => hot(el.dataset.bar));
+      el.addEventListener('blur', () => hot(null));
+    });
+    // Entrada: líneas, ingredientes, barras y números
+    const start = () => {
+      root.classList.add('is-in');
+      if (reduce) return;
+      const nums = [...root.querySelectorAll('[data-count]')], t0 = performance.now();
+      const tick = (t) => {
+        const k = Math.min(1, Math.max(0, (t - t0 - 500) / 1400)), e = 1 - Math.pow(1 - k, 3);
+        nums.forEach((n) => (n.textContent = Math.round(+n.dataset.count * e) + '%'));
+        if (k < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    };
+    if (!('IntersectionObserver' in window)) return start();
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { start(); io.disconnect(); } }, { threshold: .25 });
+    io.observe(root);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Anatomía del perfume",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Etiqueta", "default": "Anatomía de una fragancia" },
+    { "type": "text", "id": "title", "label": "Título", "default": "Lo que queda es tu <em>firma.</em>" },
+    { "type": "textarea", "id": "text", "label": "Texto", "default": "Cada perfume es una composición: notas que se abren, un corazón que permanece y un fondo que te acompaña todo el día. Pasá por cada ingrediente." },
+    { "type": "text", "id": "button", "label": "Botón", "default": "Descubrir fragancias" },
+    { "type": "url", "id": "link", "label": "Enlace del botón" },
+    { "type": "text", "id": "bars_title", "label": "Título de la composición", "default": "Composición" },
+    { "type": "text", "id": "bar_1_label", "label": "Barra 1", "default": "Cítrico" },
+    { "type": "range", "id": "bar_1_pct", "label": "Barra 1 · %", "min": 0, "max": 100, "step": 1, "default": 32 },
+    { "type": "text", "id": "bar_2_label", "label": "Barra 2", "default": "Floral" },
+    { "type": "range", "id": "bar_2_pct", "label": "Barra 2 · %", "min": 0, "max": 100, "step": 1, "default": 26 },
+    { "type": "text", "id": "bar_3_label", "label": "Barra 3", "default": "Amaderado" },
+    { "type": "range", "id": "bar_3_pct", "label": "Barra 3 · %", "min": 0, "max": 100, "step": 1, "default": 22 },
+    { "type": "text", "id": "bar_4_label", "label": "Barra 4", "default": "Ámbar y vainilla" },
+    { "type": "range", "id": "bar_4_pct", "label": "Barra 4 · %", "min": 0, "max": 100, "step": 1, "default": 20 }
+  ],
+  "presets": [{ "name": "Anatomía del perfume" }]
+}
+{% endschema %}

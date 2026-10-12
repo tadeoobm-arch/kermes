@@ -1,0 +1,95 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "settings": {
+        "eyebrow": "Perfumería online en Uruguay",
+        "heading": "Tu próxima fragancia favorita",
+        "text": "Perfumes originales elegidos con criterio. Pagá con Mercado Pago y recibilo en todo Uruguay.",
+        "cta1_label": "Ver perfumes",
+        "cta1_link": "shopify://collections/perfumes",
+        "cta2_label": "Ofertas",
+        "cta2_link": "shopify://collections/ofertas"
+      }
+    },
+    "categorias": {
+      "type": "collection-list",
+      "blocks": {
+        "hombre": { "type": "category", "settings": { "collection": "hombre", "label": "Hombre", "bg": "#E3E9F4" } },
+        "mujer": { "type": "category", "settings": { "collection": "mujer", "label": "Mujer", "bg": "#F1DAD5" } },
+        "unisex": { "type": "category", "settings": { "collection": "unisex", "label": "Unisex", "bg": "#F2EFFA" } },
+        "ofertas": { "type": "category", "settings": { "collection": "ofertas", "label": "Ofertas", "bg": "#DDE7DC" } }
+      },
+      "block_order": ["hombre", "mujer", "unisex", "ofertas"],
+      "settings": { "heading": "Elegí tu estilo" }
+    },
+    "destacados": {
+      "type": "featured-collection",
+      "settings": { "eyebrow": "Selección NovaParfum", "heading": "Perfumes destacados", "collection": "destacados", "limit": 4, "mist": false }
+    },
+    "mas_vendidos": {
+      "type": "featured-collection",
+      "settings": { "eyebrow": "Los favoritos de Uruguay", "heading": "Más vendidos", "collection": "mas-vendidos", "limit": 8, "mist": true }
+    },
+    "combos": {
+      "type": "bundle-tiers",
+      "settings": { "eyebrow": "Combos", "heading": "Llevá más, pagá menos", "tier2": 10, "tier3": 15, "link": "shopify://collections/perfumes", "mist": false }
+    },
+    "nuevos": {
+      "type": "featured-collection",
+      "settings": { "eyebrow": "Recién llegados", "heading": "Nuevos", "collection": "nuevos", "limit": 4, "mist": false }
+    },
+    "ofertas": {
+      "type": "featured-collection",
+      "settings": { "eyebrow": "Por tiempo limitado", "heading": "Ofertas", "collection": "ofertas", "limit": 4, "mist": true }
+    },
+    "beneficios": {
+      "type": "benefits",
+      "blocks": {
+        "b1": { "type": "benefit", "settings": { "icon": "shield", "title": "Perfumes originales", "text": "Trabajamos con proveedores seleccionados y verificados." } },
+        "b2": { "type": "benefit", "settings": { "icon": "card", "title": "Pagá con Mercado Pago", "text": "Tarjetas, débito, efectivo en redes de cobranza y dinero en cuenta." } },
+        "b3": { "type": "benefit", "settings": { "icon": "truck", "title": "Envíos a todo Uruguay", "text": "Seguí tu pedido en todo momento con tu número de seguimiento." } },
+        "b4": { "type": "benefit", "settings": { "icon": "chat", "title": "Te asesoramos", "text": "¿No sabés cuál elegir? Escribinos por WhatsApp." } }
+      },
+      "block_order": ["b1", "b2", "b3", "b4"],
+      "settings": { "heading": "Comprar en NovaParfum", "mist": false }
+    },
+    "envios": {
+      "type": "shipping-info",
+      "blocks": {
+        "s1": { "type": "card", "settings": { "title": "Montevideo", "text": "<p>[Completar plazo y costo reales]</p>" } },
+        "s2": { "type": "card", "settings": { "title": "Interior", "text": "<p>[Completar plazo, costo y empresas de envío que uses]</p>" } },
+        "s3": { "type": "card", "settings": { "title": "Seguimiento", "text": "<p>Cuando tu pedido sale te enviamos el número de seguimiento por email.</p>" } }
+      },
+      "block_order": ["s1", "s2", "s3"],
+      "settings": { "heading": "Llegamos a todo Uruguay" }
+    },
+    "faq": {
+      "type": "faq",
+      "blocks": {
+        "q1": { "type": "question", "settings": { "question": "¿Cómo pago?", "answer": "<p>Con Mercado Pago: tarjetas de crédito y débito, efectivo en redes de cobranza o dinero en tu cuenta. El pago se realiza en un entorno seguro.</p>" } },
+        "q2": { "type": "question", "settings": { "question": "¿Cuándo se confirma mi pedido?", "answer": "<p>Cuando Mercado Pago aprueba el pago. En ese momento te enviamos un email y empezamos a preparar tu pedido.</p>" } },
+        "q3": { "type": "question", "settings": { "question": "¿Cuánto demora el envío?", "answer": "<p>[Completar con los plazos reales de tu operación para Montevideo e Interior.]</p>" } },
+        "q4": { "type": "question", "settings": { "question": "¿Cómo sigo mi pedido?", "answer": "<p>En la página <a href=\"/pages/segui-tu-pedido\">Seguí tu pedido</a> con tu número de pedido y tu email o teléfono.</p>" } },
+        "q5": { "type": "question", "settings": { "question": "¿Qué tamaño me conviene?", "answer": "<p>30 ml para probar o llevar en la cartera; 50 ml para uso frecuente; 100 ml si ya es tu fragancia favorita.</p>" } },
+        "q6": { "type": "question", "settings": { "question": "¿Puedo cambiar un perfume?", "answer": "<p>[Completar con tu política de cambios y devoluciones, respetando la normativa de defensa del consumidor de Uruguay.]</p>" } }
+      },
+      "block_order": ["q1", "q2", "q3", "q4", "q5", "q6"],
+      "settings": { "heading": "Preguntas frecuentes" }
+    },
+    "instagram": {
+      "type": "instagram",
+      "blocks": {
+        "p1": { "type": "post", "settings": {} },
+        "p2": { "type": "post", "settings": {} },
+        "p3": { "type": "post", "settings": {} },
+        "p4": { "type": "post", "settings": {} },
+        "p5": { "type": "post", "settings": {} },
+        "p6": { "type": "post", "settings": {} }
+      },
+      "block_order": ["p1", "p2", "p3", "p4", "p5", "p6"],
+      "settings": { "heading": "Inspirate con nosotros", "handle": "@novaparfum.uy" }
+    }
+  },
+  "order": ["hero", "categorias", "destacados", "mas_vendidos", "combos", "nuevos", "ofertas", "beneficios", "envios", "faq", "instagram"]
+}

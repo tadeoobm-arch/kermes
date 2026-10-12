@@ -1,0 +1,37 @@
+{%- comment -%}
+  Comunica la promo por cantidad. El descuento real lo aplica Shopify con descuentos automáticos
+  nativos (scripts/create-volume-discounts.mjs). Los textos de acá deben coincidir con esos descuentos.
+{%- endcomment -%}
+<section class="section {% if section.settings.mist %}section--mist{% endif %}">
+  <div class="container">
+    <div class="section__head">
+      <div>
+        <p class="eyebrow">{% render 'icon', icon: 'gift' %} {{ section.settings.eyebrow }}</p>
+        <h2 style="margin:0">{{ section.settings.heading }}</h2>
+      </div>
+    </div>
+    <div class="tiers">
+      <div class="tier"><div class="tier__qty">1</div><div class="tier__label">perfume</div><div class="tier__off">Precio normal</div></div>
+      <div class="tier"><div class="tier__qty">2</div><div class="tier__label">perfumes</div><div class="tier__off">{{ section.settings.tier2 }}% OFF</div></div>
+      <div class="tier tier--best"><div class="tier__qty">3+</div><div class="tier__label">perfumes</div><div class="tier__off">{{ section.settings.tier3 }}% OFF</div></div>
+    </div>
+    <p class="muted" style="margin-top:14px;font-size:14px">{{ section.settings.note }}</p>
+    {%- if section.settings.link != blank -%}<a class="btn btn--primary" href="{{ section.settings.link }}">Armá tu combo</a>{%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Promo por cantidad",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Antetítulo", "default": "Combos" },
+    { "type": "text", "id": "heading", "label": "Título", "default": "Llevá más, pagá menos" },
+    { "type": "number", "id": "tier2", "label": "% descuento con 2", "default": 10 },
+    { "type": "number", "id": "tier3", "label": "% descuento con 3 o más", "default": 15 },
+    { "type": "text", "id": "note", "label": "Aclaración", "default": "El descuento se aplica automáticamente en el carrito. Combiná los perfumes que quieras." },
+    { "type": "url", "id": "link", "label": "Link del botón" },
+    { "type": "checkbox", "id": "mist", "label": "Fondo lavanda suave", "default": true }
+  ],
+  "presets": [{ "name": "Promo por cantidad" }]
+}
+{% endschema %}

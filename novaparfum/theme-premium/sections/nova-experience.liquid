@@ -1,0 +1,401 @@
+{%- comment -%}
+  Portada inmersiva "Nova No. 01" (inspirada en las webs de perfumería de lujo: el perfume como experiencia).
+  - La sección mide varias pantallas de alto; el escenario queda fijo mientras se baja y cuenta 4 capítulos:
+    intro → notas de salida (cítricos) → corazón (flores) → fondo (vainilla, madera, ámbar, humo; tono oscuro).
+  - En el centro, el frasco de la marca dibujado en SVG (vidrio facetado, líquido, tapa negra con collar dorado,
+    etiqueta NOVA No. 01, reflejo en el piso y haz de luz). El líquido cambia de color por capítulo y se inclina
+    según la velocidad del scroll. El frasco "gira" levemente al bajar.
+  - Alrededor, los ingredientes (SVG propios, sin imágenes de terceros) aparecen desde la profundidad, flotan
+    con paralaje (mouse en computadora) y se van cuando cambia el capítulo.
+  - Con "reducir movimiento": sin fijar el escenario ni mover ingredientes; se ve la intro quieta.
+{%- endcomment -%}
+<style>
+  .nx { --nx-out: cubic-bezier(.23, 1, .32, 1); --nx-io: cubic-bezier(.77, 0, .175, 1);
+    --liq-a: #F7CF7E; --liq-b: #D88B2E; --liq-c: #8E4A14; --nx-ink: #2B2420; --nx-soft: #6B5E55;
+    position: relative; height: 420vh; }
+  .nx__stage { position: sticky; top: 0; height: 100vh; height: 100dvh; overflow: hidden; isolation: isolate; background: #F3ECE2; color: var(--nx-ink);
+    transition: color .8s ease; }
+  .nx__stage.is-dark { --nx-ink: #F4E9D8; --nx-soft: #C9B9A4; }
+  .nx__rays { position: absolute; left: 62%; top: 44%; width: 140vmax; height: 140vmax; translate: -50% -50%; z-index: -1; pointer-events: none; opacity: .55;
+    background: repeating-conic-gradient(from 0deg, rgba(255,255,255,.0) 0deg 9deg, rgba(255,255,255,.35) 10deg 12deg, rgba(255,255,255,0) 13deg 22deg);
+    -webkit-mask: radial-gradient(closest-side, #000 0%, transparent 70%); mask: radial-gradient(closest-side, #000 0%, transparent 70%); }
+  .nx__glow { position: absolute; left: 62%; top: 46%; width: 70vmin; height: 70vmin; translate: -50% -50%; z-index: -1; border-radius: 50%; pointer-events: none;
+    background: radial-gradient(closest-side, rgba(255,246,228,.95), rgba(255,246,228,0)); }
+  .nx__floor { position: absolute; left: 0; right: 0; bottom: 0; height: 26%; z-index: -1; pointer-events: none;
+    background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,.06)); }
+  .nx__stage.is-dark .nx__glow { background: radial-gradient(closest-side, rgba(214,150,70,.38), rgba(214,150,70,0)); }
+  .nx__stage.is-dark .nx__rays { opacity: .18; }
+
+  /* Textos por capítulo */
+  .nx__copy { position: absolute; z-index: 3; left: max(20px, calc((100vw - 1240px) / 2 + 20px)); top: 50%; translate: 0 -50%; width: min(460px, 42vw); }
+  .nx__ch { position: absolute; left: 0; top: 50%; translate: 0 -50%; width: 100%; opacity: 0; transform: translateY(26px); pointer-events: none;
+    transition: opacity .7s var(--nx-out), transform .9s var(--nx-out); }
+  .nx__ch.is-on { opacity: 1; transform: none; pointer-events: auto; }
+  .nx__eyebrow { display: flex; align-items: center; gap: 10px; margin: 0 0 16px; font-size: 11px; font-weight: 700; letter-spacing: .26em; text-transform: uppercase; color: var(--nx-soft); }
+  .nx__eyebrow::before { content: ''; width: 28px; height: 1px; background: currentColor; }
+  .nx__title { margin: 0 0 18px; font: 400 clamp(44px, 6.4vw, 96px)/.92 var(--f-display, 'Fraunces', serif); letter-spacing: -.035em; color: var(--nx-ink); }
+  .nx__title em { font-style: italic; color: #B07A3A; }
+  .nx__stage.is-dark .nx__title em { color: #E3B46F; }
+  .nx__text { margin: 0 0 26px; max-width: 38ch; color: var(--nx-soft); line-height: 1.65; font-size: 16px; }
+  .nx__btns { display: flex; flex-wrap: wrap; gap: 12px; }
+  .nx-btn { display: inline-flex; align-items: center; gap: 12px; min-height: 52px; padding: 8px 8px 8px 24px; border-radius: 999px; text-decoration: none; font-weight: 700;
+    background: var(--nx-ink); color: #F7F1E8; transition: transform .45s var(--nx-out), background-color .6s ease, color .6s ease; }
+  .nx__stage.is-dark .nx-btn { color: #1E1915; }
+  .nx-btn span { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,.16); transition: transform .45s var(--nx-out); }
+  .nx-btn svg { width: 16px; height: 16px; }
+  .nx-btn--line { background: transparent; color: var(--nx-ink); box-shadow: inset 0 0 0 1px currentColor; padding-right: 24px; }
+  .nx__stage.is-dark .nx-btn--line { color: var(--nx-ink); }
+  @media (hover: hover) and (pointer: fine) { .nx-btn:hover { transform: translateY(-2px); } .nx-btn:hover span { transform: translate(3px, -2px); } }
+  .nx-btn:active { transform: scale(.98); }
+
+  /* Frasco */
+  .nx__bottle-wrap { position: absolute; z-index: 2; left: 62%; top: 50%; width: min(44vmin, 420px); translate: -50% -46%; }
+  .nx__bottle { width: 100%; display: block; overflow: visible; filter: drop-shadow(0 40px 40px rgba(60,35,10,.28)); }
+  .nx__stage.is-dark .nx__bottle { filter: drop-shadow(0 30px 50px rgba(0,0,0,.6)) drop-shadow(0 0 40px rgba(226,160,80,.25)); }
+  .nx__turn { transform-box: fill-box; transform-origin: 50% 50%; }
+  .nx__liquid { transform-box: fill-box; transform-origin: 50% 30%; }
+  .nx__spec { transform-box: fill-box; }
+  .nx stop { transition: stop-color 1s var(--nx-io); }
+
+  /* Ingredientes */
+  .nx__world { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+  .nx__world--front { z-index: 4; }
+  .nx__it { position: absolute; left: 0; top: 0; width: var(--s); height: var(--s); margin: calc(var(--s) / -2) 0 0 calc(var(--s) / -2); opacity: 0; will-change: transform, opacity; }
+  .nx__it svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .nx__it--far { filter: blur(3px); }
+  .nx__it--near { filter: blur(1.5px); }
+
+  /* Progreso */
+  .nx__nav { position: absolute; z-index: 5; right: max(16px, calc((100vw - 1240px) / 2 + 16px)); top: 50%; translate: 0 -50%; display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
+  .nx__nav li { display: flex; align-items: center; gap: 10px; justify-content: flex-end; font-size: 11px; font-weight: 700; letter-spacing: .18em; color: var(--nx-soft); opacity: .55; transition: opacity .4s ease; }
+  .nx__nav li::after { content: ''; width: 18px; height: 1px; background: currentColor; transition: width .5s var(--nx-out); }
+  .nx__nav li.is-on { opacity: 1; color: var(--nx-ink); }
+  .nx__nav li.is-on::after { width: 42px; }
+  .nx__hint { position: absolute; z-index: 5; left: 50%; bottom: 22px; translate: -50% 0; display: grid; justify-items: center; gap: 8px; font-size: 11px; font-weight: 700;
+    letter-spacing: .22em; text-transform: uppercase; color: var(--nx-soft); transition: opacity .5s ease; }
+  .nx__hint i { width: 22px; height: 34px; border-radius: 12px; box-shadow: inset 0 0 0 1.5px currentColor; position: relative; }
+  .nx__hint i::after { content: ''; position: absolute; left: 50%; top: 7px; width: 3px; height: 7px; margin-left: -1.5px; border-radius: 2px; background: currentColor; animation: nxWheel 1.6s ease-in-out infinite; }
+  .nx.is-scrolled .nx__hint { opacity: 0; }
+  @keyframes nxWheel { 0% { transform: translateY(0); opacity: 1; } 70% { transform: translateY(10px); opacity: 0; } 100% { opacity: 0; } }
+
+  @media (max-width: 989px) {
+    .nx { height: 380vh; }
+    .nx__copy { left: 20px; right: 20px; top: auto; bottom: calc(env(safe-area-inset-bottom) + 28px); translate: none; width: auto; height: 40%; text-align: center; }
+    .nx__ch { top: auto; bottom: 0; translate: none; }
+    .nx__eyebrow { justify-content: center; }
+    .nx__eyebrow::before { display: none; }
+    .nx__title { font-size: clamp(34px, 10vw, 52px); margin-bottom: 8px; }
+    .nx__eyebrow { margin-bottom: 10px; }
+    .nx__text { margin: 0 auto 14px; font-size: 14px; line-height: 1.55; }
+    .nx__btns { justify-content: center; }
+    .nx__bottle-wrap { left: 50%; top: 28%; width: min(38vw, 180px); }
+    .nx__glow, .nx__rays { left: 50%; top: 30%; }
+    .nx__nav { right: 12px; top: 30%; }
+    .nx__nav li { font-size: 0; } .nx__nav li::after { width: 10px; } .nx__nav li.is-on::after { width: 22px; }
+    .nx__hint { display: none; }
+    /* Antes de empezar a bajar, el escenario arranca debajo del menú: subimos el texto para que no se corte */
+    .nx__copy { transition: bottom .5s var(--nx-out); }
+    .nx:not(.is-scrolled) .nx__copy { bottom: calc(env(safe-area-inset-bottom) + 118px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nx { height: auto; }
+    .nx__stage { position: relative; height: 100svh; min-height: 560px; }
+    .nx__world, .nx__nav, .nx__hint { display: none; }
+    .nx__ch, .nx__ch.is-on { transition: none; }
+  }
+</style>
+
+<section class="nx" id="nx-{{ section.id }}" aria-label="{{ section.settings.name | escape }}">
+  <div class="nx__stage" data-nx-stage>
+    <div class="nx__rays" aria-hidden="true" data-nx-rays></div>
+    <div class="nx__glow" aria-hidden="true"></div>
+    <div class="nx__floor" aria-hidden="true"></div>
+
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <defs>
+        <!-- rodaja de naranja -->
+        <symbol id="nxOrange" viewBox="-50 -50 100 100">
+          <circle r="48" fill="#F29A2E"/><circle r="42" fill="#FBD38A"/>
+          <g fill="#F7A93B">{% for k in (0..9) %}<path transform="rotate({{ k | times: 36 }})" d="M3 -3 Q14 -36 36 -6 Q22 -1 3 -3Z"/>{% endfor %}</g>
+          <circle r="5" fill="#FDE6B8"/>
+        </symbol>
+        <!-- rodaja de limón -->
+        <symbol id="nxLemon" viewBox="-50 -50 100 100">
+          <circle r="48" fill="#E9C93A"/><circle r="42" fill="#FBF0B0"/>
+          <g fill="#F2DB63">{% for k in (0..7) %}<path transform="rotate({{ k | times: 45 }})" d="M3 -3 Q14 -36 36 -8 Q22 -1 3 -3Z"/>{% endfor %}</g>
+          <circle r="4" fill="#FFF8D6"/>
+        </symbol>
+        <!-- hoja -->
+        <symbol id="nxLeaf" viewBox="-50 -50 100 100">
+          <path d="M-40 30 C-30 -30 20 -45 42 -40 C40 -10 10 35 -40 30Z" fill="#6E9A54"/>
+          <path d="M-38 28 C-10 0 15 -22 40 -38" stroke="#4E7A3A" stroke-width="2.5" fill="none"/>
+        </symbol>
+        <!-- gota -->
+        <symbol id="nxDrop" viewBox="-50 -50 100 100">
+          <path d="M0 -44 C18 -14 30 4 30 18 A30 30 0 0 1 -30 18 C-30 4 -18 -14 0 -44Z" fill="rgba(255,255,255,.55)" stroke="rgba(255,255,255,.9)" stroke-width="2"/>
+          <ellipse cx="-10" cy="12" rx="5" ry="9" fill="#fff" opacity=".8"/>
+        </symbol>
+        <!-- pétalo de rosa -->
+        <symbol id="nxPetal" viewBox="-50 -50 100 100">
+          <path d="M0 44 C-40 20 -44 -24 -12 -42 C0 -30 0 -30 12 -42 C44 -24 40 20 0 44Z" fill="#E58FA3"/>
+          <path d="M0 40 C-24 18 -26 -12 -8 -30" stroke="#F6C3CF" stroke-width="3" fill="none" opacity=".7"/>
+        </symbol>
+        <!-- jazmín -->
+        <symbol id="nxJasmine" viewBox="-50 -50 100 100">
+          <g fill="#FFFDF7" stroke="#EADFCB" stroke-width="1.5">{% for k in (0..4) %}<ellipse transform="rotate({{ k | times: 72 }}) translate(0 -22)" rx="13" ry="24"/>{% endfor %}</g>
+          <circle r="7" fill="#F2D27A"/>
+        </symbol>
+        <!-- vaina de vainilla -->
+        <symbol id="nxVanilla" viewBox="-50 -50 100 100">
+          <path d="M-46 30 C-20 10 10 -12 46 -34" stroke="#3B2416" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <path d="M-44 27 C-18 8 10 -14 44 -36" stroke="#6B4429" stroke-width="2.5" stroke-linecap="round" fill="none" opacity=".8"/>
+        </symbol>
+        <!-- astilla de madera -->
+        <symbol id="nxWood" viewBox="-50 -50 100 100">
+          <path d="M-44 -10 L40 -22 L46 -6 L-38 10Z" fill="#9A6A3E"/>
+          <path d="M-40 -5 L40 -16" stroke="#C49464" stroke-width="2"/><path d="M-36 3 L42 -9" stroke="#7A4E2A" stroke-width="2"/>
+        </symbol>
+        <!-- gota de ámbar -->
+        <symbol id="nxAmber" viewBox="-50 -50 100 100">
+          <radialGradient id="nxAmberG" cx=".35" cy=".35" r=".8"><stop offset="0" stop-color="#FFE2A0"/><stop offset=".5" stop-color="#E39A2D"/><stop offset="1" stop-color="#8E4A10"/></radialGradient>
+          <path d="M0 -40 C24 -10 34 8 30 22 A30 30 0 0 1 -30 22 C-34 8 -24 -10 0 -40Z" fill="url(#nxAmberG)"/>
+          <ellipse cx="-10" cy="6" rx="6" ry="10" fill="#fff" opacity=".55"/>
+        </symbol>
+        <!-- humo -->
+        <symbol id="nxSmoke" viewBox="-50 -50 100 100">
+          <path d="M-10 46 C-30 20 20 10 0 -10 C-18 -28 18 -36 6 -48" stroke="rgba(230,215,195,.55)" stroke-width="10" stroke-linecap="round" fill="none"/>
+        </symbol>
+        <!-- destello -->
+        <symbol id="nxStar" viewBox="0 0 40 40"><path d="M20 4c1 8.4 4.2 11.8 12.6 12.8C24.2 17.8 21 21.2 20 29.6 19 21.2 15.8 17.8 7.4 16.8 15.8 15.8 19 12.4 20 4Z" fill="#E3B46F"/></symbol>
+      </defs>
+    </svg>
+
+    {%- comment -%} Ingredientes: capítulo|símbolo|x%|y%|tamaño px|profundidad(far/mid/near)|giro {%- endcomment -%}
+    {%- capture items -%}
+      0|nxStar|48|22|26|mid|0;0|nxStar|80|70|18|far|0;0|nxStar|70|18|14|far|0;0|nxStar|86|36|22|mid|0;
+      1|nxOrange|44|24|120|near|-20;1|nxLemon|82|20|96|mid|30;1|nxOrange|86|74|140|near|15;1|nxLemon|48|78|80|far|-40;1|nxLeaf|74|10|70|far|20;1|nxLeaf|40|52|60|mid|-60;1|nxDrop|56|34|34|mid|0;1|nxDrop|72|84|28|far|0;1|nxDrop|92|48|30|near|0;
+      2|nxPetal|46|26|70|near|-30;2|nxPetal|84|18|56|mid|40;2|nxJasmine|88|62|86|near|10;2|nxJasmine|44|70|64|mid|-15;2|nxPetal|72|86|60|far|70;2|nxPetal|56|14|40|far|-60;2|nxJasmine|76|40|46|far|20;2|nxPetal|94|36|44|mid|120;
+      3|nxVanilla|44|30|130|near|-10;3|nxWood|86|22|110|mid|25;3|nxAmber|84|70|70|near|0;3|nxAmber|48|76|46|mid|0;3|nxSmoke|58|20|140|far|0;3|nxSmoke|78|56|120|far|0;3|nxWood|46|56|80|far|-35;3|nxVanilla|92|48|100|mid|50;3|nxAmber|70|12|34|far|0
+    {%- endcapture -%}
+    {%- assign list = items | strip_newlines | split: ';' -%}
+    <div class="nx__world" aria-hidden="true" data-nx-world>
+      {%- for raw in list -%}{%- assign v = raw | strip | split: '|' -%}{%- if v.size > 6 and v[5] != 'near' -%}
+        <span class="nx__it nx__it--{{ v[5] }}" data-ch="{{ v[0] }}" data-x="{{ v[2] }}" data-y="{{ v[3] }}" data-d="{{ v[5] }}" data-r="{{ v[6] }}" style="--s: {{ v[4] }}px;"><svg><use href="#{{ v[1] }}"/></svg></span>
+      {%- endif -%}{%- endfor -%}
+    </div>
+
+    <div class="nx__bottle-wrap" data-nx-bottle-wrap>
+      <svg class="nx__bottle" viewBox="0 0 240 470" aria-hidden="true">
+        <defs>
+          <linearGradient id="nxLiq-{{ section.id }}" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" style="stop-color: var(--liq-a)"/><stop offset=".55" style="stop-color: var(--liq-b)"/><stop offset="1" style="stop-color: var(--liq-c)"/>
+          </linearGradient>
+          <linearGradient id="nxLiqSide-{{ section.id }}" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#000" stop-opacity=".28"/><stop offset=".25" stop-color="#000" stop-opacity="0"/><stop offset=".7" stop-color="#fff" stop-opacity=".12"/><stop offset="1" stop-color="#000" stop-opacity=".3"/>
+          </linearGradient>
+          <linearGradient id="nxGlass-{{ section.id }}" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#fff" stop-opacity=".7"/><stop offset=".12" stop-color="#fff" stop-opacity=".15"/><stop offset=".5" stop-color="#fff" stop-opacity=".05"/>
+            <stop offset=".88" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#fff" stop-opacity=".65"/>
+          </linearGradient>
+          <linearGradient id="nxGold-{{ section.id }}" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#8B6A2E"/><stop offset=".3" stop-color="#F5E1A6"/><stop offset=".55" stop-color="#C9A050"/><stop offset=".8" stop-color="#F0D693"/><stop offset="1" stop-color="#7A5A22"/>
+          </linearGradient>
+          <linearGradient id="nxCap-{{ section.id }}" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#0E0C0B"/><stop offset=".35" stop-color="#3A3330"/><stop offset=".55" stop-color="#171413"/><stop offset="1" stop-color="#050404"/>
+          </linearGradient>
+          <clipPath id="nxBody-{{ section.id }}"><path d="M44 124 H196 L212 140 V362 L196 378 H44 L28 362 V140Z"/></clipPath>
+          <linearGradient id="nxRefl-{{ section.id }}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></linearGradient>
+          <mask id="nxReflMask-{{ section.id }}"><rect x="0" y="380" width="240" height="90" fill="url(#nxRefl-{{ section.id }})"/></mask>
+        </defs>
+        <g class="nx__turn" data-nx-turn>
+          <g id="nxB-{{ section.id }}">
+            <!-- tapa -->
+            <rect x="76" y="8" width="88" height="78" rx="5" fill="url(#nxCap-{{ section.id }})"/>
+            <rect x="76" y="8" width="88" height="6" rx="3" fill="url(#nxGold-{{ section.id }})"/>
+            <rect x="84" y="14" width="6" height="70" fill="#fff" opacity=".12"/>
+            <!-- collar -->
+            <rect x="88" y="86" width="64" height="22" rx="2" fill="url(#nxGold-{{ section.id }})"/>
+            <rect x="98" y="108" width="44" height="16" fill="url(#nxGold-{{ section.id }})" opacity=".85"/>
+            <!-- vidrio -->
+            <path d="M44 124 H196 L212 140 V362 L196 378 H44 L28 362 V140Z" fill="rgba(255,255,255,.28)"/>
+            <g clip-path="url(#nxBody-{{ section.id }})">
+              <g class="nx__liquid" data-nx-liquid>
+                <rect x="0" y="150" width="240" height="260" fill="url(#nxLiq-{{ section.id }})"/>
+                <rect x="0" y="146" width="240" height="8" fill="#fff" opacity=".35"/>
+              </g>
+              <rect x="0" y="120" width="240" height="270" fill="url(#nxLiqSide-{{ section.id }})"/>
+              <rect class="nx__spec" data-nx-spec x="60" y="120" width="22" height="260" fill="#fff" opacity=".35"/>
+              <!-- fondo grueso de vidrio -->
+              <rect x="20" y="346" width="200" height="40" fill="#fff" opacity=".22"/>
+            </g>
+            <path d="M44 124 H196 L212 140 V362 L196 378 H44 L28 362 V140Z" fill="url(#nxGlass-{{ section.id }})" stroke="rgba(255,255,255,.95)" stroke-width="2"/>
+            <path d="M36 146 V356" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".7"/>
+            <path d="M204 150 V350" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".55"/>
+            <!-- etiqueta -->
+            <rect x="70" y="196" width="100" height="118" rx="2" fill="#F8F1E4" stroke="#C9A050" stroke-width="1.2"/>
+            <rect x="75" y="201" width="90" height="108" rx="1" fill="none" stroke="#C9A050" stroke-width=".6"/>
+            <use href="#nxStar" x="111" y="210" width="18" height="18"/>
+            <text x="120" y="250" text-anchor="middle" font-family="Fraunces, serif" font-size="22" letter-spacing="5" fill="#2B2420">NOVA</text>
+            <text x="120" y="272" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="15" fill="#9A6A30">No. 01</text>
+            <text x="120" y="292" text-anchor="middle" font-family="Manrope, sans-serif" font-size="6" letter-spacing="2.2" fill="#6B5E55">EAU DE PARFUM</text>
+            <text x="120" y="303" text-anchor="middle" font-family="Manrope, sans-serif" font-size="5.5" letter-spacing="1.6" fill="#9C8F84">NOVAPARFUM · URUGUAY</text>
+          </g>
+        </g>
+        <!-- reflejo en el piso -->
+        <g mask="url(#nxReflMask-{{ section.id }})" opacity=".55"><use href="#nxB-{{ section.id }}" transform="translate(0 760) scale(1 -1)"/></g>
+      </svg>
+    </div>
+
+    <div class="nx__world nx__world--front" aria-hidden="true" data-nx-world>
+      {%- for raw in list -%}{%- assign v = raw | strip | split: '|' -%}{%- if v.size > 6 and v[5] == 'near' -%}
+        <span class="nx__it nx__it--near" data-ch="{{ v[0] }}" data-x="{{ v[2] }}" data-y="{{ v[3] }}" data-d="near" data-r="{{ v[6] }}" style="--s: {{ v[4] }}px;"><svg><use href="#{{ v[1] }}"/></svg></span>
+      {%- endif -%}{%- endfor -%}
+    </div>
+
+    <div class="nx__copy">
+      <div class="nx__ch is-on" data-nx-ch="0">
+        <p class="nx__eyebrow">{{ section.settings.eyebrow }}</p>
+        <h1 class="nx__title">{{ section.settings.name }}</h1>
+        <p class="nx__text">{{ section.settings.text_0 }}</p>
+        <div class="nx__btns">
+          <a class="nx-btn" href="{{ section.settings.link | default: routes.all_products_collection_url }}">{{ section.settings.button }}<span aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 11 11 5M6 5h5v5"/></svg></span></a>
+        </div>
+      </div>
+      <div class="nx__ch" data-nx-ch="1">
+        <p class="nx__eyebrow">01 · Notas de salida</p>
+        <h2 class="nx__title">{{ section.settings.title_1 }}</h2>
+        <p class="nx__text">{{ section.settings.text_1 }}</p>
+      </div>
+      <div class="nx__ch" data-nx-ch="2">
+        <p class="nx__eyebrow">02 · Corazón</p>
+        <h2 class="nx__title">{{ section.settings.title_2 }}</h2>
+        <p class="nx__text">{{ section.settings.text_2 }}</p>
+      </div>
+      <div class="nx__ch" data-nx-ch="3">
+        <p class="nx__eyebrow">03 · Fondo</p>
+        <h2 class="nx__title">{{ section.settings.title_3 }}</h2>
+        <p class="nx__text">{{ section.settings.text_3 }}</p>
+        <div class="nx__btns">
+          <a class="nx-btn" href="{{ section.settings.link | default: routes.all_products_collection_url }}">{{ section.settings.button }}<span aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 11 11 5M6 5h5v5"/></svg></span></a>
+          {%- if section.settings.button2 != blank -%}<a class="nx-btn nx-btn--line" href="{{ section.settings.link2 | default: routes.all_products_collection_url }}">{{ section.settings.button2 }}</a>{%- endif -%}
+        </div>
+      </div>
+    </div>
+
+    <ol class="nx__nav" aria-hidden="true">
+      <li class="is-on" data-nx-dot="0">Nova</li><li data-nx-dot="1">Salida</li><li data-nx-dot="2">Corazón</li><li data-nx-dot="3">Fondo</li>
+    </ol>
+    <p class="nx__hint" aria-hidden="true"><i></i>Deslizá</p>
+  </div>
+</section>
+
+<script>
+  (() => {
+    const root = document.getElementById('nx-{{ section.id }}');
+    if (!root || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const stage = root.querySelector('[data-nx-stage]');
+    const items = [...root.querySelectorAll('.nx__it')].map((el) => ({
+      el, ch: +el.dataset.ch, x: +el.dataset.x / 100, y: +el.dataset.y / 100, r: +el.dataset.r,
+      depth: el.dataset.d === 'near' ? 1.35 : el.dataset.d === 'mid' ? 1 : .7, seed: Math.random() * 6.28
+    }));
+    const chs = [...root.querySelectorAll('[data-nx-ch]')];
+    const dots = [...root.querySelectorAll('[data-nx-dot]')];
+    const turn = root.querySelector('[data-nx-turn]');
+    const spec = root.querySelector('[data-nx-spec]');
+    const liquid = root.querySelector('[data-nx-liquid]');
+    const rays = root.querySelector('[data-nx-rays]');
+    // Colores por capítulo: fondo, líquido (arriba, medio, abajo)
+    const C = [
+      { bg: [243, 236, 226], a: '#F7CF7E', b: '#D88B2E', c: '#8E4A14' },
+      { bg: [246, 233, 200], a: '#FBE38C', b: '#F1A93A', c: '#B9661C' },
+      { bg: [244, 222, 222], a: '#F7C7B8', b: '#E08A72', c: '#9C4A3C' },
+      { bg: [34, 27, 23],    a: '#F0B45E', b: '#B8661E', c: '#5E2C0C' }
+    ];
+    // En móvil los ingredientes se ubican alrededor del frasco (arriba)
+    const mobile = () => window.innerWidth < 990;
+    const smooth = (t) => t * t * (3 - 2 * t);
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    let p = 0, chNow = -1, lastY = window.scrollY, vel = 0, tilt = 0, mx = 0, my = 0, cmx = 0, cmy = 0, raf = 0, active = true;
+
+    function chapterOf(q) { return q < .2 ? 0 : q < .46 ? 1 : q < .72 ? 2 : 3; }
+    const centers = [.08, .33, .59, .88];
+
+    function frame(t) {
+      const r = root.getBoundingClientRect();
+      const total = root.offsetHeight - window.innerHeight;
+      p = clamp(-r.top / total, 0, 1);
+      root.classList.toggle('is-scrolled', p > .02);
+      // velocidad del scroll → inclinación del líquido
+      const y = window.scrollY; vel = vel * .85 + (y - lastY) * .15; lastY = y;
+      tilt += (clamp(-vel * .9, -14, 14) - tilt) * .12;
+
+      const c = chapterOf(p);
+      if (c !== chNow) {
+        chNow = c;
+        chs.forEach((el) => el.classList.toggle('is-on', +el.dataset.nxCh === c));
+        dots.forEach((el) => el.classList.toggle('is-on', +el.dataset.nxDot === c));
+        stage.classList.toggle('is-dark', c === 3);
+        root.style.setProperty('--liq-a', C[c].a); root.style.setProperty('--liq-b', C[c].b); root.style.setProperty('--liq-c', C[c].c);
+      }
+      // fondo interpolado entre los centros de capítulo
+      let i0 = 0; while (i0 < 2 && p > centers[i0 + 1]) i0++;
+      const k = smooth(clamp((p - centers[i0]) / (centers[i0 + 1] - centers[i0]), 0, 1));
+      const from = C[i0].bg, to = C[i0 + 1].bg;
+      stage.style.backgroundColor = `rgb(${from.map((v, i) => Math.round(v + (to[i] - v) * k)).join(',')})`;
+
+      // frasco: giro aparente y brillo que se desplaza
+      const ang = Math.sin(p * Math.PI * 3);
+      turn.style.transform = `scaleX(${(.94 + .06 * Math.cos(p * Math.PI * 3)).toFixed(3)}) translateY(${(Math.sin(t / 900) * 6).toFixed(1)}px)`;
+      spec.style.transform = `translateX(${(ang * 80 + 40).toFixed(1)}px)`;
+      liquid.style.transform = `rotate(${tilt.toFixed(2)}deg)`;
+      rays.style.transform = `rotate(${(p * 120 + t / 400).toFixed(1)}deg)`;
+
+      cmx += (mx - cmx) * .06; cmy += (my - cmy) * .06;
+      const W = stage.clientWidth, H = stage.clientHeight, mob = mobile();
+      items.forEach((it) => {
+        const center = centers[it.ch];
+        const d = (p - center) / .14;                  // 0 = en su capítulo
+        const v = it.ch === 0 ? clamp(1 - Math.max(0, p - .1) / .08, 0, 1) : clamp(1 - Math.abs(d) * .55, 0, 1);
+        const vis = smooth(v);
+        let x = it.x, y = it.y;
+        if (mob) { x = .5 + (it.x - .68) * 1.6; y = .08 + it.y * .48; }
+        const drift = d * -60 * it.depth;               // suben al pasar el capítulo
+        const bob = Math.sin(t / 1400 + it.seed) * 10 * it.depth;
+        const px = x * W + cmx * 30 * it.depth + (1 - vis) * (x - .62) * W * .5;
+        const py = y * H + drift + bob + cmy * 24 * it.depth;
+        const sc = (.35 + .65 * vis) * (mob ? .7 : 1) * (1 + (1 - vis) * (d > 0 ? .5 : -.2));
+        it.el.style.opacity = vis.toFixed(3);
+        it.el.style.transform = `translate3d(${px.toFixed(1)}px, ${py.toFixed(1)}px, 0) rotate(${(it.r + d * 25 + Math.sin(t / 2000 + it.seed) * 6).toFixed(1)}deg) scale(${sc.toFixed(3)})`;
+      });
+      raf = active && !document.hidden ? requestAnimationFrame(frame) : 0;
+    }
+    new IntersectionObserver(([en]) => { active = en.isIntersecting; if (active && !raf) raf = requestAnimationFrame(frame); }).observe(root);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden && active && !raf) raf = requestAnimationFrame(frame); });
+    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      stage.addEventListener('pointermove', (e) => { mx = e.clientX / window.innerWidth - .5; my = e.clientY / window.innerHeight - .5; });
+    }
+    raf = requestAnimationFrame(frame);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Portada inmersiva",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Etiqueta", "default": "Nova Parfum · Colección" },
+    { "type": "text", "id": "name", "label": "Nombre del perfume (título)", "default": "Nova No. 01" },
+    { "type": "textarea", "id": "text_0", "label": "Texto de inicio", "default": "El perfume es una experiencia. Deslizá y descubrí cómo se construye una fragancia, nota por nota." },
+    { "type": "text", "id": "button", "label": "Botón", "default": "Descubrir perfumes" },
+    { "type": "url", "id": "link", "label": "Enlace del botón" },
+    { "type": "text", "id": "button2", "label": "Botón secundario (al final)", "default": "Ver más vendidos" },
+    { "type": "url", "id": "link2", "label": "Enlace del botón secundario" },
+    { "type": "text", "id": "title_1", "label": "Capítulo 1 · título", "default": "Bergamota & <em>mandarina</em>" },
+    { "type": "textarea", "id": "text_1", "label": "Capítulo 1 · texto", "default": "Lo primero que sentís: cítricos brillantes y frescos que abren la fragancia." },
+    { "type": "text", "id": "title_2", "label": "Capítulo 2 · título", "default": "Rosa & <em>jazmín</em>" },
+    { "type": "textarea", "id": "text_2", "label": "Capítulo 2 · texto", "default": "El corazón del perfume: flores que aparecen a los minutos y le dan su carácter." },
+    { "type": "text", "id": "title_3", "label": "Capítulo 3 · título", "default": "Ámbar, vainilla & <em>oud</em>" },
+    { "type": "textarea", "id": "text_3", "label": "Capítulo 3 · texto", "default": "Lo que queda en tu piel durante horas: maderas, ámbar y vainilla. Tu firma." }
+  ],
+  "presets": [{ "name": "Portada inmersiva" }]
+}
+{% endschema %}

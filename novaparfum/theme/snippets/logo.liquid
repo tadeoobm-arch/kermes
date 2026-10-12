@@ -1,0 +1,9 @@
+{%- comment -%}
+  Logo NovaParfum. Si se carga una imagen en Personalizar > Configuración del tema > Marca, se usa esa.
+  Si no, se usa el logo vectorial oficial (assets/logo-novaparfum.svg, texto en curvas).
+{%- endcomment -%}
+{%- if settings.logo != blank -%}
+  {{ settings.logo | image_url: width: 400 | image_tag: alt: shop.name, loading: 'eager', widths: '200, 300, 400', sizes: '200px' }}
+{%- else -%}
+  <img src="{{ 'logo-novaparfum.svg' | asset_url }}" alt="{{ shop.name | escape }}" width="200" height="40" loading="eager">
+{%- endif -%}

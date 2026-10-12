@@ -1,0 +1,51 @@
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div>
+        <p style="font-family:var(--f-head);font-size:26px;margin:0 0 6px;color:#fff"><span style="color:var(--c-lavanda)">✦</span> NovaParfum</p>
+        <p style="max-width:34ch;opacity:.85">{{ section.settings.about }}</p>
+        <div class="social">
+          {%- if settings.social_instagram != blank -%}<a href="{{ settings.social_instagram }}" target="_blank" rel="noopener" aria-label="Instagram">{% render 'icon', icon: 'instagram' %}</a>{%- endif -%}
+          {%- if settings.social_tiktok != blank -%}<a href="{{ settings.social_tiktok }}" target="_blank" rel="noopener" aria-label="TikTok">{% render 'icon', icon: 'tiktok' %}</a>{%- endif -%}
+          {%- if settings.whatsapp_number != blank -%}<a href="https://wa.me/{{ settings.whatsapp_number | remove: '+' | remove: ' ' }}" target="_blank" rel="noopener" aria-label="WhatsApp">{% render 'icon', icon: 'whatsapp' %}</a>{%- endif -%}
+        </div>
+      </div>
+      {%- for block in section.blocks -%}
+        <div {{ block.shopify_attributes }}>
+          <h2>{{ block.settings.heading }}</h2>
+          <ul>
+            {%- for link in linklists[block.settings.menu].links -%}
+              <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      {%- endfor -%}
+    </div>
+    <div class="footer__bottom">
+      <span>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }} · Uruguay</span>
+      <ul class="pay-icons" aria-label="Medios de pago">
+        {%- for type in shop.enabled_payment_types -%}<li>{{ type | payment_type_svg_tag }}</li>{%- endfor -%}
+      </ul>
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Pie de página",
+  "settings": [
+    { "type": "textarea", "id": "about", "label": "Texto de marca", "default": "Perfumes originales, elegidos con criterio y enviados a todo Uruguay." }
+  ],
+  "blocks": [
+    {
+      "type": "menu",
+      "name": "Menú",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Título", "default": "Tienda" },
+        { "type": "link_list", "id": "menu", "label": "Menú", "default": "footer" }
+      ]
+    }
+  ],
+  "max_blocks": 3
+}
+{% endschema %}

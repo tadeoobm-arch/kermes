@@ -1,0 +1,80 @@
+{%- comment -%}
+  Franja de marcas en movimiento continuo. Toma las marcas (vendors) de la tienda automáticamente;
+  cada una lleva a sus perfumes. Se detiene al pasar el mouse. Con "reducir movimiento" queda quieta
+  y se puede deslizar con el dedo.
+{%- endcomment -%}
+{%- liquid
+  assign skip = section.settings.exclude | split: ','
+  assign brands = ''
+  for v in shop.vendors
+    assign vv = v | strip
+    assign excluded = false
+    for s in skip
+      assign ss = s | strip
+      if ss == vv
+        assign excluded = true
+      endif
+    endfor
+    if vv == shop.name or vv == blank
+      assign excluded = true
+    endif
+    unless excluded
+      assign brands = brands | append: vv | append: '||'
+    endunless
+  endfor
+  assign brands = brands | split: '||'
+  assign duration = brands.size | times: section.settings.speed
+-%}
+{%- if brands.size > 0 -%}
+<style>
+  .bm { position: relative; overflow: hidden; padding: clamp(28px, 5vw, 56px) 0; background: var(--c-bg);
+    border-block: 1px solid var(--c-line); }
+  .bm__eyebrow { margin: 0 0 18px; text-align: center; }
+  .bm__track { display: flex; width: max-content; animation: bmScroll var(--bm-d, 60s) linear infinite; }
+  .bm:hover .bm__track, .bm:focus-within .bm__track { animation-play-state: paused; }
+  .bm__list { display: flex; align-items: center; flex-shrink: 0; margin: 0; padding: 0; list-style: none; }
+  .bm__item { display: flex; align-items: center; }
+  .bm__link { padding: 0 clamp(14px, 2.4vw, 30px); font: italic 400 clamp(30px, 5.4vw, 64px)/1.15 var(--f-head, 'Fraunces', Georgia, serif);
+    letter-spacing: -.01em; color: var(--c-ink); white-space: nowrap; text-decoration: none; transition: color .3s ease, -webkit-text-stroke-color .3s ease; }
+  .bm__item:nth-child(even) .bm__link { color: transparent; -webkit-text-stroke: 1.2px var(--c-iris); }
+  .bm__link:hover, .bm__link:focus-visible { color: var(--c-iris); -webkit-text-stroke-color: transparent; }
+  .bm__spark { width: clamp(14px, 1.6vw, 20px); height: auto; flex-shrink: 0; color: var(--c-iris); animation: bmSpin 9s linear infinite; }
+  .bm::before, .bm::after { content: ''; position: absolute; z-index: 1; top: 0; bottom: 0; width: min(12vw, 140px); pointer-events: none; }
+  .bm::before { left: 0; background: linear-gradient(90deg, var(--c-bg), rgba(247, 244, 240, 0)); }
+  .bm::after { right: 0; background: linear-gradient(270deg, var(--c-bg), rgba(247, 244, 240, 0)); }
+  @keyframes bmScroll { to { transform: translateX(-50%); } }
+  @keyframes bmSpin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) {
+    .bm__track { animation: none; overflow-x: auto; width: auto; scrollbar-width: none; }
+    .bm__list[aria-hidden] { display: none; }
+    .bm__spark { animation: none; }
+  }
+</style>
+<section class="bm" style="--bm-d: {{ duration }}s" aria-label="{{ section.settings.eyebrow | default: 'Marcas' | escape }}">
+  {%- if section.settings.eyebrow != blank -%}<p class="eyebrow bm__eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}
+  <div class="bm__track">
+    {%- for copy in (1..2) -%}
+      <ul class="bm__list"{% if copy == 2 %} aria-hidden="true"{% endif %}>
+        {%- for b in brands -%}
+          <li class="bm__item">
+            <a class="bm__link" href="{{ b | url_for_vendor }}"{% if copy == 2 %} tabindex="-1"{% endif %}>{{ b }}</a>
+            <svg class="bm__spark" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 4c1 8.4 4.2 11.8 12.6 12.8C24.2 17.8 21 21.2 20 29.6 19 21.2 15.8 17.8 7.4 16.8 15.8 15.8 19 12.4 20 4Z" fill="currentColor"/></svg>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endfor -%}
+  </div>
+</section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Marcas en movimiento",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Antetítulo", "default": "Las marcas que traemos" },
+    { "type": "range", "id": "speed", "label": "Segundos por marca (más = más lento)", "min": 1, "max": 6, "step": 0.5, "default": 2.5 },
+    { "type": "text", "id": "exclude", "label": "Marcas que no se muestran (separadas por coma)", "default": "A confirmar" }
+  ],
+  "presets": [{ "name": "Marcas en movimiento" }]
+}
+{% endschema %}

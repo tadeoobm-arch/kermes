@@ -1,0 +1,22 @@
+{%- comment -%} NovaParfum — Pedido entregado. {%- endcomment -%}
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>¡Tu pedido fue entregado!</title></head>
+<body style="margin:0;background:#FBF9F6;font-family:Manrope,Helvetica,Arial,sans-serif;color:#26224A">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FBF9F6"><tr><td align="center" style="padding:24px 12px">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#FFFFFF;border-radius:20px;overflow:hidden">
+  <tr><td style="background:#F2EFFA;padding:22px 28px;text-align:center">
+    <a href="{{ shop.url }}" style="text-decoration:none;color:#26224A;font-family:Georgia,serif;font-size:26px"><span style="color:#4B3FA8">&#10022;</span> Nova<span style="color:#4B3FA8">Parfum</span></a>
+  </td></tr>
+  <tr><td style="padding:28px">
+    <h1 style="font-family:Georgia,serif;font-weight:500;font-size:24px;margin:0 0 8px">¡Tu pedido fue entregado! 💜</h1>
+    <p style="margin:0 0 16px">Hola {{ customer.first_name | default: '' }}, tu pedido <strong>{{ order_name }}</strong> ya está en tus manos.</p>
+    <p style="margin:0 0 16px">Esperamos que disfrutes tu nueva fragancia. Si querés, respondé este email y contanos qué te pareció: tu opinión nos ayuda a elegir mejor.</p>
+    <p style="margin:0 0 8px;color:#5E5A70;font-size:14px">Tip NovaParfum: aplicá el perfume en puntos de pulso (muñecas, cuello) y evitá frotarlo para que las notas duren más.</p>
+    <p style="margin:24px 0"><a href="{{ shop.url }}" style="display:inline-block;background:#4B3FA8;color:#FFFFFF;padding:14px 24px;border-radius:999px;text-decoration:none;font-weight:600">Descubrí más perfumes</a></p>
+  </td></tr>
+  <tr><td style="padding:18px 28px 26px;font-size:12px;color:#5E5A70;border-top:1px solid #F2EFFA">NovaParfum · Perfumería online en Uruguay</td></tr>
+</table>
+</td></tr></table>
+</body>
+</html>

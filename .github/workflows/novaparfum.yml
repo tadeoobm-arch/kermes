@@ -1,0 +1,30 @@
+name: NovaParfum CI
+
+on:
+  push:
+    paths: ['novaparfum/**', '.github/workflows/novaparfum.yml']
+  pull_request:
+    paths: ['novaparfum/**', '.github/workflows/novaparfum.yml']
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: novaparfum/app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: novaparfum/app/package-lock.json
+      - run: npm ci
+      - name: Pruebas (flujo completo de compra simulado)
+        run: npm test
+      - name: Sin credenciales en el repositorio
+        run: npm run check:secrets
+      - name: Theme Check (Shopify)
+        run: npm run check:theme
+      - name: Simulación de compra
+        run: npm run simulate > /dev/null

@@ -1,0 +1,127 @@
+{%- comment -%}
+  Colección con filtros nativos de Shopify (Search & Discovery): Marca, Género, Tamaño, Precio,
+  Familia olfativa y Disponibilidad. Funciona sin JS (formulario GET); con JS se envía al cambiar.
+{%- endcomment -%}
+{%- paginate collection.products by section.settings.per_page -%}
+<div class="container">
+  <header class="collection-head">
+    <h1>{{ collection.title }}</h1>
+    {%- if collection.description != blank and current_page == 1 -%}<div class="rte muted" style="max-width:70ch">{{ collection.description }}</div>{%- endif -%}
+  </header>
+
+  <div class="collection-layout">
+    <details class="facets facets__drawer">
+      <summary class="btn btn--ghost">Filtrar {% if collection.filters.size > 0 %}({{ collection.products_count }}){% endif %}</summary>
+      <form class="facets__panel" action="{{ collection.url }}" method="get" data-facets-form>
+        <input type="hidden" name="sort_by" value="{{ collection.sort_by | default: collection.default_sort_by }}">
+        {%- for filter in collection.filters -%}
+          <details class="facet" {% if filter.active_values.size > 0 or forloop.index <= 3 %}open{% endif %}>
+            <summary>{{ filter.label }}</summary>
+            {%- case filter.type -%}
+              {%- when 'price_range' -%}
+                <div class="price-range">
+                  <label>Desde<input type="number" inputmode="numeric" name="{{ filter.min_value.param_name }}" value="{% if filter.min_value.value %}{{ filter.min_value.value | divided_by: 100 }}{% endif %}" placeholder="0" min="0"></label>
+                  <label>Hasta<input type="number" inputmode="numeric" name="{{ filter.max_value.param_name }}" value="{% if filter.max_value.value %}{{ filter.max_value.value | divided_by: 100 }}{% endif %}" placeholder="{{ filter.range_max | divided_by: 100 }}" min="0"></label>
+                </div>
+              {%- else -%}
+                <ul>
+                  {%- for value in filter.values -%}
+                    <li>
+                      <label>
+                        <input type="checkbox" name="{{ value.param_name }}" value="{{ value.value }}" {% if value.active %}checked{% endif %} {% if value.count == 0 and value.active == false %}disabled{% endif %}>
+                        <span>{{ value.label }} <span class="muted">({{ value.count }})</span></span>
+                      </label>
+                    </li>
+                  {%- endfor -%}
+                </ul>
+            {%- endcase -%}
+          </details>
+        {%- endfor -%}
+        <button type="submit" class="btn btn--primary btn--block" style="margin-top:14px" data-facets-submit>Aplicar filtros</button>
+      </form>
+    </details>
+
+    <div>
+      <div class="toolbar">
+        <span class="muted">{{ collection.products_count }} perfumes</span>
+        <form action="{{ collection.url }}" method="get" data-sort-form>
+          {%- for filter in collection.filters -%}
+            {%- for value in filter.active_values -%}<input type="hidden" name="{{ value.param_name }}" value="{{ value.value }}">{%- endfor -%}
+            {%- if filter.type == 'price_range' -%}
+              {%- if filter.min_value.value -%}<input type="hidden" name="{{ filter.min_value.param_name }}" value="{{ filter.min_value.value | divided_by: 100 }}">{%- endif -%}
+              {%- if filter.max_value.value -%}<input type="hidden" name="{{ filter.max_value.param_name }}" value="{{ filter.max_value.value | divided_by: 100 }}">{%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+          <label class="visually-hidden" for="SortBy">Ordenar</label>
+          <select id="SortBy" name="sort_by" data-autosubmit>
+            {%- for option in collection.sort_options -%}
+              <option value="{{ option.value }}" {% if option.value == collection.sort_by %}selected{% endif %}>{{ option.name }}</option>
+            {%- endfor -%}
+          </select>
+          <noscript><button class="btn btn--ghost" type="submit">Ordenar</button></noscript>
+        </form>
+      </div>
+
+      {%- assign has_active = false -%}
+      {%- for filter in collection.filters -%}{%- if filter.active_values.size > 0 or filter.min_value.value or filter.max_value.value -%}{%- assign has_active = true -%}{%- endif -%}{%- endfor -%}
+      {%- if has_active -%}
+        <div class="active-filters">
+          {%- for filter in collection.filters -%}
+            {%- for value in filter.active_values -%}
+              <a class="chip" href="{{ value.url_to_remove }}">{{ value.label }} ✕</a>
+            {%- endfor -%}
+            {%- if filter.type == 'price_range' -%}
+              {%- if filter.min_value.value or filter.max_value.value -%}
+                <a class="chip" href="{{ filter.url_to_remove }}">Precio ✕</a>
+              {%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+          <a class="chip" href="{{ collection.url }}?sort_by={{ collection.sort_by }}">Limpiar todo</a>
+        </div>
+      {%- endif -%}
+
+      {%- if collection.products.size > 0 -%}
+        <ul class="product-grid">
+          {%- for product in collection.products -%}
+            <li>{% if forloop.index <= 2 %}{% render 'product-card', product: product, eager: true %}{% else %}{% render 'product-card', product: product %}{% endif %}</li>
+          {%- endfor -%}
+        </ul>
+      {%- else -%}
+        <p class="notice">No encontramos perfumes con esos filtros. <a href="{{ collection.url }}">Ver todos</a></p>
+      {%- endif -%}
+
+      {%- if paginate.pages > 1 -%}
+        <nav class="pagination" aria-label="Paginación">
+          {%- if paginate.previous -%}<a href="{{ paginate.previous.url }}" aria-label="Página anterior">‹</a>{%- endif -%}
+          {%- for part in paginate.parts -%}
+            {%- if part.is_link -%}<a href="{{ part.url }}">{{ part.title }}</a>
+            {%- elsif part.title == paginate.current_page -%}<span class="current" aria-current="page">{{ part.title }}</span>
+            {%- else -%}<span>{{ part.title }}</span>{%- endif -%}
+          {%- endfor -%}
+          {%- if paginate.next -%}<a href="{{ paginate.next.url }}" aria-label="Página siguiente">›</a>{%- endif -%}
+        </nav>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+{%- endpaginate -%}
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Inicio", "item": {{ request.origin | append: routes.root_url | json }} },
+      { "@type": "ListItem", "position": 2, "name": {{ collection.title | json }}, "item": {{ request.origin | append: collection.url | json }} }
+    ]
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Colección",
+  "settings": [
+    { "type": "range", "id": "per_page", "label": "Productos por página", "min": 12, "max": 48, "step": 6, "default": 24 }
+  ]
+}
+{% endschema %}

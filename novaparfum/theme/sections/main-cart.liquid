@@ -1,0 +1,57 @@
+{%- comment -%}
+  Carrito simple. Las "Observaciones de entrega" se guardan como nota del pedido y la dirección,
+  teléfono, departamento, etc. se completan en el checkout seguro de Shopify.
+{%- endcomment -%}
+<div class="container section">
+  <h1>Tu carrito</h1>
+  {%- if cart.item_count > 0 -%}
+    <form action="{{ routes.cart_url }}" method="post" class="cart-layout" id="cart">
+      <ul class="cart-items">
+        {%- for item in cart.items -%}
+          <li class="cart-item">
+            <a href="{{ item.url }}">
+              {%- if item.image -%}{{ item.image | image_url: width: 240 | image_tag: alt: item.product.title, loading: 'lazy', widths: '120, 180, 240', sizes: '88px' }}{%- endif -%}
+            </a>
+            <div>
+              <span class="card__brand">{{ item.vendor }}</span>
+              <p style="margin:2px 0;font-weight:700"><a href="{{ item.url }}" style="text-decoration:none">{{ item.product.title }}</a></p>
+              {%- unless item.product.has_only_default_variant -%}<p class="muted" style="margin:0">{{ item.variant.title }}</p>{%- endunless -%}
+              <div class="price" style="margin:6px 0">
+                {{ item.final_line_price | money }}
+                {%- if item.original_line_price > item.final_line_price -%}<s class="price__compare">{{ item.original_line_price | money }}</s>{%- endif -%}
+              </div>
+              {%- for d in item.line_level_discount_allocations -%}<small class="chip">{{ d.discount_application.title }} (-{{ d.amount | money }})</small>{%- endfor -%}
+              <div style="display:flex;gap:10px;align-items:center;margin-top:8px">
+                <div class="qty">
+                  <label class="visually-hidden" for="qty-{{ item.key }}">Cantidad</label>
+                  <input id="qty-{{ item.key }}" type="number" name="updates[]" value="{{ item.quantity }}" min="0" inputmode="numeric" style="width:64px">
+                </div>
+                <a href="{{ item.url_to_remove }}" class="muted">Quitar</a>
+              </div>
+            </div>
+          </li>
+        {%- endfor -%}
+      </ul>
+
+      <aside class="cart-summary">
+        <div class="field">
+          <label for="CartNote">Observaciones de entrega (opcional)</label>
+          <textarea id="CartNote" name="note" rows="3" placeholder="Ej.: timbre 302, horario, referencias…">{{ cart.note }}</textarea>
+        </div>
+        {%- for d in cart.cart_level_discount_applications -%}<p class="chip">{{ d.title }}: -{{ d.total_allocated_amount | money }}</p>{%- endfor -%}
+        <p style="display:flex;justify-content:space-between;font-size:20px;margin:0"><strong>Subtotal</strong><strong>{{ cart.total_price | money }}</strong></p>
+        <small class="muted">Envío y medios de pago se eligen en el siguiente paso.</small>
+        <button type="submit" name="checkout" class="btn btn--primary btn--block">Finalizar compra</button>
+        <button type="submit" name="update" class="btn btn--ghost btn--block">Actualizar carrito</button>
+        {% render 'payment-box' %}
+      </aside>
+    </form>
+  {%- else -%}
+    <p class="notice">Tu carrito está vacío.</p>
+    <a class="btn btn--primary" href="{{ routes.collections_url }}/perfumes">Ver perfumes</a>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{ "name": "Carrito", "settings": [] }
+{% endschema %}

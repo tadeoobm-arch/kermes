@@ -1,0 +1,177 @@
+{%- comment -%}
+  Animaciones generales de la tienda (sin librerías):
+  - Barra de progreso de lectura arriba.
+  - Encabezado que se vuelve translúcido al bajar, se esconde al seguir bajando y vuelve al subir.
+  - Títulos que suben palabra por palabra; secciones, beneficios, pasos, combos, preguntas e Instagram
+    que aparecen escalonados al llegar a la pantalla.
+  - Botones con respuesta al pasar el mouse y al tocarlos; contador del carrito que "salta".
+  - Preguntas frecuentes que se abren suave; botones flotantes que entran y WhatsApp con pulso.
+  Todo lo oculto lo agrega JavaScript: sin JS se ve todo. Con "reducir movimiento" no hay animaciones.
+{%- endcomment -%}
+<style>
+  :root { --nm-ease: cubic-bezier(.22, 1, .36, 1); --nm-spring: cubic-bezier(.34, 1.56, .64, 1); }
+  @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+  /* Barra de progreso */
+  .nm-progress { position: fixed; z-index: 60; top: 0; left: 0; right: 0; height: 3px; pointer-events: none;
+    background: linear-gradient(90deg, var(--c-iris), #B7A5EC 60%, var(--c-powder)); transform-origin: 0 50%; transform: scaleX(0); }
+
+  /* Encabezado fijo con vidrio */
+  .section-header { position: sticky; top: 0; z-index: 40; transition: transform .45s var(--nm-ease); }
+  .section-header .header { transition: background-color .35s ease, box-shadow .35s ease, backdrop-filter .35s ease; }
+  .section-header.nm-scrolled .header { background-color: rgba(247, 244, 240, .78); -webkit-backdrop-filter: saturate(160%) blur(14px);
+    backdrop-filter: saturate(160%) blur(14px); box-shadow: 0 1px 0 rgba(47, 42, 74, .06), 0 10px 30px -18px rgba(47, 42, 74, .35); }
+  .section-header.nm-hidden { transform: translateY(-110%); }
+  .header__link { position: relative; }
+  .header__link::after { content: ''; position: absolute; left: 14px; right: 14px; bottom: 4px; height: 2px; border-radius: 2px;
+    background: var(--c-iris); transform: scaleX(0); transform-origin: left; transition: transform .35s var(--nm-ease); }
+  @media (hover: hover) { .header__link:hover::after { transform: scaleX(1); } }
+  .icon-btn { transition: transform .25s var(--nm-spring); }
+  @media (hover: hover) { .icon-btn:hover { transform: translateY(-2px); } }
+  .icon-btn:active { transform: scale(.92); }
+
+  /* Botones */
+  .btn { position: relative; overflow: hidden; isolation: isolate;
+    transition: transform .3s var(--nm-ease), box-shadow .3s var(--nm-ease), background-color .25s ease, color .25s ease; }
+  .btn::after { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; transform: translateX(-120%) skewX(-20deg);
+    background: linear-gradient(90deg, transparent 30%, rgba(255, 255, 255, .28) 50%, transparent 70%); }
+  @media (hover: hover) {
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 26px -12px rgba(122, 104, 184, .65); }
+    .btn:hover::after { transform: translateX(120%) skewX(-20deg); transition: transform .8s var(--nm-ease); }
+  }
+  .btn:active { transform: translateY(0) scale(.97); transition-duration: .1s; }
+  .link-arrow .icon { transition: transform .3s var(--nm-ease); }
+  @media (hover: hover) { .link-arrow:hover .icon { transform: translateX(4px); } }
+
+  /* Aparición al llegar a la pantalla */
+  .js .nm-reveal { opacity: 0; transform: translateY(26px); transition: opacity .8s var(--nm-ease), transform .8s var(--nm-ease);
+    transition-delay: calc(var(--nm-i, 0) * 90ms); }
+  .js .nm-reveal--scale { transform: translateY(18px) scale(.94); }
+  .js .nm-reveal.nm-in { opacity: 1; transform: none; }
+  .js .nm-words .nm-w { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: .08em; margin-bottom: -.08em; }
+  .js .nm-words .nm-w > span { display: inline-block; transform: translateY(110%);
+    transition: transform .9s var(--nm-ease); transition-delay: calc(var(--nm-w, 0) * 70ms + 80ms); }
+  .js .nm-words.nm-in .nm-w > span { transform: none; }
+
+  /* Beneficios, pasos, combos */
+  .benefit__icon { transition: transform .5s var(--nm-spring); }
+  .benefit.nm-in .benefit__icon { animation: nmPop .7s var(--nm-spring) calc(var(--nm-i, 0) * 90ms + .2s) both; }
+  @media (hover: hover) { .benefit:hover .benefit__icon { transform: rotate(-8deg) scale(1.12); } }
+  .step.nm-in .step__n { animation: nmPop .6s var(--nm-spring) calc(var(--nm-i, 0) * 120ms + .25s) both; }
+  .tier { transition: transform .4s var(--nm-spring), box-shadow .4s var(--nm-ease); }
+  @media (hover: hover) { .tier:hover { transform: translateY(-6px); box-shadow: 0 18px 34px -18px rgba(47, 42, 74, .45); } }
+  .tier--hl { animation: nmGlow 3.2s ease-in-out 1.5s infinite; }
+  @keyframes nmPop { 0% { transform: scale(.4); opacity: 0; } 100% { transform: none; opacity: 1; } }
+  @keyframes nmGlow { 0%, 100% { box-shadow: 0 0 0 0 rgba(122, 104, 184, 0); } 50% { box-shadow: 0 0 0 8px rgba(122, 104, 184, .18); } }
+
+  /* Instagram */
+  .ig-grid__item { transition: transform .45s var(--nm-ease); }
+  @media (hover: hover) { .ig-grid__item:hover { transform: translateY(-4px) rotate(-1deg); } }
+  .ig-grid__item .icon { transition: transform .45s var(--nm-spring); }
+  @media (hover: hover) { .ig-grid__item:hover .icon { transform: scale(1.25); } }
+
+  /* Preguntas frecuentes */
+  .faq__plus { transition: transform .4s var(--nm-spring); }
+  .faq__item[open] .faq__plus { transform: rotate(45deg); }
+  .faq__item[open] > :not(summary) { animation: nmDrop .45s var(--nm-ease) both; }
+  @keyframes nmDrop { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+
+  /* Pestañas Hombre / Mujer / Unisex */
+  .gt__panel:not([hidden]) { animation: nmFade .5s var(--nm-ease) both; }
+  @keyframes nmFade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+  /* Carrito y aviso */
+  .cart-count.nm-bump { animation: nmBump .6s var(--nm-spring); }
+  @keyframes nmBump { 0% { transform: scale(1); } 35% { transform: scale(1.55); } 100% { transform: scale(1); } }
+  #CartToast:not([hidden]) { animation: nmToast .5s var(--nm-spring) both; }
+  @keyframes nmToast { from { opacity: 0; transform: translateY(24px) scale(.96); } to { opacity: 1; transform: none; } }
+
+  /* Botones flotantes */
+  .social-float__btn { animation: nmFloatIn .7s var(--nm-spring) both; }
+  .social-float__btn:nth-child(1) { animation-delay: 1.2s; }
+  .social-float__btn:nth-child(2) { animation-delay: 1.35s; }
+  .social-float__btn--wa { position: relative; }
+  .social-float__btn--wa::before { content: ''; position: absolute; inset: 0; border-radius: 50%; background: #25D366; z-index: -1;
+    animation: nmRing 2.8s ease-out 3s infinite; }
+  @keyframes nmFloatIn { from { opacity: 0; transform: translateY(30px) scale(.6); } to { opacity: 1; transform: none; } }
+  @keyframes nmRing { 0% { transform: scale(1); opacity: .55; } 70%, 100% { transform: scale(1.7); opacity: 0; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nm-progress { display: none; }
+    .section-header, .section-header.nm-hidden { transform: none; }
+    .js .nm-reveal, .js .nm-words .nm-w > span { opacity: 1; transform: none; transition: none; }
+    .benefit.nm-in .benefit__icon, .step.nm-in .step__n, .tier--hl, .social-float__btn, .social-float__btn--wa::before,
+    .faq__item[open] > :not(summary), .gt__panel:not([hidden]), .cart-count.nm-bump, #CartToast:not([hidden]) { animation: none; }
+  }
+</style>
+<div class="nm-progress" aria-hidden="true"></div>
+<script>
+  (function () {
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function ready(fn) { document.readyState !== 'loading' ? fn() : document.addEventListener('DOMContentLoaded', fn); }
+
+    ready(function () {
+      var header = document.querySelector('.section-header');
+      var bar = document.querySelector('.nm-progress');
+      var lastY = window.scrollY, ticking = false;
+
+      function onScroll() {
+        var y = window.scrollY;
+        var max = document.documentElement.scrollHeight - window.innerHeight;
+        if (bar && !reduce) bar.style.transform = 'scaleX(' + (max > 0 ? Math.min(1, y / max) : 0) + ')';
+        if (header) {
+          header.classList.toggle('nm-scrolled', y > 8);
+          var menuOpen = header.querySelector('details[open]');
+          if (!reduce && !menuOpen && y > 320 && y > lastY + 4) header.classList.add('nm-hidden');
+          else if (y < lastY - 4 || y <= 320) header.classList.remove('nm-hidden');
+        }
+        lastY = y;
+        ticking = false;
+      }
+      window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+      onScroll();
+
+      /* Contador del carrito */
+      document.querySelectorAll('.cart-count').forEach(function (el) {
+        new MutationObserver(function () { el.classList.remove('nm-bump'); void el.offsetWidth; el.classList.add('nm-bump'); })
+          .observe(el, { childList: true, characterData: true, subtree: true });
+      });
+
+      if (reduce || !('IntersectionObserver' in window)) return;
+
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('nm-in'); io.unobserve(en.target); } });
+      }, { rootMargin: '0px 0px -10% 0px' });
+
+      /* Títulos: palabra por palabra (solo si el título es texto simple) */
+      document.querySelectorAll('main .section__title, main .page-title, main .product__title').forEach(function (h) {
+        if (h.closest('.ph') || h.children.length) return;
+        var words = h.textContent.trim().split(/\s+/);
+        h.setAttribute('aria-label', h.textContent.trim());
+        h.innerHTML = words.map(function (w, i) {
+          return '<span class="nm-w" aria-hidden="true"><span style="--nm-w:' + i + '">' + w.replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }) + '</span></span>';
+        }).join(' ');
+        h.classList.add('nm-words');
+        io.observe(h);
+      });
+
+      /* Bloques que aparecen escalonados */
+      var groups = [
+        ['main .eyebrow', false], ['.ps__stage', false], ['.bundle__copy', false], ['.tier', true], ['.benefit', false],
+        ['.step', false], ['.faq__item', false], ['.ig-grid__item', true], ['.shipping__intro', false], ['.link-arrow', false],
+        ['.gt__tabs', false], ['.gt__more', false], ['.collection__head', false], ['.facets__bar', false],
+        ['.product__info > *', false], ['.gallery__item', true], ['.footer__brand', false], ['.footer__col', false], ['.newsletter', false]
+      ];
+      groups.forEach(function (g) {
+        document.querySelectorAll(g[0]).forEach(function (el) {
+          if (el.closest('.ph') || el.classList.contains('np-reveal') || el.classList.contains('nm-reveal')) return;
+          var sibs = Array.prototype.filter.call(el.parentElement.children, function (s) { return s.matches(g[0].replace(/^main\s+/, '')); });
+          el.style.setProperty('--nm-i', Math.min(sibs.indexOf(el), 6));
+          el.classList.add('nm-reveal');
+          if (g[1]) el.classList.add('nm-reveal--scale');
+          io.observe(el);
+        });
+      });
+    });
+  })();
+</script>

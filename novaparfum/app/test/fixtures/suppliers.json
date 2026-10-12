@@ -1,0 +1,14 @@
+{
+  "default": null,
+  "suppliers": [
+    {
+      "handle": "proveedor-c",
+      "nombre": "Proveedor C (por marca)",
+      "email": "pedidos@proveedor-c.test",
+      "vendors": ["Marca Por Config"],
+      "sku_prefixes": ["PC-"],
+      "metodo_envio": "Mirtrans",
+      "tiempo_preparacion_dias": 2
+    }
+  ]
+}

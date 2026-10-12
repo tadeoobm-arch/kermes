@@ -1,0 +1,15 @@
+{
+  "sections": {
+    "main": { "type": "main-page", "settings": {} },
+    "faq": {
+      "type": "faq",
+      "blocks": {
+        "q1": { "type": "question", "settings": { "question": "¿Cómo pago?", "answer": "<p>Con Mercado Pago: tarjetas, débito, efectivo en redes de cobranza o dinero en cuenta.</p>" } },
+        "q2": { "type": "question", "settings": { "question": "¿Cómo sigo mi pedido?", "answer": "<p>En <a href=\"/pages/segui-tu-pedido\">Seguí tu pedido</a>.</p>" } }
+      },
+      "block_order": ["q1", "q2"],
+      "settings": { "heading": "Preguntas frecuentes" }
+    }
+  },
+  "order": ["main", "faq"]
+}

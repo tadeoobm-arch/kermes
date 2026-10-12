@@ -1,0 +1,42 @@
+{%- comment -%}
+  Grilla de Instagram SIN scripts de terceros (más rápido): subís 6 imágenes y cada una enlaza al post.
+  Si preferís un feed automático, usá una app oficial de Shopify App Store (evaluar impacto en velocidad).
+{%- endcomment -%}
+<section class="section">
+  <div class="container">
+    <div class="section__head">
+      <div>
+        <p class="eyebrow">{% render 'icon', icon: 'instagram' %} {{ section.settings.handle }}</p>
+        <h2 style="margin:0">{{ section.settings.heading }}</h2>
+      </div>
+      {%- if settings.social_instagram != blank -%}<a class="link-arrow" href="{{ settings.social_instagram }}" target="_blank" rel="noopener">Seguinos →</a>{%- endif -%}
+    </div>
+    <div class="ig-grid">
+      {%- for block in section.blocks -%}
+        <a href="{{ block.settings.link | default: settings.social_instagram }}" target="_blank" rel="noopener" {{ block.shopify_attributes }}>
+          {%- if block.settings.image != blank -%}
+            {{ block.settings.image | image_url: width: 400 | image_tag: alt: block.settings.image.alt | default: 'Publicación de Instagram de NovaParfum', loading: 'lazy', widths: '200, 300, 400', sizes: '(min-width: 750px) 16vw, 33vw' }}
+          {%- endif -%}
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Instagram",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Título", "default": "Inspirate con nosotros" },
+    { "type": "text", "id": "handle", "label": "Usuario", "default": "@novaparfum.uy" }
+  ],
+  "blocks": [
+    { "type": "post", "name": "Publicación", "settings": [
+      { "type": "image_picker", "id": "image", "label": "Imagen" },
+      { "type": "url", "id": "link", "label": "Link al post" }
+    ] }
+  ],
+  "max_blocks": 12,
+  "presets": [{ "name": "Instagram", "blocks": [{ "type": "post" }, { "type": "post" }, { "type": "post" }, { "type": "post" }, { "type": "post" }, { "type": "post" }] }]
+}
+{% endschema %}

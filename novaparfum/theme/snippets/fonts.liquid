@@ -1,0 +1,10 @@
+{%- comment -%}
+  Tipografías autoalojadas en el CDN de Shopify (licencia SIL OFL): Fraunces (títulos) y Manrope (texto).
+  Subconjunto latino (incluye á, é, í, ó, ú, ñ, ¿, ¡). font-display: swap para no bloquear el render.
+{%- endcomment -%}
+{{ 'manrope-latin.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+{{ 'fraunces-latin.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+<style>
+  @font-face { font-family: 'Fraunces'; src: url('{{ 'fraunces-latin.woff2' | asset_url }}') format('woff2'); font-weight: 400 500; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'Manrope'; src: url('{{ 'manrope-latin.woff2' | asset_url }}') format('woff2'); font-weight: 200 800; font-style: normal; font-display: swap; }
+</style>

@@ -1,0 +1,57 @@
+{%- assign menu = linklists[section.settings.menu] -%}
+<header class="header">
+  <div class="container header__inner">
+    <div>
+      <details class="menu-drawer">
+        <summary class="icon-btn" aria-label="Abrir menú">{% render 'icon', icon: 'menu' %}</summary>
+        <nav class="menu-drawer__panel" aria-label="Menú principal">
+          {%- for link in menu.links -%}
+            <a href="{{ link.url }}" {% if link.current %}aria-current="page"{% endif %}>{{ link.title }}</a>
+          {%- endfor -%}
+          <a href="{{ settings.tracking_page_url | default: '/pages/segui-tu-pedido' }}">Seguí tu pedido</a>
+        </nav>
+      </details>
+      <nav class="nav-desktop" aria-label="Menú principal">
+        {%- for link in menu.links -%}
+          <a href="{{ link.url }}" {% if link.current %}aria-current="page"{% endif %}>{{ link.title }}</a>
+        {%- endfor -%}
+      </nav>
+    </div>
+
+    <a class="header__logo" href="{{ routes.root_url }}">
+      {%- if request.page_type == 'index' -%}<h1 class="visually-hidden">{{ shop.name }}</h1>{%- endif -%}
+      {% render 'logo' %}
+    </a>
+
+    <div class="header__icons">
+      <details class="search-toggle">
+        <summary class="icon-btn" aria-label="Buscar">{% render 'icon', icon: 'search' %}</summary>
+        <div class="search-bar">
+          <form action="{{ routes.search_url }}" method="get" role="search" class="search-form container">
+            <label class="visually-hidden" for="HeaderSearch">Buscar perfumes</label>
+            <input id="HeaderSearch" type="search" name="q" placeholder="Buscá por perfume, marca o nota…" autocomplete="off">
+            <input type="hidden" name="options[prefix]" value="last">
+            <button class="btn btn--primary" type="submit">Buscar</button>
+          </form>
+        </div>
+      </details>
+      {%- if shop.customer_accounts_enabled -%}
+        <a class="icon-btn" href="{{ routes.account_url }}" aria-label="Mi cuenta">{% render 'icon', icon: 'account' %}</a>
+      {%- endif -%}
+      <a class="icon-btn" href="{{ routes.cart_url }}" aria-label="Carrito ({{ cart.item_count }})">
+        {% render 'icon', icon: 'cart' %}
+        <span class="cart-count" data-cart-count data-count="{{ cart.item_count }}">{% if cart.item_count > 0 %}{{ cart.item_count }}{% endif %}</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Encabezado",
+  "class": "section-header",
+  "settings": [
+    { "type": "link_list", "id": "menu", "label": "Menú", "default": "main-menu" }
+  ]
+}
+{% endschema %}

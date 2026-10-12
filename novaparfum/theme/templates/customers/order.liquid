@@ -1,0 +1,14 @@
+<div class="container section" style="max-width:760px">
+  <p><a href="{{ routes.account_url }}">← Mi cuenta</a></p>
+  <h1>Pedido {{ order.name }}</h1>
+  <p class="muted">{{ order.created_at | date: '%d/%m/%Y %H:%M' }} · {{ order.financial_status_label }} · {{ order.fulfillment_status_label }}</p>
+  <ul class="cart-items">
+    {%- for li in order.line_items -%}
+      <li class="cart-summary">{{ li.title }} × {{ li.quantity }} — {{ li.final_line_price | money }}
+        {%- if li.fulfillment -%}<br><small>Enviado por {{ li.fulfillment.tracking_company }} · {% if li.fulfillment.tracking_url %}<a href="{{ li.fulfillment.tracking_url }}">{{ li.fulfillment.tracking_number }}</a>{% else %}{{ li.fulfillment.tracking_number }}{% endif %}</small>{%- endif -%}
+      </li>
+    {%- endfor -%}
+  </ul>
+  <p style="margin-top:16px"><strong>Total: {{ order.total_price | money }}</strong></p>
+  {%- if order.shipping_address -%}<h2 class="h3">Envío</h2><p>{{ order.shipping_address | format_address }}</p>{%- endif -%}
+</div>

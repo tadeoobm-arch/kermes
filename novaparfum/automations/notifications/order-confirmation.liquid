@@ -1,0 +1,64 @@
+{%- comment -%}
+  NovaParfum — Confirmación del pedido (PEDIDO RECIBIDO).
+  Si el pago todavía está pendiente (p. ej. efectivo en redes de cobranza), se aclara que se
+  confirma al acreditarse. La venta se considera confirmada recién con el webhook orders/paid.
+{%- endcomment -%}
+{%- capture email_title -%}
+  {%- if financial_status == 'paid' -%}¡Gracias por tu compra!{%- else -%}Recibimos tu pedido{%- endif -%}
+{%- endcapture -%}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ email_title }}</title>
+</head>
+<body style="margin:0;background:#FBF9F6;font-family:Manrope,Helvetica,Arial,sans-serif;color:#26224A">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FBF9F6"><tr><td align="center" style="padding:24px 12px">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#FFFFFF;border-radius:20px;overflow:hidden">
+  <tr><td style="background:#F2EFFA;padding:22px 28px;text-align:center">
+    <a href="{{ shop.url }}" style="text-decoration:none;color:#26224A;font-family:Georgia,serif;font-size:26px"><span style="color:#4B3FA8">&#10022;</span> Nova<span style="color:#4B3FA8">Parfum</span></a>
+  </td></tr>
+  <tr><td style="padding:28px">
+    <h1 style="font-family:Georgia,serif;font-weight:500;font-size:24px;margin:0 0 8px">{{ email_title }}</h1>
+    <p style="margin:0 0 6px">Hola {{ customer.first_name | default: '' }}, tu pedido <strong>{{ order_name }}</strong> está registrado.</p>
+    {%- if financial_status == 'paid' -%}
+      <p style="margin:0 0 16px">Tu pago fue aprobado y ya lo estamos preparando. Te avisamos cuando salga, con el número de seguimiento.</p>
+    {%- else -%}
+      <p style="margin:0 0 16px;background:#F2EFFA;padding:12px;border-radius:12px">Estamos esperando la confirmación de tu pago en Mercado Pago. Apenas se acredite te enviamos otro email y empezamos a preparar tu pedido.</p>
+    {%- endif -%}
+
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px">
+      {%- for line in line_items -%}
+        <tr>
+          <td style="padding:10px 0;border-bottom:1px solid #E7E2F0">
+            <strong>{{ line.product.title | default: line.title }}</strong>
+            {%- if line.variant.title != blank and line.variant.title != 'Default Title' -%}<br><span style="color:#5E5A70">{{ line.variant.title }}</span>{%- endif -%}
+            <br><span style="color:#5E5A70">Cantidad: {{ line.quantity }}</span>
+          </td>
+          <td style="padding:10px 0;border-bottom:1px solid #E7E2F0;text-align:right;white-space:nowrap">{{ line.final_line_price | money }}</td>
+        </tr>
+      {%- endfor -%}
+      <tr><td style="padding:8px 0;color:#5E5A70">Subtotal</td><td style="text-align:right">{{ subtotal_price | money }}</td></tr>
+      {%- if discounts_savings > 0 -%}<tr><td style="padding:4px 0;color:#5E5A70">Descuentos</td><td style="text-align:right">-{{ discounts_savings | money }}</td></tr>{%- endif -%}
+      <tr><td style="padding:4px 0;color:#5E5A70">Envío</td><td style="text-align:right">{{ shipping_price | money }}</td></tr>
+      <tr><td style="padding:10px 0;font-size:17px"><strong>Total</strong></td><td style="text-align:right;font-size:17px"><strong>{{ total_price | money }}</strong></td></tr>
+    </table>
+
+    {%- if shipping_address -%}
+      <h2 style="font-size:15px;margin:20px 0 6px">Enviamos a</h2>
+      <p style="margin:0;color:#5E5A70;line-height:1.5">
+        {{ shipping_address.name }}<br>{{ shipping_address.address1 }}{% if shipping_address.address2 != blank %}, {{ shipping_address.address2 }}{% endif %}<br>
+        {{ shipping_address.city }}{% if shipping_address.province != blank %}, {{ shipping_address.province }}{% endif %} {{ shipping_address.zip }}<br>
+        {% if shipping_address.phone != blank %}Tel: {{ shipping_address.phone }}{% endif %}
+      </p>
+    {%- endif -%}
+
+    <p style="margin:26px 0"><a href="{{ order_status_url }}" style="display:inline-block;background:#4B3FA8;color:#FFFFFF;padding:14px 24px;border-radius:999px;text-decoration:none;font-weight:600">Ver mi pedido</a></p>
+    <p style="margin:0;color:#5E5A70;font-size:13px">También podés consultarlo en {{ shop.url }}/pages/segui-tu-pedido con tu número de pedido.</p>
+  </td></tr>
+  <tr><td style="padding:18px 28px 26px;font-size:12px;color:#5E5A70;border-top:1px solid #F2EFFA">NovaParfum · Perfumería online en Uruguay · ¿Dudas? Respondé este email.</td></tr>
+</table>
+</td></tr></table>
+</body>
+</html>

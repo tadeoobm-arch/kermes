@@ -1,0 +1,5 @@
+{
+  "_comentario": "Respaldo de asignación de proveedores. La fuente principal es el metaobjeto 'Proveedor' asignado a cada producto en Shopify. Este archivo se usa solo si un producto no tiene proveedor asignado: primero por prefijo de SKU, luego por marca (vendor), luego 'default'. Los emails reales se cargan en Shopify (Contenido > Metaobjetos > Proveedor), no acá, si el repositorio es público.",
+  "default": null,
+  "suppliers": []
+}

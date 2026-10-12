@@ -1,0 +1,16 @@
+{
+  "type": "footer",
+  "name": "Grupo pie de página",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "shop": { "type": "menu", "settings": { "heading": "Tienda", "menu": "main-menu" } },
+        "help": { "type": "menu", "settings": { "heading": "Ayuda", "menu": "footer" } }
+      },
+      "block_order": ["shop", "help"],
+      "settings": {}
+    }
+  },
+  "order": ["footer"]
+}
